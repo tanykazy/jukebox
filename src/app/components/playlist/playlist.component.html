@@ -1,9 +1,5 @@
-<!-- <p>playlist works!</p> -->
-<mat-selection-list #shoes [multiple]="false">
-    <mat-list-option *ngFor="let shoe of typesOfShoes" [value]="shoe">
-        {{shoe}}
+<mat-selection-list #videos [multiple]="false" (selectionChange)="onSelectionChange($event)">
+    <mat-list-option *ngFor="let video of playlist" [value]="video">
+        {{video}}
     </mat-list-option>
 </mat-selection-list>
-<p>
-    Option selected: {{shoes.selectedOptions.selected[0]?.value}}
-</p>

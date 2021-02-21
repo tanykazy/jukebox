@@ -1,4 +1,4 @@
-<app-youtube-player [videoId]="videoId"></app-youtube-player>
+<app-youtube-player (ended)="onEnded($event)"></app-youtube-player>
 <app-request-box (submit)="onSubmit($event)"></app-request-box>
-<app-playlist></app-playlist>
+<app-playlist (select)="onSelect($event)"></app-playlist>
 <router-outlet></router-outlet>

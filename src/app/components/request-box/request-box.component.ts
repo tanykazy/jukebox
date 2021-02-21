@@ -8,12 +8,22 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 export class RequestBoxComponent implements OnInit {
   @Output() submit = new EventEmitter();
 
+  value = '';
+
   constructor() {
   }
 
-  value = '';
-
   ngOnInit(): void {
+  }
+
+  public onSubmit(event: any): void {
+    const requests = event.split('\n');
+    for (let request of requests) {
+      if (request) {
+        this.submit.emit(request);
+      }
+    }
+    this.value = '';
   }
 
 }

@@ -1,6 +1,7 @@
-<mat-form-field class="example-form-field" (keyup.enter)="submit.emit(value)">
+<mat-form-field (keyup.enter)="onSubmit(value)">
     <!-- <mat-label>Clearable input</mat-label> -->
-    <input matInput type="text" [(ngModel)]="value">
+    <!-- <input matInput type="text" [(ngModel)]="value"> -->
+    <textarea matInput placeholder="" [(ngModel)]="value"></textarea>
     <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
         <mat-icon>close</mat-icon>
     </button>

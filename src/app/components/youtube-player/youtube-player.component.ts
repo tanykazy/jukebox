@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit, Output, ViewChild, EventEmitter } from '@angular/core';
+
+import { YouTubePlayer } from "@angular/youtube-player";
 
 @Component({
   selector: 'app-youtube-player',
@@ -6,9 +8,11 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./youtube-player.component.css']
 })
 export class YoutubePlayerComponent implements OnInit {
-  @Input() videoId: string = '';
+  @ViewChild(YouTubePlayer) youtube!: YouTubePlayer;
 
+  @Output() ended = new EventEmitter();
 
+  videoId: string | undefined;
   height: number | undefined;
   width: number | undefined;
   startSeconds: number | undefined;
@@ -49,6 +53,18 @@ export class YoutubePlayerComponent implements OnInit {
       event.target.playVideo();
     }
 
+    if (event.data === 0) {
+      this.ended.emit(event.data);
+    }
+
+  }
+
+  /**
+   * getState
+   */
+  public getState() {
+    console.log(this.youtube.getPlayerState());
+    return this.youtube.getPlayerState();
   }
 
 }

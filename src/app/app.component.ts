@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+
+import { YoutubePlayerComponent } from "./components/youtube-player/youtube-player.component";
+import { PlaylistComponent } from "./components/playlist/playlist.component";
 
 @Component({
   selector: 'app-root',
@@ -6,12 +9,21 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  videoId: string = '';
+  @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
+  @ViewChild(PlaylistComponent) playlist!: PlaylistComponent;
 
   onSubmit(event: any): void {
-    console.log(event);
-
-    this.videoId = event;
+    this.playlist.addList(event);
   }
 
+  onEnded(event: any): void {
+    const videoId = this.playlist.getShuffle();
+    if (videoId) {
+      this.player.videoId = videoId;
+    }
+  }
+
+  onSelect(event: any): void {
+    this.player.videoId = event;
+  }
 }
