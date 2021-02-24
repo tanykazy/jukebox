@@ -30,4 +30,4 @@ jobs:
       - name: Install
         run: npm install
       - name: Build
-        run: ng build
+        run: npx ng build
