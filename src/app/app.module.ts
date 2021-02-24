@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from "@angular/forms";
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCardModule } from '@angular/material/card';
@@ -15,11 +16,7 @@ import { AppComponent } from './app.component';
 
 import { YoutubePlayerComponent } from './components/youtube-player/youtube-player.component';
 import { RequestBoxComponent } from './components/request-box/request-box.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlaylistComponent } from './components/playlist/playlist.component';
-
-
-
 
 @NgModule({
   declarations: [
