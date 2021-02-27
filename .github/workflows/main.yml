@@ -37,7 +37,7 @@ jobs:
       - name: test
         run: |
           git config user.name "${{ github.actor }}"
-          git checkout -b gh-pages
+          git checkout gh-pages
           git add ./dist
           git commit -m "test deploy"
           get push
