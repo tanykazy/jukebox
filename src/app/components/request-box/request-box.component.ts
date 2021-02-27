@@ -1,5 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
+import { YoutubeUrlService } from "../../service/youtube-url.service";
+
 @Component({
   selector: 'app-request-box',
   templateUrl: './request-box.component.html',
@@ -20,7 +22,8 @@ export class RequestBoxComponent implements OnInit {
     const requests = event.split('\n');
     for (let request of requests) {
       if (request) {
-        this.submit.emit(request);
+        const videoid = YoutubeUrlService.getVideoId(request);
+        this.submit.emit(videoid);
       }
     }
     this.value = '';
