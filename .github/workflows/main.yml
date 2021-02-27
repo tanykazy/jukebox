@@ -37,7 +37,7 @@ jobs:
       - name: test1
         run: git add .
       - name: test2
-        run: git commit -m test deploy
+        run: git commit -m "test deploy"
       - name: test3
         run: git push
 
