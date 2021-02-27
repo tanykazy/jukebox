@@ -35,14 +35,14 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run ng build -- --prod --base-href=https://${{ github.repository_owner }}.github.io/${{ github.actor }}/ --output-path=/${{ github.repository }}
+        run: npm run ng build -- --prod --base-href=https://${{ github.repository_owner }}.github.io/jukebox/ --output-path=${{ runner.temp }}
 
       - name: Push github pages
         run: |
           git config user.name "${{ github.actor }}"
           git fetch origin
           git checkout gh-pages
-          mv /${{ github.repository }} ./
+          mv /${{ runner.temp }} ./
           git add . -f
           git commit -m "Deploy to github pages - ${{ github.sha }}"
           git push origin
