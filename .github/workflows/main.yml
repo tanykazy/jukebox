@@ -50,7 +50,7 @@ jobs:
       - run: git config --global user.email "CI@example"
       - run: git config --global user.name "CI"
       - run: git commit -m "Gen .dump"
-      - run: git push origin master
+      - run: git push origin main
 
 
 
