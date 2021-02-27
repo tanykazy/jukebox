@@ -32,13 +32,13 @@ jobs:
       - name: Install
         run: npm install
       - name: Build
-        run: npm run ng build -- --prod --base-href=https://tanykazy.github.io/jukebox/
+        run: npm run ng build -- --prod --base-href=https://tanykazy.github.io/jukebox/ --output-path=../dist
 
       - name: test
         run: |
           git config user.name "${{ github.actor }}"
           git checkout gh-pages
-          git add ./dist
+          git add ../dist
           git commit -m "test deploy"
           get push
 
