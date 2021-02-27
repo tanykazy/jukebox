@@ -25,7 +25,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup
+      - name: Setup nodejs
         uses: actions/setup-node@v2
 #         with:
 #           node-version: '14'
@@ -34,18 +34,23 @@ jobs:
       - name: Build
         run: npm run ng build -- --prod --base-href=https://tanykazy.github.io/jukebox/ --output-path=../dist
 
-      - name: test
-        run: |
-          git config user.name "${{ github.actor }}"
-          git fetch
-          git checkout gh-pages
-          mv ../dist ./
-          git add ./dist -f
-          git commit -m "test deploy"
-          get push origin
+#       - name: test
+#         run: |
+#           git config user.name "${{ github.actor }}"
+#           git fetch
+#           git checkout gh-pages
+#           mv ../dist ./
+#           git add ./dist -f
+#           git commit -m "test deploy"
+#           get push origin
 
 
-
+      - run: echo 1 > .dump
+      - run: git add .dump
+      - run: git config --global user.email "CI@example"
+      - run: git config --global user.name "CI"
+      - run: git commit -m "Gen .dump"
+      - run: git push origin master
 
 
 
