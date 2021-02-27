@@ -36,12 +36,11 @@ jobs:
 
       - name: test
         run: |
-          ls -R
-          
-#          git config user.name "${{ github.actor }}"
-#          git add .
-#          git commit -m "test deploy"
-#          get push
+          git config user.name "${{ github.actor }}"
+          git checkout -b gh-pages
+          git add ./dist
+          git commit -m "test deploy"
+          get push
 
 
 
