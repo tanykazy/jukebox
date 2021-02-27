@@ -32,7 +32,7 @@ jobs:
       - name: Install
         run: npm install
       - name: Build
-        run: npm run ng build --prod --base-href=https://tanykazy.github.io/jukebox/
+        run: npm run ng build -- --prod --base-href=https://tanykazy.github.io/jukebox/
 
       - name: test
         run: |
