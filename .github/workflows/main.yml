@@ -42,7 +42,7 @@ jobs:
           mv ../dist ./
           git add ./dist -f
           git commit -m "test deploy"
-          get push
+          get push origin
 
 
 
