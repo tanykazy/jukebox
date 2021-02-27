@@ -39,7 +39,7 @@ jobs:
           git config user.name "${{ github.actor }}"
           git checkout -b gh-pages
           mv ../dist ./
-          git add ./dist
+          git add ./dist -f
           git commit -m "test deploy"
           get push
 
