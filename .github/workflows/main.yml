@@ -42,7 +42,7 @@ jobs:
           git config user.name "${{ github.actor }}"
           git fetch origin
           git checkout gh-pages
-          git rm -rf .
+          rm -rf .
           mv ${{ runner.temp }}/${{ github.sha }}/** ./
           git add .
           git commit -m "Deploy to github pages - ${{ github.sha }}"
