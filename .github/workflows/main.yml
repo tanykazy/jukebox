@@ -44,7 +44,8 @@ jobs:
           git checkout gh-pages
           git rm -rf .
           mv ${{ runner.temp }}/${{ github.sha }}/** ./
-          git add **!node_modules/
+          rm -rf ./node_modules/
+          git add .
           git commit -m "Deploy to github pages - ${{ github.sha }}"
           git push origin
 
