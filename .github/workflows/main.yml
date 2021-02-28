@@ -44,11 +44,13 @@ jobs:
           mv -v ${{ runner.temp }}/${{ github.sha }}/** ./
 
       - name: Check changes
+        id: changes
         run: |
-          ! git diff --exit-code --quiet
+          git diff --exit-code --quiet
+          echo "::set-output name=ischange::$?"
 
       - name: Push github pages
-        if: ${{ success() }}
+        if: steps.changes.outputs.ischange > 0
         run: |
           git config user.name "${{ github.actor }}"
           git add .
