@@ -47,6 +47,7 @@ jobs:
         id: changes
         run: |
           git diff --exit-code
+          echo "exit code $?"
           echo "::set-output name=ischange::$?"
 
       - name: Push github pages
