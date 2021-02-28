@@ -30,3 +30,13 @@ export class RequestBoxComponent implements OnInit {
   }
 
 }
+
+/*
+https://www.youtube.com/watch?v=0zUE1E3e7Mg
+https://www.youtube.com/watch?v=j7BQRPSOIeA
+https://www.youtube.com/watch?v=OlqC1BBVk70
+https://www.youtube.com/watch?v=h2FxhiY7qGg
+https://www.youtube.com/watch?v=rk_yhS3YnIo
+https://www.youtube.com/watch?v=fpaq_2Qk9Zg
+https://www.youtube.com/watch?v=qJCv23IjDAI
+*/
