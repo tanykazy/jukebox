@@ -37,24 +37,20 @@ jobs:
 
       - name: Preprocessing
         run: |
-          git config user.name "${{ github.actor }}"
           git fetch origin
           git checkout gh-pages
           git rm -rf .
           rm -rfv ./node_modules
-          rsync -auvz --delete ${{ runner.temp }}/${{ github.sha }}/ ./
-#          mv -v ${{ runner.temp }}/${{ github.sha }}/** ./
-#          rm -rf ./node_modules
+          mv -v ${{ runner.temp }}/${{ github.sha }}/** ./
 
-          
-      - name: Push github pages
+      - name: Check changes
         run: |
-          if ! git diff --exit-code --quiet
-          then
-            git add . -f
-            git commit -m "Deploy to github pages - ${{ github.sha }}"
-            git push origin
-          fi
+          ! git diff --exit-code --quiet
 
-
-
+      - name: Push github pages
+        if: ${{ success() }}
+        run: |
+          git config user.name "${{ github.actor }}"
+          git add .
+          git commit -m "Deploy to github pages - ${{ github.sha }}"
+          git push origin
