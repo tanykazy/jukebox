@@ -30,7 +30,7 @@ jobs:
 #           node-version: '14'
 
       - name: Install node packages
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run ng -- build --prod --base-href=https://${{ github.repository_owner }}.github.io/jukebox/ --output-path=${{ runner.temp }}/${{ github.sha }}
@@ -41,6 +41,7 @@ jobs:
           git fetch origin
           git checkout gh-pages
           git rm -rf .
+          rm -rfv ./node_modules
           rsync -auvz --delete ${{ runner.temp }}/${{ github.sha }}/ ./
 #          mv -v ${{ runner.temp }}/${{ github.sha }}/** ./
 #          rm -rf ./node_modules
