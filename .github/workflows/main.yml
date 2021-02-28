@@ -47,7 +47,7 @@ jobs:
         id: changes
         run: |
           git add -N .
-          git diff --exit-code
+          git diff --exit-code --quiet
           echo "exit code $?"
           echo "::set-output name=ischange::$?"
 
