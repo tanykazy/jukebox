@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Deploy to github pages
 
 # Controls when the action will run. 
@@ -32,21 +30,29 @@ jobs:
 #           node-version: '14'
 
       - name: Install node packages
-        run: npm install
+        run: npm ci
 
       - name: Build
         run: npm run ng -- build --prod --base-href=https://${{ github.repository_owner }}.github.io/jukebox/ --output-path=${{ runner.temp }}/${{ github.sha }}
 
-      - name: Push github pages
+      - name: Preprocessing
         run: |
-          git config user.name "${{ github.actor }}"
           git fetch origin
           git checkout gh-pages
-          mv ${{ runner.temp }}/${{ github.sha }}/** ./
-          git add . -f
+          git rm -rf .
+          rm -rf ./node_modules
+          mv -v ${{ runner.temp }}/${{ github.sha }}/** ./
+
+      - name: Check changes
+        id: changes
+        run: |
+          git diff --exit-code
+          echo "::set-output name=ischange::$?"
+
+      - name: Push github pages
+        if: steps.changes.outputs.ischange > 0
+        run: |
+          git config user.name "${{ github.actor }}"
+          git add .
           git commit -m "Deploy to github pages - ${{ github.sha }}"
           git push origin
-
-
-
-
