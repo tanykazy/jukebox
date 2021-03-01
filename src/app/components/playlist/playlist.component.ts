@@ -38,14 +38,3 @@ export class PlaylistComponent implements OnInit {
   }
 
 }
-
-export class Request {
-  constructor(index:number, value:string){
-    this.index = index; // request index for done()
-    this.value = value; // request value (YouTube video id)
-  }
-  public done(){
-    // call function 
-  }
-}
-
