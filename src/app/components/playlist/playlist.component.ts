@@ -18,7 +18,11 @@ export class PlaylistComponent implements OnInit {
   onSelectionChange(event: any): void {
     console.log(event.options[0].value);
 
-    this.select.emit(event.options[0].value);
+    this.emitSelect(event.options[0].value);
+  }
+
+  private emitSelect(value:string) {
+    this.select.emit(value);
   }
 
   /**
