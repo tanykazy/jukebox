@@ -21,7 +21,7 @@ export class PlaylistComponent implements OnInit {
     this.emitSelect(event.options[0].value);
   }
 
-  private emitSelect(value:string) {
+  private emitSelect(value: string) {
     this.select.emit(value);
   }
 
@@ -29,7 +29,9 @@ export class PlaylistComponent implements OnInit {
    * addList
    */
   public addList(url: string) {
-    this.playlist.push(url);
+    if (!this.playlist.includes(url)) {
+      this.playlist.push(url);
+    }
   }
 
   /**
