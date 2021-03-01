@@ -43,17 +43,20 @@ jobs:
           rm -rf ./node_modules
           mv -v ${{ runner.temp }}/${{ github.sha }}/** ./
 
-      - name: Check changes
-        id: changes
-        run: |
-          git add -N .
-          echo "::set-output name=ischange::$(git diff --name-only | wc -l)"
-          echo ${{ steps.changes.outputs.ischange }}
+#       - name: Check changes
+#         id: changes
+#         run: |
+#           git add -N .
+#           echo "::set-output name=ischange::$(git diff --name-only | wc -l)"
+#           echo ${{ steps.changes.outputs.ischange }}
 
       - name: Push github pages
         if: steps.changes.outputs.ischange > 0
         run: |
-          git config user.name "${{ github.actor }}"
-          git add .
-          git commit -m "Deploy to github pages - ${{ github.sha }}"
-          git push origin
+          git add -N .
+          if ! git diff --exit-code --quiet
+            git config user.name "${{ github.actor }}"
+            git add .
+            git commit -m "Deploy to github pages - ${{ github.sha }}"
+            git push origin
+          fi
