@@ -11,16 +11,18 @@ export class YoutubeUrlService {
    * getVideoId
    */
   static getVideoId(url: string) {
-    const addr = new URL(url);
-    const hostname = addr.hostname;
-    let v;
-    if (hostname === 'youtu.be') {
-      v = addr.pathname;
-    } else {
-      const searchParams = addr.searchParams;
-      v = searchParams.get('v');
+    try {
+      const addr = new URL(url);
+      const hostname = addr.hostname;
+      if (hostname === 'youtu.be') {
+        return addr.pathname.replace('/', '');
+      } else {
+        const searchParams = addr.searchParams;
+        return searchParams.get('v');
+      }
+    } catch (error) {
+      return null;
     }
-    return v;
   }
 }
 

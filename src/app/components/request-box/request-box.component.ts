@@ -19,7 +19,7 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public onSubmit(event: any): void {
-    const requests = event.split('\n');
+    const requests = event.split(/\r\n|\r|\n|\s/);
     for (let request of requests) {
       if (request) {
         const videoid = YoutubeUrlService.getVideoId(request);

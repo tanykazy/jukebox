@@ -16,9 +16,12 @@ export class PlaylistComponent implements OnInit {
   }
 
   onSelectionChange(event: any): void {
-    console.log(event.options[0].value);
-
-    this.emitSelect(event.options[0].value);
+    const value = event.options[0].value;
+    const index = this.playlist.indexOf(value);
+    if (index !== -1) {
+      this.playlist.splice(index, 1);
+      this.emitSelect(value);
+    }
   }
 
   private emitSelect(value: string) {
