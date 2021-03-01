@@ -51,10 +51,11 @@ jobs:
 #           echo ${{ steps.changes.outputs.ischange }}
 
       - name: Push github pages
-        if: steps.changes.outputs.ischange > 0
+#         if: steps.changes.outputs.ischange > 0
         run: |
           git add -N .
           if ! git diff --exit-code --quiet
+          then
             git config user.name "${{ github.actor }}"
             git add .
             git commit -m "Deploy to github pages - ${{ github.sha }}"
