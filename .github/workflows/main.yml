@@ -48,6 +48,7 @@ jobs:
         run: |
           git add -N .
           echo "::set-output name=ischange::$(git diff --name-only | wc -l)"
+          echo ${{ steps.changes.outputs.ischange }}
 
       - name: Push github pages
         if: steps.changes.outputs.ischange > 0
