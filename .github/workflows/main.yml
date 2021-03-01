@@ -39,6 +39,7 @@ jobs:
         run: |
           git fetch origin
           git checkout gh-pages
+          ls -al
           git rm -rf .
           rm -rf ./node_modules
           mv -v ${{ runner.temp }}/${{ github.sha }}/** ./
