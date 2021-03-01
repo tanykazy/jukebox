@@ -47,9 +47,7 @@ jobs:
         id: changes
         run: |
           git add -N .
-          git diff --exit-code --quiet
-          echo "exit code $?"
-          echo "::set-output name=ischange::$?"
+          echo "::set-output name=ischange::$(git diff --name-only | wc -l)"
 
       - name: Push github pages
         if: steps.changes.outputs.ischange > 0
