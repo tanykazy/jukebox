@@ -1,11 +1,11 @@
 <youtube-player 
-  [videoId]="_videoId" 
+  [videoId]="videoId" 
   [height]="height" 
   [width]="width" 
   [startSeconds]="startSeconds"
   [endSeconds]="endSeconds"
   (ready)="onReady($event)"
-  (stateChange)="onStateChange($event)">
-  <!-- [suggestedQuality]="suggestedQuality" -->
-  <!-- [showBeforeIframeApiLoads]="showBeforeIframeApiLoads" -->
+  (stateChange)="onStateChange($event)"
+  [suggestedQuality]="suggestedQuality"
+  [showBeforeIframeApiLoads]="showBeforeIframeApiLoads">
 </youtube-player>

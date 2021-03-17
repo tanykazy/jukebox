@@ -19,11 +19,15 @@ export class AppComponent {
   onEnded(event: any): void {
     const videoId = this.playlist.getShuffle();
     if (videoId) {
-      this.player.videoId = videoId;
+      this.player.playVideo(videoId);
     }
   }
 
+  onChangeCurrentTime(event: any): void {
+    // console.log(event);
+  }
+
   onSelect(event: any): void {
-    this.player.videoId = event;
+    this.player.playVideo(event);
   }
 }

@@ -1,4 +1,6 @@
-<app-youtube-player (ended)="onEnded($event)"></app-youtube-player>
-<app-request-box (submit)="onSubmit($event)"></app-request-box>
-<app-playlist (select)="onSelect($event)"></app-playlist>
+<app-youtube-player (ended)="onEnded($event)" (changeCurrentTime)="onChangeCurrentTime($event)"></app-youtube-player>
+<div>
+    <app-request-box (submit)="onSubmit($event)"></app-request-box>
+    <app-playlist (select)="onSelect($event)"></app-playlist>
+</div>
 <router-outlet></router-outlet>
