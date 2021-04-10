@@ -1,5 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
+import { StorageService } from "../../service/storage.service";
+
 @Component({
   selector: 'app-playlist',
   templateUrl: './playlist.component.html',
@@ -10,7 +12,12 @@ export class PlaylistComponent implements OnInit {
 
   playlist: string[] = [];
 
-  constructor() { }
+  constructor() {
+    const playlist = StorageService.getItem('playlist');
+    if (playlist !== null) {
+      this.playlist = playlist;
+    }
+  }
 
   ngOnInit(): void {
   }
@@ -20,6 +27,7 @@ export class PlaylistComponent implements OnInit {
     const index = this.playlist.indexOf(value);
     if (index !== -1) {
       this.playlist.splice(index, 1);
+      StorageService.setItem('playlist', this.playlist);
       this.emitSelect(value);
     }
   }
@@ -34,6 +42,7 @@ export class PlaylistComponent implements OnInit {
   public addList(url: string) {
     if (!this.playlist.includes(url)) {
       this.playlist.push(url);
+      StorageService.setItem('playlist', this.playlist);
     }
   }
 
@@ -43,6 +52,7 @@ export class PlaylistComponent implements OnInit {
   public getShuffle() {
     const random = Math.floor(Math.random() * this.playlist.length);
     const url = this.playlist.splice(random, 1)[0];
+    StorageService.setItem('playlist', this.playlist);
     return url;
   }
 
