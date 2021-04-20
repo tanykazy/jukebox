@@ -12,6 +12,8 @@ export class AppComponent {
   @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
   @ViewChild(PlaylistComponent) playlist!: PlaylistComponent;
 
+  appName = "jukebox";
+
   onSubmit(event: any): void {
     this.playlist.addList(event);
   }

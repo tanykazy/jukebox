@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatRippleModule } from '@angular/material/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +19,7 @@ import { AppComponent } from './app.component';
 import { YoutubePlayerComponent } from './components/youtube-player/youtube-player.component';
 import { RequestBoxComponent } from './components/request-box/request-box.component';
 import { PlaylistComponent } from './components/playlist/playlist.component';
+import { TopBarComponent } from './components/top-bar/top-bar.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +27,7 @@ import { PlaylistComponent } from './components/playlist/playlist.component';
     YoutubePlayerComponent,
     RequestBoxComponent,
     PlaylistComponent,
+    TopBarComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,6 +40,8 @@ import { PlaylistComponent } from './components/playlist/playlist.component';
     MatInputModule,
     MatGridListModule,
     MatListModule,
+    MatToolbarModule,
+    MatRippleModule,
     BrowserAnimationsModule,
     MatButtonModule,
   ],
