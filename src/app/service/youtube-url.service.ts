@@ -10,7 +10,7 @@ export class YoutubeUrlService {
   /**
    * getVideoId
    */
-  static getVideoId(url: string) {
+  static getVideoId(url: string): string | null {
     try {
       const addr = new URL(url);
       const hostname = addr.hostname;
