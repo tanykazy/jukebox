@@ -1,8 +1,10 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-
-import { YoutubeUrlService } from "../../service/youtube-url.service";
 import { FormControl } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+
+import { YoutubeUrlService } from "../../service/youtube-url.service";
+
 @Component({
   selector: 'app-request-box',
   templateUrl: './request-box.component.html',
@@ -13,6 +15,17 @@ export class RequestBoxComponent implements OnInit {
 
   value = '';
 
+  // keywords = new Set(['angular', 'how-to', 'tutorial']);
+  keywords: Set<string> = new Set([]);
+  // keywords = [];
+  // formControl: FormControl = new FormControl(['angular']);
+  // formControl: FormControl = new FormControl();
+
+  readonly selectable = true;
+  readonly removable = true;
+  readonly addOnBlur = true;
+  readonly separatorKeysCodes = [ENTER, COMMA] as const;
+
   constructor() {
   }
 
@@ -20,7 +33,7 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public onSubmit(event: any): void {
-    const requests = event.split(/\r\n|\r|\n|\s/);
+    const requests: Array<string> = event.split(/\r\n|\r|\n|\s/);
     for (let request of requests) {
       if (request) {
         const videoid = YoutubeUrlService.getVideoId(request);
@@ -30,12 +43,8 @@ export class RequestBoxComponent implements OnInit {
     this.value = '';
   }
 
-  keywords = new Set(['angular', 'how-to', 'tutorial']);
-  formControl = new FormControl(['angular']);
-
-  addKeywordFromInput(event: MatChipInputEvent) {
+  public addKeywordFromInput(event: MatChipInputEvent) {
     if (event.value) {
-
       const requests = event.value.split(/\r\n|\r|\n|\s/);
       for (let request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
@@ -48,7 +57,7 @@ export class RequestBoxComponent implements OnInit {
     }
   }
 
-  removeKeyword(keyword: string) {
+  public remove(keyword: string): void {
     this.keywords.delete(keyword);
   }
 }

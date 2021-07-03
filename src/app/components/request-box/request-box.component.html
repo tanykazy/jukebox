@@ -7,26 +7,17 @@
     </button>
 </mat-form-field>
 
-<!-- <div class="example-button-container">
-    <button mat-raised-button (click)="formControl.disable()">Disable form control</button>
-    <button mat-raised-button (click)="formControl.enable()">Enable form control</button>
-</div> -->
-
-<!-- <p>
-    <i>Select a focused chip by pressing <code>SPACE</code></i>
-</p> -->
 <mat-form-field class="request-box" appearance="fill">
     <mat-label>YouTube Video ID</mat-label>
     <!-- <mat-chip-list #chipList aria-label="Video keywords" multiple [formControl]="formControl"> -->
-    <mat-chip-list #chipList aria-label="Video keywords" multiple>
-        <mat-chip *ngFor="let keyword of keywords" [selected]="keyword" [value]="keyword"
-            (removed)="removeKeyword(keyword)">
+    <mat-chip-list #chipList aria-label="Video keywords">
+        <mat-chip *ngFor="let keyword of keywords" [selectable]="selectable" [removable]="removable"
+            (removed)="remove(keyword)">
             {{keyword}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
         </mat-chip>
         <input placeholder="New URL..." [matChipInputFor]="chipList"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
             (matChipInputTokenEnd)="addKeywordFromInput($event)">
     </mat-chip-list>
 </mat-form-field>
-<!-- <p>
-    <b>The following keywords are selected:</b> {{formControl.value}}
-</p> -->
