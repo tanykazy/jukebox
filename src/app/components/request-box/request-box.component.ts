@@ -26,10 +26,8 @@ export class RequestBoxComponent implements OnInit {
 
   ngOnInit(): void {
     const playlist = StorageService.getItem('playlist');
-    // console.log(playlist);
     if (playlist !== null) {
       try {
-        // console.log(playlist);
         this.requests = new Set(playlist);
       } catch (error) {
         this.updateStorage(this.requests);
@@ -62,6 +60,7 @@ export class RequestBoxComponent implements OnInit {
   public remove(request: string, chip: MatChip): void {
     chip.deselect();
     this.requests.delete(request);
+    this.updateStorage(this.requests);
   }
 
   public onChipClick(chip: MatChip): void {
