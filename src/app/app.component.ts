@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 
 import { YoutubePlayerComponent } from "./components/youtube-player/youtube-player.component";
-import { PlaylistComponent } from "./components/playlist/playlist.component";
+import { RequestBoxComponent } from "./components/request-box/request-box.component";
 
 @Component({
   selector: 'app-root',
@@ -10,16 +10,12 @@ import { PlaylistComponent } from "./components/playlist/playlist.component";
 })
 export class AppComponent {
   @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
-  @ViewChild(PlaylistComponent) playlist!: PlaylistComponent;
+  @ViewChild(RequestBoxComponent) requestBox!: RequestBoxComponent;
 
   appName = "jukebox";
 
-  onSubmit(event: any): void {
-    this.playlist.addList(event);
-  }
-
   onEnded(event: any): void {
-    const videoId = this.playlist.getShuffle();
+    const videoId = this.requestBox.getShuffle();
     if (videoId) {
       this.player.playVideo(videoId);
     }

@@ -17,7 +17,6 @@ import { AppComponent } from './app.component';
 
 import { YoutubePlayerComponent } from './components/youtube-player/youtube-player.component';
 import { RequestBoxComponent } from './components/request-box/request-box.component';
-import { PlaylistComponent } from './components/playlist/playlist.component';
 import { TopBarComponent } from './components/top-bar/top-bar.component';
 
 @NgModule({
@@ -25,7 +24,6 @@ import { TopBarComponent } from './components/top-bar/top-bar.component';
     AppComponent,
     YoutubePlayerComponent,
     RequestBoxComponent,
-    PlaylistComponent,
     TopBarComponent,
   ],
   imports: [

@@ -1,5 +1,5 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { MatChip, MatChipInputEvent, MatChipSelectionChange } from '@angular/material/chips';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 import { YoutubeUrlService } from "../../service/youtube-url.service";
@@ -13,6 +13,8 @@ import { StorageService } from "../../service/storage.service";
 export class RequestBoxComponent implements OnInit {
   @Output() select = new EventEmitter();
   @Output() deselect = new EventEmitter();
+
+  @ViewChild(MatChipList) chipList!: MatChipList;
 
   readonly selectable: boolean = true;
   readonly removable: boolean = true;
@@ -39,8 +41,31 @@ export class RequestBoxComponent implements OnInit {
     StorageService.setItem('playlist', [...values]);
   }
 
-  onSubmit(event: any): void {
-    console.log(this.requests);
+  private getChipByValue(value: string): MatChip | null {
+    let chip: MatChip | null = null;
+    this.chipList.chips.forEach((item: MatChip) => {
+      if (item.value === value) {
+        chip = item;
+      }
+    });
+    return chip;
+  }
+
+  public getShuffle(): string | null {
+    this.chipList.chips.forEach((item: MatChip) => {
+      item.deselect();
+    });
+    if (this.requests.size !== 0) {
+      const random = Math.floor(Math.random() * this.requests.size);
+      const videoid = [...this.requests][random];
+      const chip = this.getChipByValue(videoid);
+      if (chip) {
+        chip.deselect();
+      }
+      return videoid;
+    } else {
+      return null;
+    }
   }
 
   public addRequestFromInput(event: MatChipInputEvent): void {
