@@ -7,13 +7,17 @@ export class StorageService {
 
   constructor() { }
 
-  static getItem(keyName: string) {
+  static getItem(keyName: string): any {
     if (storageAvailable('localStorage')) {
       const value = window.localStorage.getItem(keyName);
       if (value === null) {
         return value;
       }
-      return JSON.parse(value);
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        return null;
+      }
     }
   }
 

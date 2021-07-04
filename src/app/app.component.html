@@ -1,6 +1,3 @@
 <app-top-bar [appName]="appName"></app-top-bar>
 <app-youtube-player (ended)="onEnded($event)" (changeCurrentTime)="onChangeCurrentTime($event)"></app-youtube-player>
-<div>
-    <app-request-box (submit)="onSubmit($event)"></app-request-box>
-    <app-playlist (select)="onSelect($event)"></app-playlist>
-</div>
+<app-request-box (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
