@@ -13,7 +13,7 @@ export class YoutubePlayerComponent implements OnInit {
   @Output() ended = new EventEmitter();
   @Output() changeCurrentTime = new EventEmitter();
 
-  private watchCurrentTimeId: any;
+  private watchCurrentTimeId: any | undefined;
 
   videoId: string | undefined;
   height: number | undefined;
@@ -33,13 +33,13 @@ export class YoutubePlayerComponent implements OnInit {
     document.body.appendChild(tag);
   }
 
-  onReady(event: any): void {
-    event.target.autoplay = 1;
+  onReady(event: YT.PlayerEvent): void {
     // for auto play when first time loaded
     event.target.playVideo();
+    // console.log(event.target.getIframe());
   }
 
-  onStateChange(event: any): void {
+  onStateChange(event: YT.OnStateChangeEvent): void {
     if (event.data === 0) {
       clearInterval(this.watchCurrentTimeId);
       this.ended.emit(event.data);
