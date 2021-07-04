@@ -11,10 +11,10 @@ import { StorageService } from "../../service/storage.service";
   styleUrls: ['./request-box.component.css']
 })
 export class RequestBoxComponent implements OnInit {
+  @ViewChild(MatChipList) chipList!: MatChipList;
+
   @Output() select = new EventEmitter();
   @Output() deselect = new EventEmitter();
-
-  @ViewChild(MatChipList) chipList!: MatChipList;
 
   readonly selectable: boolean = true;
   readonly removable: boolean = true;

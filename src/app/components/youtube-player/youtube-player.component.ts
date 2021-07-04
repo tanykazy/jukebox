@@ -23,8 +23,7 @@ export class YoutubePlayerComponent implements OnInit {
   suggestedQuality: "default" | "small" | "medium" | "large" | "hd720" | "hd1080" | "highres" | undefined;
   showBeforeIframeApiLoads: boolean | undefined;
 
-  constructor() {
-  }
+  constructor() { }
 
   ngOnInit(): void {
     // This code loads the IFrame Player API code asynchronously, according to the instructions at
@@ -55,7 +54,7 @@ export class YoutubePlayerComponent implements OnInit {
     }
   }
 
-  private watchCurrentTime() {
+  private watchCurrentTime(): void {
     const time = this.youtube.getCurrentTime();
     this.changeCurrentTime.emit(time);
   }
@@ -63,7 +62,7 @@ export class YoutubePlayerComponent implements OnInit {
   /**
    * playVideo
    */
-  public playVideo(videoId: string) {
+  public playVideo(videoId: string): void {
     this.videoId = videoId;
     this.youtube.playVideo();
   }
@@ -71,14 +70,14 @@ export class YoutubePlayerComponent implements OnInit {
   /**
    * pauseVideo
    */
-  public pauseVideo() {
+  public pauseVideo(): void {
     this.youtube.pauseVideo();
   }
 
   /**
    * getDuration
    */
-  public getDuration() {
+  public getDuration(): number {
     return this.youtube.getDuration();
   }
 

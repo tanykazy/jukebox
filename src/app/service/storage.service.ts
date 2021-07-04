@@ -7,7 +7,7 @@ export class StorageService {
 
   constructor() { }
 
-  static getItem(keyName: string): any {
+  static getItem(keyName: string): any | null {
     if (storageAvailable('localStorage')) {
       const value = window.localStorage.getItem(keyName);
       if (value === null) {
@@ -21,14 +21,14 @@ export class StorageService {
     }
   }
 
-  static setItem(keyName: string, keyValue: any) {
+  static setItem(keyName: string, keyValue: any): void {
     if (storageAvailable('localStorage')) {
       window.localStorage.setItem(keyName, JSON.stringify(keyValue));
     }
   }
 }
 
-function storageAvailable(type: 'localStorage' | 'sessionStorage') {
+function storageAvailable(type: 'localStorage' | 'sessionStorage'): boolean | undefined {
   var storage;
   try {
     storage = window[type];
