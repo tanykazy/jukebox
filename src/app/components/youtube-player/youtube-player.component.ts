@@ -69,6 +69,13 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   /**
+   * pauseVideo
+   */
+  public pauseVideo() {
+    this.youtube.pauseVideo();
+  }
+
+  /**
    * getDuration
    */
   public getDuration() {

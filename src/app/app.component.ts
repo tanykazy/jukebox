@@ -32,4 +32,8 @@ export class AppComponent {
   onSelect(event: any): void {
     this.player.playVideo(event);
   }
+  
+  onDeselect(event: any): void {
+    this.player.pauseVideo();
+  }
 }

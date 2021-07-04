@@ -1,7 +1,6 @@
 <mat-form-field class="request-box" (keyup.enter)="onSubmit(value)">
     <mat-label>Input Request</mat-label>
     <input matInput type="text" placeholder="YouTube Video URL" [(ngModel)]="value">
-    <!-- <textarea matInput placeholder="YouTube Video URL" [(ngModel)]="value"></textarea> -->
     <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
         <mat-icon>close</mat-icon>
     </button>
@@ -9,15 +8,20 @@
 
 <mat-form-field class="request-box" appearance="fill">
     <mat-label>YouTube Video ID</mat-label>
-    <!-- <mat-chip-list #chipList aria-label="Video keywords" multiple [formControl]="formControl"> -->
-    <mat-chip-list #chipList aria-label="Video keywords">
-        <mat-chip *ngFor="let keyword of keywords" [selectable]="selectable" [removable]="removable"
-            (removed)="remove(keyword)">
-            {{keyword}}
-            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+    <mat-chip-list #chipList aria-label="Video requests" selectable>
+        <mat-chip #chip="matChip" *ngFor="let request of requests" [value]="request" [selectable]="selectable"
+            [removable]="removable" (removed)="remove(request, chip)" (selectionChange)="onSelectionChange($event)"
+            (click)="onChipClick(chip)">
+            {{request}}
+            <mat-icon matChipRemove *ngIf="removable">
+                cancel
+            </mat-icon>
         </mat-chip>
-        <input placeholder="New URL..." [matChipInputFor]="chipList"
+        <input placeholder="New URL..." [(ngModel)]="value" [matChipInputFor]="chipList"
             [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-            (matChipInputTokenEnd)="addKeywordFromInput($event)">
+            (matChipInputTokenEnd)="addRequestFromInput($event)">
+        <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+            <mat-icon>close</mat-icon>
+        </button>
     </mat-chip-list>
 </mat-form-field>
