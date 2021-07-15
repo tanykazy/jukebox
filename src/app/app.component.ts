@@ -21,14 +21,13 @@ export class AppComponent {
     }
   }
 
-  onChangeCurrentTime(event: any): void {
-    // console.log(event);
+  onChangeCurrentTime(event: number): void {
   }
 
   onSelect(event: any): void {
     this.player.playVideo(event);
   }
-  
+
   onDeselect(event: any): void {
     this.player.pauseVideo();
   }

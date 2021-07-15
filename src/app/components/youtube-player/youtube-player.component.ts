@@ -36,7 +36,6 @@ export class YoutubePlayerComponent implements OnInit {
   onReady(event: YT.PlayerEvent): void {
     // for auto play when first time loaded
     event.target.playVideo();
-    // console.log(event.target.getIframe());
   }
 
   onStateChange(event: YT.OnStateChangeEvent): void {
@@ -45,7 +44,7 @@ export class YoutubePlayerComponent implements OnInit {
       this.ended.emit(event.data);
     } else if (event.data === 1) {
       this.watchCurrentTimeId = setInterval(() => {
-        this.watchCurrentTime();
+        this.watchCurrentTime(event.target);
       }, 1000);
     } else if (event.data === 2) {
       clearInterval(this.watchCurrentTimeId);
@@ -54,8 +53,8 @@ export class YoutubePlayerComponent implements OnInit {
     }
   }
 
-  private watchCurrentTime(): void {
-    const time = this.youtube.getCurrentTime();
+  private watchCurrentTime(target: YT.Player): void {
+    const time = target.getCurrentTime();
     this.changeCurrentTime.emit(time);
   }
 

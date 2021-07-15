@@ -4,14 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YouTubePlayerModule } from '@angular/youtube-player';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatRippleModule } from '@angular/material/core';
 
 import { AppComponent } from './app.component';
 
@@ -31,13 +27,9 @@ import { TopBarComponent } from './components/top-bar/top-bar.component';
     FormsModule,
     YouTubePlayerModule,
     MatChipsModule,
-    MatCardModule,
     MatIconModule,
     MatInputModule,
-    MatGridListModule,
-    MatListModule,
     MatToolbarModule,
-    MatRippleModule,
     BrowserAnimationsModule,
     MatButtonModule,
   ],

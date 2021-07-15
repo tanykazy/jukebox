@@ -4,8 +4,8 @@
   [width]="width" 
   [startSeconds]="startSeconds"
   [endSeconds]="endSeconds"
-  (ready)="onReady($event)"
-  (stateChange)="onStateChange($event)"
   [suggestedQuality]="suggestedQuality"
-  [showBeforeIframeApiLoads]="showBeforeIframeApiLoads">
+  [showBeforeIframeApiLoads]="showBeforeIframeApiLoads"
+  (ready)="onReady($event)"
+  (stateChange)="onStateChange($event)">
 </youtube-player>
