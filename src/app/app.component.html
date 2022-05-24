@@ -1,3 +1,9 @@
 <app-top-bar [appName]="appName"></app-top-bar>
-<app-youtube-player (ended)="onEnded($event)" (changeCurrentTime)="onChangeCurrentTime($event)"></app-youtube-player>
-<app-request-box (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
+<app-request-box [(requests)]="requests" (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
+<mat-grid-list cols="1">
+    <mat-grid-tile *ngFor="let request of requests">
+        <app-youtube-player [videoId]="request" [width]="screenWidth" (ended)="onEnded(request)"
+            (changeCurrentTime)="onChangeCurrentTime($event)">
+        </app-youtube-player>
+    </mat-grid-tile>
+</mat-grid-list>

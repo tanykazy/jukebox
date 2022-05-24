@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
 import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
@@ -13,6 +13,9 @@ import { StorageService } from "../../service/storage.service";
 export class RequestBoxComponent implements OnInit {
   @ViewChild(MatChipList) chipList!: MatChipList;
 
+  @Input() requests: Set<string> = new Set();
+  @Output() requestsChange = new EventEmitter<Set<string>>();
+
   @Output() select = new EventEmitter();
   @Output() deselect = new EventEmitter();
 
@@ -22,7 +25,7 @@ export class RequestBoxComponent implements OnInit {
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
   public value: string = '';
-  public requests: Set<string> = new Set();
+  // public requests: Set<string> = new Set();
 
   constructor() { }
 
@@ -34,6 +37,7 @@ export class RequestBoxComponent implements OnInit {
       } catch (error) {
         this.updateStorage(this.requests);
       }
+      this.requestsChange.emit(this.requests);
     }
   }
 
@@ -75,6 +79,7 @@ export class RequestBoxComponent implements OnInit {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
           this.requests.add(videoid);
+          this.requestsChange.emit(this.requests);
         }
       }
       this.updateStorage(this.requests);
@@ -85,6 +90,7 @@ export class RequestBoxComponent implements OnInit {
   public remove(request: string, chip: MatChip): void {
     chip.deselect();
     this.requests.delete(request);
+    this.requestsChange.emit(this.requests);
     this.updateStorage(this.requests);
   }
 
