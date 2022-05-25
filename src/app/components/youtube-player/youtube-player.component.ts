@@ -16,8 +16,9 @@ export class YoutubePlayerComponent implements OnInit {
   @Input() height: number | undefined;
   @Input() width: number | undefined;
 
-  @Output() ended = new EventEmitter();
-  @Output() changeCurrentTime = new EventEmitter();
+  @Output() ended: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
+  @Output() changeCurrentTime: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
+  @Output() ready: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
 
   private watchCurrentTimeId: any | undefined;
 
@@ -40,12 +41,13 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   onReady(event: YT.PlayerEvent): void {
+    this.ready.emit(this);
   }
 
   onStateChange(event: YT.OnStateChangeEvent): void {
     if (event.data === 0) {
       clearInterval(this.watchCurrentTimeId);
-      this.ended.emit();
+      this.ended.emit(this);
     } else if (event.data === 1) {
       this.watchCurrentTimeId = setInterval(() => {
         this.watchCurrentTime(event.target);
@@ -59,7 +61,7 @@ export class YoutubePlayerComponent implements OnInit {
 
   private watchCurrentTime(target: YT.Player): void {
     const time = target.getCurrentTime();
-    this.changeCurrentTime.emit(time);
+    this.changeCurrentTime.emit(this);
   }
 
   /**
