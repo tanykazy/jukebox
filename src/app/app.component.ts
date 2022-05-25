@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ViewChildren, HostListener, QueryList } from '@angular/core';
 
 import { YoutubePlayerComponent } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent } from "./components/request-box/request-box.component";
@@ -9,15 +9,27 @@ import { RequestBoxComponent } from "./components/request-box/request-box.compon
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
   @ViewChild(RequestBoxComponent) requestBox!: RequestBoxComponent;
+  @ViewChildren(YoutubePlayerComponent) players!: QueryList<YoutubePlayerComponent>;
 
   appName = "jukebox";
+  requests!: Set<string>;
+  screenWidth: number = 0;
+  screenHeight: number = 0;
 
-  onEnded(event: any): void {
-    const videoId = this.requestBox.getShuffle();
-    if (videoId) {
-      this.player.playVideo(videoId);
+  ngOnInit() {
+    this.screenWidth = window.innerWidth;
+    this.screenHeight = window.innerHeight;
+  }
+
+  onEnded(videoId: string): void {
+    console.log(videoId);
+    console.log(this.players);
+    const players = this.players.toArray();
+    const index = players.findIndex((player) => player.videoId === videoId);
+    const player = this.players.get(index + 1);
+    if (player) {
+      player.playVideo();
     }
   }
 
@@ -25,10 +37,26 @@ export class AppComponent {
   }
 
   onSelect(event: any): void {
-    this.player.playVideo(event);
+    const players = this.players.toArray();
+    const index = players.findIndex((player) => player.videoId === event);
+    const player = this.players.get(index);
+    if (player) {
+      player.playVideo();
+    }
   }
 
   onDeselect(event: any): void {
-    this.player.pauseVideo();
+    const players = this.players.toArray();
+    const index = players.findIndex((player) => player.videoId === event);
+    const player = this.players.get(index);
+    if (player) {
+      player.pauseVideo();
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onWindowResize(event: UIEvent) {
+    this.screenWidth = window.innerWidth;
+    this.screenHeight = window.innerHeight;
   }
 }
