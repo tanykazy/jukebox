@@ -16,27 +16,29 @@ export class AppComponent {
   requests!: Set<string>;
   screenWidth: number = 0;
   screenHeight: number = 0;
+  cols: number = 1;
+  minWidth: number = 400;
 
   ngOnInit() {
-    this.screenWidth = window.innerWidth;
-    this.screenHeight = window.innerHeight;
+    this.resizeGrid(window.innerWidth, window.innerHeight);
   }
 
-  onEnded(videoId: string): void {
-    console.log(videoId);
-    console.log(this.players);
+  onEnded(event: YoutubePlayerComponent): void {
     const players = this.players.toArray();
-    const index = players.findIndex((player) => player.videoId === videoId);
+    const index = players.findIndex((player) => player.videoId === event.videoId);
     const player = this.players.get(index + 1);
     if (player) {
       player.playVideo();
     }
   }
 
-  onChangeCurrentTime(event: number): void {
+  onChangeCurrentTime(event: YoutubePlayerComponent): void {
   }
 
-  onSelect(event: any): void {
+  onReady(event: YoutubePlayerComponent): void {
+  }
+
+  onSelect(event: string): void {
     const players = this.players.toArray();
     const index = players.findIndex((player) => player.videoId === event);
     const player = this.players.get(index);
@@ -45,7 +47,7 @@ export class AppComponent {
     }
   }
 
-  onDeselect(event: any): void {
+  onDeselect(event: string): void {
     const players = this.players.toArray();
     const index = players.findIndex((player) => player.videoId === event);
     const player = this.players.get(index);
@@ -56,7 +58,20 @@ export class AppComponent {
 
   @HostListener('window:resize', ['$event'])
   onWindowResize(event: UIEvent) {
-    this.screenWidth = window.innerWidth;
-    this.screenHeight = window.innerHeight;
+    this.resizeGrid(window.innerWidth, window.innerHeight);
+  }
+
+  private resizeGrid(windowWidth: number, windowHeight: number): void {
+    let cols = Math.floor(windowWidth / this.minWidth);
+    let size = this.minWidth;
+    if (cols > 0) {
+      size = Math.floor(window.innerWidth / cols);
+    } else {
+      size = window.innerWidth;
+      cols = cols + 1;
+    }
+    this.screenWidth = size;
+    this.screenHeight = size;
+    this.cols = cols;
   }
 }

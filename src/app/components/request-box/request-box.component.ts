@@ -14,10 +14,10 @@ export class RequestBoxComponent implements OnInit {
   @ViewChild(MatChipList) chipList!: MatChipList;
 
   @Input() requests: Set<string> = new Set();
-  @Output() requestsChange = new EventEmitter<Set<string>>();
+  @Output() requestsChange: EventEmitter<Set<string>> = new EventEmitter();
 
-  @Output() select = new EventEmitter();
-  @Output() deselect = new EventEmitter();
+  @Output() select: EventEmitter<string> = new EventEmitter();
+  @Output() deselect: EventEmitter<string> = new EventEmitter();
 
   readonly selectable: boolean = true;
   readonly removable: boolean = true;
