@@ -1,3 +1,18 @@
 <mat-toolbar>
     <span>{{appName}}</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="onClickVolume($event)">
+        <ng-container *ngIf="muted; else unMutedButton">
+            <mat-icon>volume_mute</mat-icon>
+        </ng-container>
+        <ng-template #unMutedButton>
+            <ng-container *ngIf="volume < 50; else elseBlock">
+                <mat-icon>volume_down</mat-icon>
+            </ng-container>
+            <ng-template #elseBlock>
+                <mat-icon>volume_up</mat-icon>
+            </ng-template>
+        </ng-template>
+    </button>
+    <mat-slider min="0" max="100" step="1" [value]="volume" (input)="onInputSlider($event)"></mat-slider>
 </mat-toolbar>

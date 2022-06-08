@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatSliderModule } from '@angular/material/slider';
 
 import { AppComponent } from './app.component';
 
@@ -34,6 +35,7 @@ import { TopBarComponent } from './components/top-bar/top-bar.component';
     BrowserAnimationsModule,
     MatGridListModule,
     MatButtonModule,
+    MatSliderModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

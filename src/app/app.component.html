@@ -1,9 +1,10 @@
-<app-top-bar [appName]="appName"></app-top-bar>
+<app-top-bar [appName]="appName" [(volume)]="volume" [(muted)]="muted"></app-top-bar>
 <app-request-box [(requests)]="requests" (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
 <mat-grid-list [cols]="cols">
     <mat-grid-tile *ngFor="let request of requests">
         <app-youtube-player [videoId]="request" [width]="screenWidth" [height]="screenHeight" (ready)="onReady($event)"
-            (ended)="onEnded($event)" (changeCurrentTime)="onChangeCurrentTime($event)">
+            (ended)="onEnded($event)" (changeCurrentTime)="onChangeCurrentTime($event)" [volume]="volume"
+            [muted]="muted">
         </app-youtube-player>
     </mat-grid-tile>
 </mat-grid-list>

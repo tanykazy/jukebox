@@ -64,7 +64,7 @@ export class RequestBoxComponent implements OnInit {
       const videoid = [...this.requests][random];
       const chip = this.getChipByValue(videoid);
       if (chip) {
-        chip.deselect();
+        chip.select();
       }
       return videoid;
     } else {
@@ -75,7 +75,7 @@ export class RequestBoxComponent implements OnInit {
   public addRequestFromInput(event: MatChipInputEvent): void {
     if (event.value) {
       const requests = event.value.split(/\r\n|\r|\n|\s/);
-      for (let request of requests) {
+      for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
           this.requests.add(videoid);

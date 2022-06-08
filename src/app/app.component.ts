@@ -14,6 +14,8 @@ export class AppComponent {
 
   appName = "jukebox";
   requests!: Set<string>;
+  volume: number = 50;
+  muted: boolean = false;
   screenWidth: number = 0;
   screenHeight: number = 0;
   cols: number = 1;

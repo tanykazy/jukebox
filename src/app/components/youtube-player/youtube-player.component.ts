@@ -20,7 +20,26 @@ export class YoutubePlayerComponent implements OnInit {
   @Output() changeCurrentTime: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
   @Output() ready: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
 
+  @Input()
+  set volume(value: number) {
+    if (this.isReady) {
+      this.setVolume(value);
+    }
+  }
+
+  @Input()
+  set muted(mute: boolean) {
+    if (this.isReady) {
+      if (mute) {
+        this.mute();
+      } else {
+        this.unMute();
+      }
+    }
+  }
+
   private watchCurrentTimeId: any | undefined;
+  private isReady: boolean = false;
 
   startSeconds: number | undefined;
   endSeconds: number | undefined;
@@ -41,6 +60,7 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   onReady(event: YT.PlayerEvent): void {
+    this.isReady = true;
     this.ready.emit(this);
   }
 
@@ -62,6 +82,41 @@ export class YoutubePlayerComponent implements OnInit {
   private watchCurrentTime(target: YT.Player): void {
     const time = target.getCurrentTime();
     this.changeCurrentTime.emit(this);
+  }
+
+  /**
+   * setVolume
+   */
+  public setVolume(volume: number): void {
+    this.youtube.setVolume(volume);
+  }
+
+  /**
+   * getVolume
+   */
+  public getVolume(): number {
+    return this.youtube.getVolume();
+  }
+
+  /**
+   * mute
+   */
+  public mute(): void {
+    this.youtube.mute();
+  }
+
+  /**
+   * unMute
+   */
+  public unMute() {
+    this.youtube.unMute();
+  }
+
+  /**
+   * isMuted
+   */
+  public isMuted(): boolean {
+    return this.youtube.isMuted();
   }
 
   /**
