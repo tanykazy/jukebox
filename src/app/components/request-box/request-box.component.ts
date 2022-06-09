@@ -13,8 +13,10 @@ import { StorageService } from "../../service/storage.service";
 export class RequestBoxComponent implements OnInit {
   @ViewChild(MatChipList) chipList!: MatChipList;
 
-  @Input() requests: Set<string> = new Set();
-  @Output() requestsChange: EventEmitter<Set<string>> = new EventEmitter();
+  // @Input() requests: Set<string> = new Set();
+  @Input() requests: Array<string> = new Array();
+  // @Output() requestsChange: EventEmitter<Set<string>> = new EventEmitter();
+  @Output() requestsChange: EventEmitter<Array<string>> = new EventEmitter();
 
   @Output() select: EventEmitter<string> = new EventEmitter();
   @Output() deselect: EventEmitter<string> = new EventEmitter();
@@ -33,7 +35,8 @@ export class RequestBoxComponent implements OnInit {
     const playlist = StorageService.getItem('playlist');
     if (playlist !== null) {
       try {
-        this.requests = new Set(playlist);
+        // this.requests = new Set(playlist);
+        this.requests = Array.from(playlist);
       } catch (error) {
         this.updateStorage(this.requests);
       }
@@ -59,8 +62,9 @@ export class RequestBoxComponent implements OnInit {
     this.chipList.chips.forEach((item: MatChip) => {
       item.deselect();
     });
-    if (this.requests.size !== 0) {
-      const random = Math.floor(Math.random() * this.requests.size);
+    // if (this.requests.size !== 0) {
+    if (this.requests.length !== 0) {
+      const random = Math.floor(Math.random() * this.requests.length);
       const videoid = [...this.requests][random];
       const chip = this.getChipByValue(videoid);
       if (chip) {
@@ -78,7 +82,8 @@ export class RequestBoxComponent implements OnInit {
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
-          this.requests.add(videoid);
+          // this.requests.add(videoid);
+          this.requests.push(videoid);
           this.requestsChange.emit(this.requests);
         }
       }
@@ -89,7 +94,8 @@ export class RequestBoxComponent implements OnInit {
 
   public remove(request: string, chip: MatChip): void {
     chip.deselect();
-    this.requests.delete(request);
+    // this.requests.delete(request);
+    this.requests = this.requests.filter((element) => element !== request);
     this.requestsChange.emit(this.requests);
     this.updateStorage(this.requests);
   }

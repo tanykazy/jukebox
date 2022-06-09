@@ -13,7 +13,8 @@ export class AppComponent {
   @ViewChildren(YoutubePlayerComponent) players!: QueryList<YoutubePlayerComponent>;
 
   appName = "jukebox";
-  requests!: Set<string>;
+  // requests!: Set<string>;
+  requests!: Array<string>;
   volume: number = 50;
   muted: boolean = false;
   screenWidth: number = 0;
