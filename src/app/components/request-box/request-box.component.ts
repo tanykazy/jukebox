@@ -44,7 +44,8 @@ export class RequestBoxComponent implements OnInit {
     }
   }
 
-  private updateStorage(values: Set<string>): void {
+  // private updateStorage(values: Set<string>): void {
+  private updateStorage(values: Array<string>): void {
     StorageService.setItem('playlist', [...values]);
   }
 
@@ -77,6 +78,7 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public addRequestFromInput(event: MatChipInputEvent): void {
+    // console.log(this.requests);
     if (event.value) {
       const requests = event.value.split(/\r\n|\r|\n|\s/);
       for (const request of requests) {

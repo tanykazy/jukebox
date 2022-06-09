@@ -14,7 +14,7 @@ export class AppComponent {
 
   appName = "jukebox";
   // requests!: Set<string>;
-  requests!: Array<string>;
+  requests: Array<string> = new Array();
   volume: number = 50;
   muted: boolean = false;
   screenWidth: number = 0;
@@ -60,7 +60,7 @@ export class AppComponent {
   }
 
   @HostListener('window:resize', ['$event'])
-  onWindowResize(event: UIEvent) {
+  onWindowResize(event: UIEvent): void {
     this.resizeGrid(window.innerWidth, window.innerHeight);
   }
 
