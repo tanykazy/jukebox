@@ -2,16 +2,17 @@
     <span>{{appName}}</span>
     <span class="spacer"></span>
     <button mat-icon-button (click)="onClickVolume($event)">
-        <ng-container *ngIf="muted; else unMutedButton">
+        <ng-template [ngIf]="muted || volume === 0">
+            <mat-icon>volume_off</mat-icon>
+        </ng-template>
+        <ng-template [ngIf]="!muted && 0 < volume && volume <= 20">
             <mat-icon>volume_mute</mat-icon>
-        </ng-container>
-        <ng-template #unMutedButton>
-            <ng-container *ngIf="volume < 50; else elseBlock">
-                <mat-icon>volume_down</mat-icon>
-            </ng-container>
-            <ng-template #elseBlock>
-                <mat-icon>volume_up</mat-icon>
-            </ng-template>
+        </ng-template>
+        <ng-template [ngIf]="!muted && 20 < volume && volume <= 50">
+            <mat-icon>volume_down</mat-icon>
+        </ng-template>
+        <ng-template [ngIf]="!muted && 50 < volume && volume <= 100">
+            <mat-icon>volume_up</mat-icon>
         </ng-template>
     </button>
     <mat-slider min="0" max="100" step="1" [value]="volume" (input)="onInputSlider($event)"></mat-slider>
