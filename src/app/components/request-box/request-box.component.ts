@@ -90,8 +90,10 @@ export class RequestBoxComponent implements OnInit, DoCheck {
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
-          this.requests.push(videoid);
-          this.requestsChange.emit(this.requests);
+          if (!this.requests.includes(videoid)) {
+            this.requests.push(videoid);
+            this.requestsChange.emit(this.requests);
+          }
         }
       }
       this.updateStorage(this.requests);
