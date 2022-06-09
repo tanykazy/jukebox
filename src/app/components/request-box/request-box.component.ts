@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Input, IterableDiffers, DoCheck, IterableDiffer } from '@angular/core';
 import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
@@ -10,7 +10,7 @@ import { StorageService } from "../../service/storage.service";
   templateUrl: './request-box.component.html',
   styleUrls: ['./request-box.component.css']
 })
-export class RequestBoxComponent implements OnInit {
+export class RequestBoxComponent implements OnInit, DoCheck {
   @ViewChild(MatChipList) chipList!: MatChipList;
 
   // @Input() requests: Set<string> = new Set();
@@ -29,7 +29,12 @@ export class RequestBoxComponent implements OnInit {
   public value: string = '';
   // public requests: Set<string> = new Set();
 
-  constructor() { }
+  private iterableDiffer: IterableDiffer<string>;
+
+  // constructor() { }
+  constructor(private iterableDiffers: IterableDiffers) {
+    this.iterableDiffer = this.iterableDiffers.find(this.requests).create();
+  }
 
   ngOnInit(): void {
     const playlist = StorageService.getItem('playlist');
@@ -41,6 +46,17 @@ export class RequestBoxComponent implements OnInit {
         this.updateStorage(this.requests);
       }
       this.requestsChange.emit(this.requests);
+    }
+  }
+
+  ngDoCheck(): void {
+    if (this.iterableDiffer) {
+      const changes = this.iterableDiffer.diff(this.requests);
+      if (changes) {
+        console.log("Changes detected!");
+        // console.log(changes);
+        this.updateStorage(this.requests);
+      }
     }
   }
 
