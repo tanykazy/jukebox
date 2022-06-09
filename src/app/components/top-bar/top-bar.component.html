@@ -5,10 +5,7 @@
         <ng-template [ngIf]="muted || volume === 0">
             <mat-icon>volume_off</mat-icon>
         </ng-template>
-        <ng-template [ngIf]="!muted && 0 < volume && volume <= 20">
-            <mat-icon>volume_mute</mat-icon>
-        </ng-template>
-        <ng-template [ngIf]="!muted && 20 < volume && volume <= 50">
+        <ng-template [ngIf]="!muted && 0 < volume && volume <= 50">
             <mat-icon>volume_down</mat-icon>
         </ng-template>
         <ng-template [ngIf]="!muted && 50 < volume && volume <= 100">
