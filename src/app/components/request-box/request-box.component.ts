@@ -13,9 +13,7 @@ import { StorageService } from "../../service/storage.service";
 export class RequestBoxComponent implements OnInit, DoCheck {
   @ViewChild(MatChipList) chipList!: MatChipList;
 
-  // @Input() requests: Set<string> = new Set();
   @Input() requests: Array<string> = new Array();
-  // @Output() requestsChange: EventEmitter<Set<string>> = new EventEmitter();
   @Output() requestsChange: EventEmitter<Array<string>> = new EventEmitter();
 
   @Output() select: EventEmitter<string> = new EventEmitter();
@@ -27,11 +25,9 @@ export class RequestBoxComponent implements OnInit, DoCheck {
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
   public value: string = '';
-  // public requests: Set<string> = new Set();
 
   private iterableDiffer: IterableDiffer<string>;
 
-  // constructor() { }
   constructor(private iterableDiffers: IterableDiffers) {
     this.iterableDiffer = this.iterableDiffers.find(this.requests).create();
   }
@@ -40,7 +36,6 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     const playlist = StorageService.getItem('playlist');
     if (playlist !== null) {
       try {
-        // this.requests = new Set(playlist);
         this.requests = Array.from(playlist);
       } catch (error) {
         this.updateStorage(this.requests);
@@ -53,14 +48,11 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     if (this.iterableDiffer) {
       const changes = this.iterableDiffer.diff(this.requests);
       if (changes) {
-        console.log("Changes detected!");
-        // console.log(changes);
         this.updateStorage(this.requests);
       }
     }
   }
 
-  // private updateStorage(values: Set<string>): void {
   private updateStorage(values: Array<string>): void {
     StorageService.setItem('playlist', [...values]);
   }
@@ -79,7 +71,6 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     this.chipList.chips.forEach((item: MatChip) => {
       item.deselect();
     });
-    // if (this.requests.size !== 0) {
     if (this.requests.length !== 0) {
       const random = Math.floor(Math.random() * this.requests.length);
       const videoid = [...this.requests][random];
@@ -94,13 +85,11 @@ export class RequestBoxComponent implements OnInit, DoCheck {
   }
 
   public addRequestFromInput(event: MatChipInputEvent): void {
-    // console.log(this.requests);
     if (event.value) {
       const requests = event.value.split(/\r\n|\r|\n|\s/);
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
-          // this.requests.add(videoid);
           this.requests.push(videoid);
           this.requestsChange.emit(this.requests);
         }
@@ -112,7 +101,6 @@ export class RequestBoxComponent implements OnInit, DoCheck {
 
   public remove(request: string, chip: MatChip): void {
     chip.deselect();
-    // this.requests.delete(request);
     this.requests = this.requests.filter((element) => element !== request);
     this.requestsChange.emit(this.requests);
     this.updateStorage(this.requests);
