@@ -13,7 +13,7 @@ export class AppComponent {
   @ViewChildren(YoutubePlayerComponent) players!: QueryList<YoutubePlayerComponent>;
 
   appName = "jukebox";
-  requests!: Set<string>;
+  requests: Array<string> = new Array();
   volume: number = 50;
   muted: boolean = false;
   screenWidth: number = 0;
@@ -26,12 +26,17 @@ export class AppComponent {
   }
 
   onEnded(event: YoutubePlayerComponent): void {
-    const players = this.players.toArray();
-    const index = players.findIndex((player) => player.videoId === event.videoId);
-    const player = this.players.get(index + 1);
-    if (player) {
-      player.playVideo();
+    this.requests = this.requests.filter((request) => request !== event.videoId);
+    // const random = Math.floor(Math.random() * this.requests.length);
+    const request = this.requestBox.getShuffle();
+    const players = this.players.filter((player) => player.videoId === request);
+    // const player = this.players.get(random);
+    if (players.length > 0) {
+      players[0].playVideo();
     }
+    // if (player) {
+    //   player.playVideo();
+    // }
   }
 
   onChangeCurrentTime(event: YoutubePlayerComponent): void {
@@ -41,25 +46,21 @@ export class AppComponent {
   }
 
   onSelect(event: string): void {
-    const players = this.players.toArray();
-    const index = players.findIndex((player) => player.videoId === event);
-    const player = this.players.get(index);
-    if (player) {
-      player.playVideo();
+    const players = this.players.filter((player) => player.videoId === event);
+    if (players.length > 0) {
+      players[0].playVideo();
     }
   }
 
   onDeselect(event: string): void {
-    const players = this.players.toArray();
-    const index = players.findIndex((player) => player.videoId === event);
-    const player = this.players.get(index);
-    if (player) {
-      player.pauseVideo();
+    const players = this.players.filter((player) => player.videoId === event);
+    if (players.length > 0) {
+      players[0].pauseVideo();
     }
   }
 
   @HostListener('window:resize', ['$event'])
-  onWindowResize(event: UIEvent) {
+  onWindowResize(event: UIEvent): void {
     this.resizeGrid(window.innerWidth, window.innerHeight);
   }
 

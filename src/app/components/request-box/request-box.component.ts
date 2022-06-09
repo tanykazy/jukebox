@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Input, IterableDiffers, DoCheck, IterableDiffer } from '@angular/core';
 import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
@@ -10,11 +10,11 @@ import { StorageService } from "../../service/storage.service";
   templateUrl: './request-box.component.html',
   styleUrls: ['./request-box.component.css']
 })
-export class RequestBoxComponent implements OnInit {
+export class RequestBoxComponent implements OnInit, DoCheck {
   @ViewChild(MatChipList) chipList!: MatChipList;
 
-  @Input() requests: Set<string> = new Set();
-  @Output() requestsChange: EventEmitter<Set<string>> = new EventEmitter();
+  @Input() requests: Array<string> = new Array();
+  @Output() requestsChange: EventEmitter<Array<string>> = new EventEmitter();
 
   @Output() select: EventEmitter<string> = new EventEmitter();
   @Output() deselect: EventEmitter<string> = new EventEmitter();
@@ -25,15 +25,18 @@ export class RequestBoxComponent implements OnInit {
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
   public value: string = '';
-  // public requests: Set<string> = new Set();
 
-  constructor() { }
+  private iterableDiffer: IterableDiffer<string>;
+
+  constructor(private iterableDiffers: IterableDiffers) {
+    this.iterableDiffer = this.iterableDiffers.find(this.requests).create();
+  }
 
   ngOnInit(): void {
     const playlist = StorageService.getItem('playlist');
     if (playlist !== null) {
       try {
-        this.requests = new Set(playlist);
+        this.requests = Array.from(playlist);
       } catch (error) {
         this.updateStorage(this.requests);
       }
@@ -41,7 +44,16 @@ export class RequestBoxComponent implements OnInit {
     }
   }
 
-  private updateStorage(values: Set<string>): void {
+  ngDoCheck(): void {
+    if (this.iterableDiffer) {
+      const changes = this.iterableDiffer.diff(this.requests);
+      if (changes) {
+        this.updateStorage(this.requests);
+      }
+    }
+  }
+
+  private updateStorage(values: Array<string>): void {
     StorageService.setItem('playlist', [...values]);
   }
 
@@ -59,8 +71,8 @@ export class RequestBoxComponent implements OnInit {
     this.chipList.chips.forEach((item: MatChip) => {
       item.deselect();
     });
-    if (this.requests.size !== 0) {
-      const random = Math.floor(Math.random() * this.requests.size);
+    if (this.requests.length !== 0) {
+      const random = Math.floor(Math.random() * this.requests.length);
       const videoid = [...this.requests][random];
       const chip = this.getChipByValue(videoid);
       if (chip) {
@@ -78,7 +90,7 @@ export class RequestBoxComponent implements OnInit {
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
-          this.requests.add(videoid);
+          this.requests.push(videoid);
           this.requestsChange.emit(this.requests);
         }
       }
@@ -89,7 +101,7 @@ export class RequestBoxComponent implements OnInit {
 
   public remove(request: string, chip: MatChip): void {
     chip.deselect();
-    this.requests.delete(request);
+    this.requests = this.requests.filter((element) => element !== request);
     this.requestsChange.emit(this.requests);
     this.updateStorage(this.requests);
   }
