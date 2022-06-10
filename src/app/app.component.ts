@@ -27,16 +27,11 @@ export class AppComponent {
 
   onEnded(event: YoutubePlayerComponent): void {
     this.requests = this.requests.filter((request) => request !== event.videoId);
-    // const random = Math.floor(Math.random() * this.requests.length);
     const request = this.requestBox.getShuffle();
     const players = this.players.filter((player) => player.videoId === request);
-    // const player = this.players.get(random);
     if (players.length > 0) {
       players[0].playVideo();
     }
-    // if (player) {
-    //   player.playVideo();
-    // }
   }
 
   onChangeCurrentTime(event: YoutubePlayerComponent): void {
