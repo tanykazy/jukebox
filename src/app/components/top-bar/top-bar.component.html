@@ -1,7 +1,9 @@
 <mat-toolbar>
     <span>{{appName}}</span>
     <span class="spacer"></span>
-    <mat-icon>skip_next</mat-icon>
+    <button mat-icon-button>
+        <mat-icon>skip_next</mat-icon>
+    </button>
     <button mat-icon-button (click)="onClickVolume($event)">
         <ng-template [ngIf]="muted || volume === 0">
             <mat-icon>volume_off</mat-icon>
