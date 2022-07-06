@@ -5,15 +5,6 @@
         <mat-icon>share</mat-icon>
     </button>
     <button mat-icon-button>
-        <mat-icon>repeat</mat-icon>
-    </button>
-    <button mat-icon-button>
-        <mat-icon>repeat_one</mat-icon>
-    </button>
-    <button mat-icon-button>
-        <mat-icon>shuffle</mat-icon>
-    </button>
-    <button mat-icon-button>
         <mat-icon>skip_previous</mat-icon>
     </button>
     <button mat-icon-button>
@@ -27,6 +18,25 @@
     </button>
     <button mat-icon-button>
         <mat-icon>skip_next</mat-icon>
+    </button>
+    <button mat-icon-button (click)="onClickShuffle($event)">
+        <ng-template [ngIf]="shuffle">
+            <mat-icon>shuffle</mat-icon>
+        </ng-template>
+        <ng-template [ngIf]="!shuffle">
+            <mat-icon class="disabled">shuffle</mat-icon>
+        </ng-template>
+    </button>
+    <button mat-icon-button (click)="onClickRepeat($event)">
+        <ng-template [ngIf]="repeat === 0">
+            <mat-icon class="disabled">repeat</mat-icon>
+        </ng-template>
+        <ng-template [ngIf]="repeat === 1">
+            <mat-icon>repeat_one</mat-icon>
+        </ng-template>
+        <ng-template [ngIf]="repeat === 2">
+            <mat-icon>repeat</mat-icon>
+        </ng-template>
     </button>
     <button mat-icon-button (click)="onClickVolume($event)">
         <ng-template [ngIf]="muted || volume === 0">

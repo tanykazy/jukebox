@@ -15,6 +15,10 @@ export class TopBarComponent implements OnInit {
   @Output() volumeChange: EventEmitter<number> = new EventEmitter();
   @Input() muted: boolean = false;
   @Output() mutedChange: EventEmitter<boolean> = new EventEmitter();
+  @Input() repeat: number = 0;
+  @Output() repeatChange: EventEmitter<number> = new EventEmitter();
+  @Input() shuffle: boolean = false;
+  @Output() shuffleChange: EventEmitter<boolean> = new EventEmitter();
 
   constructor() { }
 
@@ -35,6 +39,16 @@ export class TopBarComponent implements OnInit {
         muted: this.muted
       });
     }
+  }
+
+  onClickShuffle(event: UIEvent): void {
+    this.shuffle = !this.shuffle;
+    this.shuffleChange.emit(this.shuffle);
+  }
+
+  onClickRepeat(event: UIEvent): void {
+    this.repeat = (this.repeat + 1) % 3;
+    this.repeatChange.emit(this.repeat);
   }
 
   onClickVolume(event: UIEvent): void {
