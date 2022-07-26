@@ -3,7 +3,7 @@ import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from 
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 import { YoutubeUrlService } from "../../service/youtube-url.service";
-import { StorageService } from "../../service/storage.service";
+import { StorageService, Storage } from "../../service/storage.service";
 
 @Component({
   selector: 'app-request-box',
@@ -33,7 +33,7 @@ export class RequestBoxComponent implements OnInit, DoCheck {
   }
 
   ngOnInit(): void {
-    const playlist = StorageService.getItem('playlist');
+    const playlist = StorageService.getItem(Storage.Playlist);
     if (playlist !== null) {
       try {
         this.requests = Array.from(playlist);
@@ -54,7 +54,7 @@ export class RequestBoxComponent implements OnInit, DoCheck {
   }
 
   private updateStorage(values: Array<string>): void {
-    StorageService.setItem('playlist', [...values]);
+    StorageService.setItem(Storage.Playlist, [...values]);
   }
 
   private getChipByValue(value: string): MatChip | null {

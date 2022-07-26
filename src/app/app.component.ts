@@ -2,6 +2,7 @@ import { Component, ViewChild, ViewChildren, HostListener, QueryList } from '@an
 
 import { YoutubePlayerComponent } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent } from "./components/request-box/request-box.component";
+import { Control, Settings } from './components/top-bar/top-bar.component';
 
 @Component({
   selector: 'app-root',
@@ -14,8 +15,7 @@ export class AppComponent {
 
   appName = "jukebox";
   requests: Array<string> = new Array();
-  volume: number = 50;
-  muted: boolean = false;
+  settings: Settings = new Settings();
   screenWidth: number = 0;
   screenHeight: number = 0;
   cols: number = 1;
@@ -23,6 +23,10 @@ export class AppComponent {
 
   ngOnInit() {
     this.resizeGrid(window.innerWidth, window.innerHeight);
+  }
+
+  onControlEvent(event: Control) {
+    // console.log(event);
   }
 
   onEnded(event: YoutubePlayerComponent): void {
