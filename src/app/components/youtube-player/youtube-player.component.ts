@@ -65,17 +65,36 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   onStateChange(event: YT.OnStateChangeEvent): void {
-    if (event.data === 0) {
-      clearInterval(this.watchCurrentTimeId);
-      this.ended.emit(this);
-    } else if (event.data === 1) {
-      this.watchCurrentTimeId = setInterval(() => {
-        this.watchCurrentTime(event.target);
-      }, 1000);
-    } else if (event.data === 2) {
-      clearInterval(this.watchCurrentTimeId);
-    } else if (event.data === 5) {
-      // event.target.playVideo();
+    // console.log(`State Change ${event.data}`);
+
+    switch (event.data) {
+      case PlayerState.UNSTARTED:
+        break;
+
+      case PlayerState.ENDED:
+        clearInterval(this.watchCurrentTimeId);
+        this.ended.emit(this);
+        break;
+
+      case PlayerState.PLAYING:
+        this.watchCurrentTimeId = setInterval(() => {
+          this.watchCurrentTime(event.target);
+        }, 1000);
+        break;
+
+      case PlayerState.PAUSED:
+        clearInterval(this.watchCurrentTimeId);
+        break;
+
+      case PlayerState.BUFFERING:
+        break;
+
+      case PlayerState.CUED:
+        // event.target.playVideo();
+        break;
+
+      default:
+        break;
     }
   }
 
@@ -147,3 +166,12 @@ export class YoutubePlayerComponent implements OnInit {
     return this.youtube.getVideoUrl();
   }
 }
+
+const PlayerState = {
+  UNSTARTED: -1,
+  ENDED: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  BUFFERING: 3,
+  CUED: 5
+} as const;

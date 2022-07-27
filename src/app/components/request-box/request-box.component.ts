@@ -84,9 +84,9 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     }
   }
 
-  public addRequestFromInput(event: MatChipInputEvent): void {
-    if (event.value) {
-      const requests = event.value.split(/\r\n|\r|\n|\s/);
+  public addRequest(value: string): void {
+    if (value) {
+      const requests = value.split(/\r\n|\r|\n|\s/);
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
@@ -97,6 +97,12 @@ export class RequestBoxComponent implements OnInit, DoCheck {
         }
       }
       this.updateStorage(this.requests);
+    }
+  }
+
+  public addRequestFromInput(event: MatChipInputEvent): void {
+    if (event.value) {
+      this.addRequest(event.value);
       event.chipInput!.clear();
     }
   }
