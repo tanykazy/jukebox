@@ -16,15 +16,20 @@ export class YoutubePlayerComponent implements OnInit {
   @Input() height: number | undefined;
   @Input() width: number | undefined;
 
-  @Output() ended: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
-  @Output() changeCurrentTime: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
+  @Output() changeCurrentTime: EventEmitter<number> = new EventEmitter();
+  @Output() changeLoadedFraction: EventEmitter<number> = new EventEmitter();
   @Output() ready: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
+  @Output() state: EventEmitter<PlayerState> = new EventEmitter();
 
   @Input()
   set volume(value: number) {
     if (this.isReady) {
       this.setVolume(value);
     }
+    this._volume = value;
+  }
+  get volume(): number {
+    return this._volume;
   }
 
   @Input()
@@ -36,10 +41,17 @@ export class YoutubePlayerComponent implements OnInit {
         this.unMute();
       }
     }
+    this._muted = mute;
+  }
+  get muted(): boolean {
+    return this._muted;
   }
 
   private watchCurrentTimeId: any | undefined;
+  private watchLoadedFractionTimeId: any | undefined;
   private isReady: boolean = false;
+  private _volume: number = 0;
+  private _muted: boolean = false;
 
   startSeconds: number | undefined;
   endSeconds: number | undefined;
@@ -62,26 +74,68 @@ export class YoutubePlayerComponent implements OnInit {
   onReady(event: YT.PlayerEvent): void {
     this.isReady = true;
     this.ready.emit(this);
+    this.setVolume(this._volume);
+    if (this._muted) {
+      this.mute();
+    } else {
+      this.unMute();
+    }
   }
 
   onStateChange(event: YT.OnStateChangeEvent): void {
-    if (event.data === 0) {
-      clearInterval(this.watchCurrentTimeId);
-      this.ended.emit(this);
-    } else if (event.data === 1) {
-      this.watchCurrentTimeId = setInterval(() => {
+    this.state.emit(event.data);
+    switch (event.data) {
+      case PlayerState.UNSTARTED:
+        break;
+
+      case PlayerState.ENDED:
+        clearInterval(this.watchCurrentTimeId);
+        clearInterval(this.watchLoadedFractionTimeId);
+        break;
+
+      case PlayerState.PLAYING:
         this.watchCurrentTime(event.target);
-      }, 1000);
-    } else if (event.data === 2) {
-      clearInterval(this.watchCurrentTimeId);
-    } else if (event.data === 5) {
-      // event.target.playVideo();
+        this.watchCurrentTimeId = setInterval(() => {
+          this.watchCurrentTime(event.target);
+        }, 1000);
+        this.watchLoadedFraction(event.target);
+        clearInterval(this.watchLoadedFractionTimeId);
+        this.watchLoadedFractionTimeId = setInterval(() => {
+          this.watchLoadedFraction(event.target);
+        }, 1000);
+        break;
+
+      case PlayerState.PAUSED:
+        clearInterval(this.watchCurrentTimeId);
+        clearInterval(this.watchLoadedFractionTimeId);
+        break;
+
+      case PlayerState.BUFFERING:
+        this.watchLoadedFractionTimeId = setInterval(() => {
+          this.watchLoadedFraction(event.target);
+        }, 1000);
+        break;
+
+      case PlayerState.CUED:
+        event.target.playVideo();
+        break;
+
+      default:
+        break;
     }
   }
 
   private watchCurrentTime(target: YT.Player): void {
     const time = target.getCurrentTime();
-    this.changeCurrentTime.emit(this);
+    this.changeCurrentTime.emit(time);
+  }
+
+  private watchLoadedFraction(target: YT.Player): void {
+    const fraction = target.getVideoLoadedFraction();
+    this.changeLoadedFraction.emit(fraction);
+    if (fraction === 1) {
+      clearInterval(this.watchLoadedFractionTimeId);
+    }
   }
 
   /**
@@ -134,6 +188,13 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   /**
+   * seekTo
+   */
+  public seekTo(seconds: number, allowSeekAhead: boolean): void {
+    this.youtube.seekTo(seconds, allowSeekAhead);
+  }
+
+  /**
    * getDuration
    */
   public getDuration(): number {
@@ -147,3 +208,13 @@ export class YoutubePlayerComponent implements OnInit {
     return this.youtube.getVideoUrl();
   }
 }
+
+export const PlayerState = {
+  UNSTARTED: -1,
+  ENDED: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  BUFFERING: 3,
+  CUED: 5
+} as const;
+export type PlayerState = typeof PlayerState[keyof typeof PlayerState];

@@ -1,10 +1,76 @@
-<app-top-bar [appName]="appName" [(settings)]="settings" (controlEvent)="onControlEvent($event)"></app-top-bar>
+<app-top-bar [appName]="appName"></app-top-bar>
+<mat-card>
+    <mat-card-content>
+        <app-youtube-player #player [videoId]="playback.videoid" [width]="screenSize.width * 0.9"
+            [height]="screenSize.height * 0.9" (state)="onStateChange($event)" (ready)="onReady($event)"
+            (changeCurrentTime)="onChangeCurrentTime($event)" (changeLoadedFraction)="onChangeLoadedFraction($event)"
+            [volume]="settings.volume.value" [muted]="settings.volume.muted">
+        </app-youtube-player>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-icon-button (click)="onClickSkipPrevious($event)">
+            <mat-icon>skip_previous</mat-icon>
+        </button>
+        <button mat-icon-button (click)="onClickPlayPause($event)">
+            <ng-template [ngIf]="playback.isPlaying">
+                <mat-icon>pause</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!playback.isPlaying">
+                <mat-icon>play_arrow</mat-icon>
+            </ng-template>
+        </button>
+        <button mat-icon-button (click)="onClickSkipNext($event)">
+            <mat-icon>skip_next</mat-icon>
+        </button>
+        <button mat-icon-button (click)="onClickShuffle($event)">
+            <ng-template [ngIf]="settings.shuffle">
+                <mat-icon>shuffle</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!settings.shuffle">
+                <mat-icon class="disabled">shuffle</mat-icon>
+            </ng-template>
+        </button>
+        <button mat-icon-button (click)="onClickRepeat($event)">
+            <ng-template [ngIf]="settings.repeat === 0">
+                <mat-icon class="disabled">repeat</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="settings.repeat === 1">
+                <mat-icon>repeat_one</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="settings.repeat === 2">
+                <mat-icon>repeat</mat-icon>
+            </ng-template>
+        </button>
+        <button mat-icon-button (click)="onClickVolume($event)">
+            <ng-template [ngIf]="settings.volume.muted || settings.volume.value === 0">
+                <mat-icon>volume_off</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!settings.volume.muted && 0 < settings.volume.value && settings.volume.value <= 50">
+                <mat-icon>volume_down</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!settings.volume.muted && 50 < settings.volume.value && settings.volume.value <= 100">
+                <mat-icon>volume_up</mat-icon>
+            </ng-template>
+        </button>
+        <mat-slider min="0" max="100" step="1" [value]="settings.volume.value" (input)="onInputSlider($event)">
+        </mat-slider>
+    </mat-card-actions>
+    <mat-card-footer>
+        <mat-progress-bar [mode]="barmode" [value]="value" [bufferValue]="bufferValue"></mat-progress-bar>
+    </mat-card-footer>
+</mat-card>
 <app-request-box [(requests)]="requests" (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
 <mat-grid-list [cols]="cols">
     <mat-grid-tile *ngFor="let request of requests">
-        <app-youtube-player [videoId]="request" [width]="screenWidth" [height]="screenHeight" (ready)="onReady($event)"
-            (ended)="onEnded($event)" (changeCurrentTime)="onChangeCurrentTime($event)" [volume]="settings.volume.value"
-            [muted]="settings.volume.muted">
+        <app-youtube-player [videoId]="request" [width]="screenSize.width" [height]="screenSize.height">
         </app-youtube-player>
+        <div class="float" id="request">
+            <button mat-fab (click)="onClickListPlay(request)">
+                <mat-icon>play_circle</mat-icon>
+            </button>
+            <button mat-fab (click)="onClickListDelete(request)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
     </mat-grid-tile>
 </mat-grid-list>
