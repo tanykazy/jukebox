@@ -1,6 +1,7 @@
 import { Component, ViewChild, ViewChildren, HostListener, QueryList } from '@angular/core';
 import { MatSliderChange } from "@angular/material/slider";
-import { YoutubePlayerComponent } from "./components/youtube-player/youtube-player.component";
+import { ProgressBarMode } from '@angular/material/progress-bar';
+import { YoutubePlayerComponent, PlayerState } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent } from "./components/request-box/request-box.component";
 import { StorageService, Storage } from './service/storage.service';
 
@@ -12,17 +13,26 @@ import { StorageService, Storage } from './service/storage.service';
 export class AppComponent {
   @ViewChild(RequestBoxComponent) requestBox!: RequestBoxComponent;
   @ViewChildren(YoutubePlayerComponent) players!: QueryList<YoutubePlayerComponent>;
+  @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
 
   appName = "jukebox";
   requests: Array<string> = new Array();
   settings: Settings = new Settings();
-  screenWidth: number = 0;
-  screenHeight: number = 0;
+  playlist: Array<string> = new Array();
+  playback: Playback = new Playback();
+  screenSize!: ScreenSize;
   cols: number = 1;
-  minWidth: number = 400;
+  barmode!: ProgressBarMode;
+  bufferValue: number = 0;
+  value: number = 0;
+  maxWidth: number = 400;
 
   ngOnInit() {
-    this.resizeGrid(window.innerWidth, window.innerHeight);
+    this.screenSize = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
+    this.resizeGrid(this.screenSize);
     const settings: Settings = StorageService.getItem(Storage.Settings);
     if (settings) {
       this.settings = settings;
@@ -33,53 +43,127 @@ export class AppComponent {
     // console.log(event);
   }
 
-  onEnded(event: YoutubePlayerComponent): void {
-    this.requests = this.requests.filter((request) => request !== event.videoId);
-    const request = this.requestBox.getShuffle();
-    const players = this.players.filter((player) => player.videoId === request);
-    if (players.length > 0) {
-      players[0].playVideo();
-    }
+  onChangeCurrentTime(event: number): void {
+    this.playback.time = event;
+    this.value = event / this.playback.duration * 100;
   }
 
-  onChangeCurrentTime(event: YoutubePlayerComponent): void {
+  onChangeLoadedFraction(event: number): void {
+    this.playback.fraction = event;
+    this.bufferValue = event * 100;
   }
 
   onReady(event: YoutubePlayerComponent): void {
+    event.playVideo();
+  }
+
+  onStateChange(event: PlayerState): void {
+    this.playback.state = event;
+    switch (event) {
+      case PlayerState.UNSTARTED:
+        this.barmode = 'indeterminate';
+        break;
+
+      case PlayerState.ENDED:
+        this.playback.isPlaying = false;
+        if (this.settings.repeat === Repeat.One) {
+          this.player.seekTo(0, true);
+        } else {
+          this.onClickSkipNext({} as UIEvent);
+        }
+        break;
+
+      case PlayerState.PLAYING:
+        this.playback.isPlaying = true;
+        this.playback.duration = this.player.getDuration();
+        this.barmode = 'buffer';
+        break;
+
+      case PlayerState.PAUSED:
+        this.playback.isPlaying = false;
+        break;
+
+      case PlayerState.BUFFERING:
+        this.barmode = 'buffer';
+        break;
+
+      case PlayerState.CUED:
+        this.barmode = 'buffer';
+        break;
+
+      default:
+        break;
+    }
   }
 
   onSelect(event: string): void {
-    const players = this.players.filter((player) => player.videoId === event);
-    if (players.length > 0) {
-      players[0].playVideo();
-    }
+    // const players = this.players.filter((player) => player.videoId === event);
+    // if (players.length > 0) {
+    //   players[0].playVideo();
+    // }
   }
 
   onDeselect(event: string): void {
-    const players = this.players.filter((player) => player.videoId === event);
-    if (players.length > 0) {
-      players[0].pauseVideo();
+    // const players = this.players.filter((player) => player.videoId === event);
+    // if (players.length > 0) {
+    //   players[0].pauseVideo();
+    // }
+  }
+
+  onClickListPlay(event: string): void {
+    const index = this.requests.indexOf(event);
+    if (index !== -1) {
+      this.playback = new Playback();
+      this.playback.videoid = event;
+      this.playback.index = index;
+      // this.requests = this.requests.splice(index, 1);
     }
+    // this.requests = this.requests.filter((request) => request !== event);
+  }
+
+  onClickListDelete(event: string): void {
+    this.requests = this.requests.filter((request) => request !== event);
   }
 
   onClickSkipPrevious(event: UIEvent): void {
     // this.controlEvent.emit(Control.SkipPrevious);
+    if (this.requests.length > 0) {
+      let index = this.playback.index - 1;
+      if (index < 0) {
+        index = this.requests.length - 1;
+      }
+      const request = this.requests[index];
+      this.playback = new Playback();
+      this.playback.videoid = request;
+      this.playback.index = index;
+    }
   }
 
-  onClickStop(event: UIEvent): void {
-    // this.controlEvent.emit(Control.Stop);
-  }
-
-  onClickPlay(event: UIEvent): void {
+  onClickPlayPause(event: UIEvent): void {
     // this.controlEvent.emit(Control.Play);
-  }
-
-  onClickPause(event: UIEvent): void {
-    // this.controlEvent.emit(Control.Pause);
+    if (this.playback.isPlaying) {
+      this.player.pauseVideo();
+    } else {
+      this.player.playVideo();
+    }
   }
 
   onClickSkipNext(event: UIEvent): void {
     // this.controlEvent.emit(Control.SkipNext);
+    if (this.requests.length > 0) {
+      let request;
+      let index;
+      if (this.settings.shuffle) {
+        request = this.requestBox.getShuffle();
+        index = this.requests.indexOf(request);
+      } else {
+        index = (this.playback.index + 1) % this.requests.length;
+        request = this.requests[index];
+      }
+      this.playback = new Playback();
+      this.playback.videoid = request;
+      this.playback.index = index;
+    }
   }
 
   onClickShuffle(event: UIEvent): void {
@@ -115,20 +199,25 @@ export class AppComponent {
 
   @HostListener('window:resize', ['$event'])
   onWindowResize(event: UIEvent): void {
-    this.resizeGrid(window.innerWidth, window.innerHeight);
+    this.resizeGrid({
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
   }
 
-  private resizeGrid(windowWidth: number, windowHeight: number): void {
-    let cols = Math.floor(windowWidth / this.minWidth);
-    let size = this.minWidth;
+  private resizeGrid(screenSize: ScreenSize): void {
+    let cols = Math.floor(screenSize.width / this.maxWidth);
+    let size = this.maxWidth;
     if (cols > 0) {
-      size = Math.floor(window.innerWidth / cols);
+      size = Math.floor(screenSize.width / cols);
     } else {
-      size = window.innerWidth;
+      size = screenSize.width;
       cols = cols + 1;
     }
-    this.screenWidth = size;
-    this.screenHeight = size;
+    this.screenSize = {
+      width: size,
+      height: size
+    };
     this.cols = cols;
   }
 
@@ -146,6 +235,12 @@ const Control = {
 } as const;
 export type Control = typeof Control[keyof typeof Control];
 
+const Repeat = {
+  Off: 0,
+  One: 1,
+  On: 2,
+} as const;
+
 export class Settings {
   public volume: Volume;
   public repeat: number = 0;
@@ -159,4 +254,19 @@ export class Settings {
 class Volume {
   public value: number = 50;
   public muted: boolean = false;
+}
+
+class Playback {
+  videoid: string | undefined;
+  state: PlayerState | undefined;
+  time: number = 0;
+  duration: number = 0;
+  fraction: number = 0;
+  index: number = -1;
+  isPlaying: boolean = false;
+}
+
+interface ScreenSize {
+  width: number;
+  height: number;
 }

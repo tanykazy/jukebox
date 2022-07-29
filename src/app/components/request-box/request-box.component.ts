@@ -67,7 +67,7 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     return chip;
   }
 
-  public getShuffle(): string | null {
+  public getShuffle(): string {
     this.chipList.chips.forEach((item: MatChip) => {
       item.deselect();
     });
@@ -80,7 +80,7 @@ export class RequestBoxComponent implements OnInit, DoCheck {
       }
       return videoid;
     } else {
-      return null;
+      return '';
     }
   }
 

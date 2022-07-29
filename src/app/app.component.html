@@ -1,24 +1,23 @@
 <app-top-bar [appName]="appName"></app-top-bar>
-
 <mat-card>
-    <!-- <mat-card-content>
-        <app-youtube-player [videoId]="requests[0]" [width]="screenWidth" [height]="screenHeight"
-            (ready)="onReady($event)" (ended)="onEnded($event)" (changeCurrentTime)="onChangeCurrentTime($event)"
+    <mat-card-content>
+        <app-youtube-player #player [videoId]="playback.videoid" [width]="screenSize.width * 0.9"
+            [height]="screenSize.height * 0.9" (state)="onStateChange($event)" (ready)="onReady($event)"
+            (changeCurrentTime)="onChangeCurrentTime($event)" (changeLoadedFraction)="onChangeLoadedFraction($event)"
             [volume]="settings.volume.value" [muted]="settings.volume.muted">
         </app-youtube-player>
-    </mat-card-content> -->
+    </mat-card-content>
     <mat-card-actions>
         <button mat-icon-button (click)="onClickSkipPrevious($event)">
             <mat-icon>skip_previous</mat-icon>
         </button>
-        <button mat-icon-button (click)="onClickStop($event)">
-            <mat-icon>stop</mat-icon>
-        </button>
-        <button mat-icon-button (click)="onClickPlay($event)">
-            <mat-icon>play_arrow</mat-icon>
-        </button>
-        <button mat-icon-button (click)="onClickPause($event)">
-            <mat-icon>pause</mat-icon>
+        <button mat-icon-button (click)="onClickPlayPause($event)">
+            <ng-template [ngIf]="playback.isPlaying">
+                <mat-icon>pause</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!playback.isPlaying">
+                <mat-icon>play_arrow</mat-icon>
+            </ng-template>
         </button>
         <button mat-icon-button (click)="onClickSkipNext($event)">
             <mat-icon>skip_next</mat-icon>
@@ -57,16 +56,21 @@
         </mat-slider>
     </mat-card-actions>
     <mat-card-footer>
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <mat-progress-bar [mode]="barmode" [value]="value" [bufferValue]="bufferValue"></mat-progress-bar>
     </mat-card-footer>
 </mat-card>
-
 <app-request-box [(requests)]="requests" (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
 <mat-grid-list [cols]="cols">
     <mat-grid-tile *ngFor="let request of requests">
-        <app-youtube-player [videoId]="request" [width]="screenWidth" [height]="screenHeight" (ready)="onReady($event)"
-            (ended)="onEnded($event)" (changeCurrentTime)="onChangeCurrentTime($event)" [volume]="settings.volume.value"
-            [muted]="settings.volume.muted">
+        <app-youtube-player [videoId]="request" [width]="screenSize.width" [height]="screenSize.height">
         </app-youtube-player>
+        <div class="float" id="request">
+            <button mat-fab (click)="onClickListPlay(request)">
+                <mat-icon>play_circle</mat-icon>
+            </button>
+            <button mat-fab (click)="onClickListDelete(request)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </div>
     </mat-grid-tile>
 </mat-grid-list>
