@@ -69,7 +69,7 @@ export class AppComponent {
         if (this.settings.repeat === Repeat.One) {
           this.player.seekTo(0, true);
         } else {
-          this.onClickSkipNext({} as UIEvent);
+          this.skipNext(this.settings.repeat === Repeat.On);
         }
         break;
 
@@ -116,9 +116,7 @@ export class AppComponent {
       this.playback = new Playback();
       this.playback.videoid = event;
       this.playback.index = index;
-      // this.requests = this.requests.splice(index, 1);
     }
-    // this.requests = this.requests.filter((request) => request !== event);
   }
 
   onClickListDelete(event: string): void {
@@ -150,20 +148,7 @@ export class AppComponent {
 
   onClickSkipNext(event: UIEvent): void {
     // this.controlEvent.emit(Control.SkipNext);
-    if (this.requests.length > 0) {
-      let request;
-      let index;
-      if (this.settings.shuffle) {
-        request = this.requestBox.getShuffle();
-        index = this.requests.indexOf(request);
-      } else {
-        index = (this.playback.index + 1) % this.requests.length;
-        request = this.requests[index];
-      }
-      this.playback = new Playback();
-      this.playback.videoid = request;
-      this.playback.index = index;
-    }
+    this.skipNext(true);
   }
 
   onClickShuffle(event: UIEvent): void {
@@ -219,6 +204,29 @@ export class AppComponent {
       height: size
     };
     this.cols = cols;
+  }
+
+  private skipNext(loop: boolean): void {
+    if (this.requests.length === 0) {
+      return;
+    }
+    let index;
+    if (this.settings.shuffle) {
+      index = Math.floor(Math.random() * this.requests.length);
+    } else {
+      index = this.playback.index + 1;
+      if (!(index < this.requests.length)) {
+        if (!loop) {
+          return;
+        } else {
+          index = index % this.requests.length;
+        }
+      }
+    }
+    const request = this.requests[index];
+    this.playback = new Playback();
+    this.playback.videoid = request;
+    this.playback.index = index;
   }
 
   private saveSettings(settings: Settings): void {

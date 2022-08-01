@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild, Input, IterableDiffers, DoCheck, IterableDiffer } from '@angular/core';
 import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { YoutubeUrlService } from "../../service/youtube-url.service";
 import { StorageService, Storage } from "../../service/storage.service";
@@ -67,23 +68,6 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     return chip;
   }
 
-  public getShuffle(): string {
-    this.chipList.chips.forEach((item: MatChip) => {
-      item.deselect();
-    });
-    if (this.requests.length !== 0) {
-      const random = Math.floor(Math.random() * this.requests.length);
-      const videoid = [...this.requests][random];
-      const chip = this.getChipByValue(videoid);
-      if (chip) {
-        chip.select();
-      }
-      return videoid;
-    } else {
-      return '';
-    }
-  }
-
   public addRequest(value: string): void {
     if (value) {
       const requests = value.split(/\r\n|\r|\n|\s/);
@@ -115,7 +99,7 @@ export class RequestBoxComponent implements OnInit, DoCheck {
   }
 
   public onChipClick(chip: MatChip): void {
-    chip.toggleSelected();
+    // chip.toggleSelected();
   }
 
   public onSelectionChange(event: MatChipSelectionChange): void {
@@ -124,5 +108,9 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     } else {
       this.deselect.emit(event.source.value);
     }
+  }
+
+  public drop(event: CdkDragDrop<string[]>): void {
+    moveItemInArray(this.requests, event.previousIndex, event.currentIndex);
   }
 }

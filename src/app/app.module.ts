@@ -12,6 +12,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from './app.component';
 
@@ -40,6 +41,7 @@ import { TopBarComponent } from './components/top-bar/top-bar.component';
     MatSliderModule,
     MatCardModule,
     MatProgressBarModule,
+    DragDropModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
