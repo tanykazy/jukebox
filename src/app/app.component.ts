@@ -139,10 +139,17 @@ export class AppComponent {
 
   onClickPlayPause(event: UIEvent): void {
     // this.controlEvent.emit(Control.Play);
-    if (this.playback.isPlaying) {
-      this.player.pauseVideo();
+    if (this.playback.index < 0) {
+      const index = 0;
+      this.playback = new Playback();
+      this.playback.videoid = this.requests[index];
+      this.playback.index = index;
     } else {
-      this.player.playVideo();
+      if (this.playback.isPlaying) {
+        this.player.pauseVideo();
+      } else {
+        this.player.playVideo();
+      }
     }
   }
 
