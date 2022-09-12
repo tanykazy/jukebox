@@ -215,16 +215,16 @@ export class AppComponent {
     }
     let index;
     // if (this.settings.shuffle) {
-      // index = Math.floor(Math.random() * this.requests.length);
+    // index = Math.floor(Math.random() * this.requests.length);
     // } else {
-      index = this.playback.index + 1;
-      if (!(index < this.requests.length)) {
-        if (!loop) {
-          return;
-        } else {
-          index = index % this.requests.length;
-        }
+    index = this.playback.index + 1;
+    if (!(index < this.requests.length)) {
+      if (!loop) {
+        return;
+      } else {
+        index = index % this.requests.length;
       }
+    }
     // }
     const request = this.requests[index];
     this.playback = new Playback();
@@ -286,8 +286,8 @@ function range(start: number, stop: number, step: number): Array<number> {
   return Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step));
 }
 
-function shuffle(array) {
-  let m = array.length
+function shuffle(array: Array<any>): Array<any> {
+  let m = array.length;
   // While there remain elements to shuffle…
   while (m) {
     // Pick a remaining element…
