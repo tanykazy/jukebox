@@ -18,7 +18,7 @@ export class AppComponent {
   appName = "jukebox";
   requests: Array<string> = new Array();
   settings: Settings = new Settings();
-  playlist: Array<string> = new Array();
+  playlist: Array<number> = new Array();
   playback: Playback = new Playback();
   screenSize!: ScreenSize;
   cols: number = 1;
@@ -153,6 +153,9 @@ export class AppComponent {
 
   onClickShuffle(event: UIEvent): void {
     this.settings.shuffle = !this.settings.shuffle;
+    if (this.settings.shuffle) {
+      shuffle(this.requests);
+    }
     this.saveSettings(this.settings);
   }
 
@@ -211,9 +214,9 @@ export class AppComponent {
       return;
     }
     let index;
-    if (this.settings.shuffle) {
-      index = Math.floor(Math.random() * this.requests.length);
-    } else {
+    // if (this.settings.shuffle) {
+      // index = Math.floor(Math.random() * this.requests.length);
+    // } else {
       index = this.playback.index + 1;
       if (!(index < this.requests.length)) {
         if (!loop) {
@@ -222,7 +225,7 @@ export class AppComponent {
           index = index % this.requests.length;
         }
       }
-    }
+    // }
     const request = this.requests[index];
     this.playback = new Playback();
     this.playback.videoid = request;
@@ -277,4 +280,21 @@ class Playback {
 interface ScreenSize {
   width: number;
   height: number;
+}
+
+function range(start: number, stop: number, step: number): Array<number> {
+  return Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step));
+}
+
+function shuffle(array) {
+  let m = array.length
+  // While there remain elements to shuffle…
+  while (m) {
+    // Pick a remaining element…
+    const i = Math.floor(Math.random() * m--);
+
+    // And swap it with the current element.
+    [array[m], array[i]] = [array[i], array[m]];
+  }
+  return array;
 }
