@@ -48,6 +48,10 @@ export class AppComponent {
     this.value = event / this.playback.duration * 100;
 
     console.log(this.playback);
+
+    if (this.playback.time > 60 * 4) {
+      this.skipNext(this.settings.repeat !== Repeat.Off);
+    }
   }
 
   onChangeLoadedFraction(event: number): void {
