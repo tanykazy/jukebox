@@ -46,6 +46,8 @@ export class AppComponent {
   onChangeCurrentTime(event: number): void {
     this.playback.time = event;
     this.value = event / this.playback.duration * 100;
+
+    console.log(this.playback);
   }
 
   onChangeLoadedFraction(event: number): void {
