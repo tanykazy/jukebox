@@ -1,4 +1,4 @@
-<app-top-bar [appName]="appName"></app-top-bar>
+<app-top-bar [appName]="appName" (share)="onClickShare($event)"></app-top-bar>
 <mat-card>
     <mat-card-content>
         <app-youtube-player #player [videoId]="playback.videoid" [width]="screenSize.width * 0.9"

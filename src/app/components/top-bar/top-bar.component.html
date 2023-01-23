@@ -1,7 +1,7 @@
 <mat-toolbar>
     <span>{{appName}}</span>
     <span class="spacer"></span>
-    <button mat-icon-button disabled>
+    <button mat-icon-button (click)="onClickShareButton($event)">
         <mat-icon>share</mat-icon>
     </button>
 </mat-toolbar>

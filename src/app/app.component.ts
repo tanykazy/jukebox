@@ -189,6 +189,11 @@ export class AppComponent {
     }
   }
 
+  onClickShare(event: UIEvent): void {
+    const playlist = StorageService.getItem(Storage.Playlist);
+    console.debug(playlist);
+  }
+
   @HostListener('document:paste', ['$event'])
   onPaste(event: ClipboardEvent): void {
     const clipboardData = event.clipboardData;
