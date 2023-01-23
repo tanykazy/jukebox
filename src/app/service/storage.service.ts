@@ -1,3 +1,4 @@
+import { E } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 
 export const Storage = {
@@ -28,7 +29,21 @@ export class StorageService {
 
   static setItem(keyName: string, keyValue: any): void {
     if (storageAvailable('localStorage')) {
-      window.localStorage.setItem(keyName, JSON.stringify(keyValue));
+      let json = '';
+      try {
+        json = JSON.stringify(keyValue);
+      } catch (error) {
+        if (error instanceof TypeError) {
+          console.error(error);
+        } else {
+          console.error(error);
+        }
+      }
+      try {
+        window.localStorage.setItem(keyName, json);
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 }
