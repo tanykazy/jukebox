@@ -24,6 +24,9 @@ export class StorageService {
       } catch (error) {
         return null;
       }
+    } else {
+      console.error('localStorage is not available')
+      return null;
     }
   }
 
@@ -44,6 +47,8 @@ export class StorageService {
       } catch (error) {
         console.error(error);
       }
+    } else {
+      console.error('localStorage is not available')
     }
   }
 }
