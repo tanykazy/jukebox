@@ -52,7 +52,7 @@ export class StorageService {
  * Detects whether localStorage is both supported and available.
  * https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
  * @param {'localStorage'|'sessionStorage'} type - Web Storage Type
- * @returns {boolean} Availability
+ * @returns {boolean|undefined} Availability
  */
 function storageAvailable(type: 'localStorage' | 'sessionStorage'): boolean | undefined {
   let storage;
