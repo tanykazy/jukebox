@@ -190,8 +190,7 @@ export class AppComponent {
   }
 
   onClickShare(event: UIEvent): void {
-    const playlist = StorageService.getItem(Storage.Playlist);
-    console.debug(playlist);
+    console.debug(this.requests);
   }
 
   @HostListener('document:paste', ['$event'])
