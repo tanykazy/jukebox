@@ -1,7 +1,8 @@
 import { Component, ViewChild, ViewChildren, HostListener, QueryList } from '@angular/core';
 import { MatSliderChange } from "@angular/material/slider";
 import { ProgressBarMode } from '@angular/material/progress-bar';
-import { Clipboard, PendingCopy } from '@angular/cdk/clipboard';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { YoutubePlayerComponent, PlayerState } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent } from "./components/request-box/request-box.component";
 import { StorageService, Storage } from './service/storage.service';
@@ -28,7 +29,9 @@ export class AppComponent {
   value: number = 0;
   maxWidth: number = 400;
 
-  constructor(private clipboard: Clipboard) { }
+  constructor(
+    private clipboard: Clipboard,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.screenSize = {
@@ -202,7 +205,12 @@ export class AppComponent {
     if (this.requests.length > 0) {
       url.search = `requests=${this.requests.join(',')}`;
     }
-    attemptCopy(this.clipboard.beginCopy(url.href));
+    const result = this.clipboard.copy(url.href);
+    if (result) {
+      this.openSnackBar('Copy succeeded.', 'OK');
+    } else {
+      this.openSnackBar('Failed to copy.', 'OK');
+    }
   }
 
   @HostListener('document:paste', ['$event'])
@@ -220,6 +228,10 @@ export class AppComponent {
       width: window.innerWidth,
       height: window.innerHeight
     });
+  }
+
+  private openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action);
   }
 
   private resizeGrid(screenSize: ScreenSize): void {
@@ -309,20 +321,6 @@ class Playback {
 interface ScreenSize {
   width: number;
   height: number;
-}
-
-function attemptCopy(pending: PendingCopy, attempts: number = 3) {
-  const result = pending.copy();
-  if (!result && --attempts) {
-    window.setTimeout(arguments.callee, 0, [pending, attempts]);
-  } else {
-    // Remember to destroy when you're done!
-    pending.destroy();
-  }
-}
-
-function range(start: number, stop: number, step: number): Array<number> {
-  return Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + (i * step));
 }
 
 function shuffle(array: Array<any>): Array<any> {

@@ -1,4 +1,5 @@
 <app-top-bar [appName]="appName" (share)="onClickShare($event)"></app-top-bar>
+
 <mat-card>
     <mat-card-content>
         <app-youtube-player #player [videoId]="playback.videoid" [width]="screenSize.width * 0.9"
@@ -59,7 +60,9 @@
         <mat-progress-bar [mode]="barmode" [value]="value" [bufferValue]="bufferValue"></mat-progress-bar>
     </mat-card-footer>
 </mat-card>
+
 <app-request-box [(requests)]="requests" (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
+
 <mat-grid-list [cols]="cols">
     <mat-grid-tile *ngFor="let request of requests">
         <app-youtube-player [videoId]="request" [width]="screenSize.width" [height]="screenSize.height">
@@ -77,3 +80,12 @@
         </div>
     </mat-grid-tile>
 </mat-grid-list>
+
+<mat-form-field appearance="fill">
+    <mat-label>Message</mat-label>
+    <input matInput #message>
+</mat-form-field>
+<mat-form-field appearance="fill">
+    <mat-label>Action</mat-label>
+    <input matInput #action>
+</mat-form-field>
