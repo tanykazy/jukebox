@@ -47,8 +47,8 @@ export class YoutubePlayerComponent implements OnInit {
     return this._muted;
   }
 
-  private watchCurrentTimeId: any | undefined;
-  private watchLoadedFractionTimeId: any | undefined;
+  private watchCurrentTimeId: number | undefined;
+  private watchLoadedFractionTimeId: number | undefined;
   private isReady: boolean = false;
   private _volume: number = 0;
   private _muted: boolean = false;
@@ -64,14 +64,18 @@ export class YoutubePlayerComponent implements OnInit {
     if (!apiLoaded) {
       // This code loads the IFrame Player API code asynchronously, according to the instructions at
       // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      document.body.appendChild(tag);
+      const scriptElement: HTMLScriptElement = document.createElement('script');
+      scriptElement.src = 'https://www.youtube.com/iframe_api';
+      console.info('Load API %s', scriptElement.src);
+      document.body.appendChild(scriptElement);
       apiLoaded = true;
+    } else {
+      console.debug('API loaded.');
     }
   }
 
   onReady(event: YT.PlayerEvent): void {
+    console.info('Video %s ready.', event.target.getVideoUrl());
     this.isReady = true;
     this.ready.emit(this);
     this.setVolume(this._volume);
@@ -83,37 +87,53 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   onStateChange(event: YT.OnStateChangeEvent): void {
-    this.state.emit(event.data);
+    console.info('Player state changed to %d', event.data);
     switch (event.data) {
       case PlayerState.UNSTARTED:
         break;
 
       case PlayerState.ENDED:
-        clearInterval(this.watchCurrentTimeId);
-        clearInterval(this.watchLoadedFractionTimeId);
+        window.clearInterval(this.watchCurrentTimeId);
+        console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+
+        window.clearInterval(this.watchLoadedFractionTimeId);
+        console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
         break;
 
       case PlayerState.PLAYING:
-        this.watchCurrentTime(event.target);
-        this.watchCurrentTimeId = setInterval(() => {
+        window.clearInterval(this.watchCurrentTimeId);
+        console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+
+        this.watchCurrentTimeId = window.setInterval(() => {
           this.watchCurrentTime(event.target);
-        }, 1000);
-        this.watchLoadedFraction(event.target);
-        clearInterval(this.watchLoadedFractionTimeId);
-        this.watchLoadedFractionTimeId = setInterval(() => {
+        }, 100);
+        console.info('Start watching current time. id: %d', this.watchCurrentTimeId);
+
+        window.clearInterval(this.watchLoadedFractionTimeId);
+        console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+
+        this.watchLoadedFractionTimeId = window.setInterval(() => {
           this.watchLoadedFraction(event.target);
-        }, 1000);
+        }, 100);
+        console.info('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
         break;
 
       case PlayerState.PAUSED:
-        clearInterval(this.watchCurrentTimeId);
-        clearInterval(this.watchLoadedFractionTimeId);
+        window.clearInterval(this.watchCurrentTimeId);
+        console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+
+        window.clearInterval(this.watchLoadedFractionTimeId);
+        console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
         break;
 
       case PlayerState.BUFFERING:
-        this.watchLoadedFractionTimeId = setInterval(() => {
+        window.clearInterval(this.watchLoadedFractionTimeId);
+        console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+
+        this.watchLoadedFractionTimeId = window.setInterval(() => {
           this.watchLoadedFraction(event.target);
-        }, 1000);
+        }, 100);
+        console.info('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
         break;
 
       case PlayerState.CUED:
@@ -121,20 +141,23 @@ export class YoutubePlayerComponent implements OnInit {
         break;
 
       default:
+        console.warn('Unknown state %d', event.data);
         break;
     }
+    this.state.emit(event.data);
   }
 
   private watchCurrentTime(target: YT.Player): void {
-    const time = target.getCurrentTime();
+    const time: number = target.getCurrentTime();
     this.changeCurrentTime.emit(time);
   }
 
   private watchLoadedFraction(target: YT.Player): void {
-    const fraction = target.getVideoLoadedFraction();
+    const fraction: number = target.getVideoLoadedFraction();
     this.changeLoadedFraction.emit(fraction);
     if (fraction === 1) {
-      clearInterval(this.watchLoadedFractionTimeId);
+      window.clearInterval(this.watchLoadedFractionTimeId);
+      console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
     }
   }
 
