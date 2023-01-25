@@ -1,6 +1,7 @@
 import { Component, ViewChild, ViewChildren, HostListener, QueryList } from '@angular/core';
 import { MatSliderChange } from "@angular/material/slider";
 import { ProgressBarMode } from '@angular/material/progress-bar';
+import { Clipboard, PendingCopy } from '@angular/cdk/clipboard';
 import { YoutubePlayerComponent, PlayerState } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent } from "./components/request-box/request-box.component";
 import { StorageService, Storage } from './service/storage.service';
@@ -27,12 +28,19 @@ export class AppComponent {
   value: number = 0;
   maxWidth: number = 400;
 
+  constructor(private clipboard: Clipboard) { }
+
   ngOnInit() {
     this.screenSize = {
       width: window.innerWidth,
       height: window.innerHeight
     };
     this.resizeGrid(this.screenSize);
+    const params = new URLSearchParams(window.location.search);
+    const requests = params.get('requests');
+    if (requests) {
+      this.requests = requests.split(',');
+    }
     const settings: Settings = StorageService.getItem(Storage.Settings);
     if (settings) {
       this.settings = settings;
@@ -190,7 +198,11 @@ export class AppComponent {
   }
 
   onClickShare(event: UIEvent): void {
-    console.debug(this.requests);
+    const url = new URL(window.location.href);
+    if (this.requests.length > 0) {
+      url.search = `requests=${this.requests.join(',')}`;
+    }
+    attemptCopy(this.clipboard.beginCopy(url.href));
   }
 
   @HostListener('document:paste', ['$event'])
@@ -297,6 +309,16 @@ class Playback {
 interface ScreenSize {
   width: number;
   height: number;
+}
+
+function attemptCopy(pending: PendingCopy, attempts: number = 3) {
+  const result = pending.copy();
+  if (!result && --attempts) {
+    window.setTimeout(arguments.callee, 0, [pending, attempts]);
+  } else {
+    // Remember to destroy when you're done!
+    pending.destroy();
+  }
 }
 
 function range(start: number, stop: number, step: number): Array<number> {
