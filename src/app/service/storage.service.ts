@@ -1,4 +1,3 @@
-import { E } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 
 export const Storage = {
