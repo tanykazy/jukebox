@@ -61,7 +61,8 @@ export class AppComponent {
     // console.log(this.playback);
 
     if (this.playback.time > 60 * 1) {
-      this.skipNext(this.settings.repeat !== Repeat.Off);
+      // this.skipNext(this.settings.repeat !== Repeat.Off);
+      this.player.stopVideo();
     }
   }
 

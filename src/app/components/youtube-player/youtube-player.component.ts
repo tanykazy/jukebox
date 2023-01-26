@@ -211,6 +211,13 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   /**
+   * stopVideo
+   */
+  public stopVideo(): void {
+    this.youtube.stopVideo();
+  }
+
+  /**
    * seekTo
    */
   public seekTo(seconds: number, allowSeekAhead: boolean): void {
