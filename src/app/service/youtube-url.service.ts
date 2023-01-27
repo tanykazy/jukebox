@@ -12,15 +12,16 @@ export class YoutubeUrlService {
    */
   static getVideoId(url: string): string | null {
     try {
-      const addr = new URL(url);
-      const hostname = addr.hostname;
+      const addr: URL = new URL(url);
+      const hostname: string = addr.hostname;
       if (hostname === 'youtu.be') {
         return addr.pathname.replace('/', '');
       } else {
-        const searchParams = addr.searchParams;
+        const searchParams: URLSearchParams = addr.searchParams;
         return searchParams.get('v');
       }
     } catch (error) {
+      console.warn(error);
       return null;
     }
   }

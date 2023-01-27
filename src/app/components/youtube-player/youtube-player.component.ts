@@ -26,7 +26,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   public get videoId(): string | undefined {
     return this._videoId;
   }
-  _videoId: string | undefined;
+  public _videoId: string | undefined;
 
   @Input()
   public set volume(value: number) {

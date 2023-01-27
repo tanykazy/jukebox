@@ -14,7 +14,7 @@ export class StorageService {
 
   static getItem(keyName: string): any | null {
     if (storageAvailable('localStorage')) {
-      const value = window.localStorage.getItem(keyName);
+      const value: string | null = window.localStorage.getItem(keyName);
       if (value === null) {
         return value;
       }
@@ -31,7 +31,7 @@ export class StorageService {
 
   static setItem(keyName: string, keyValue: any): void {
     if (storageAvailable('localStorage')) {
-      let json = '';
+      let json: string = '';
       try {
         json = JSON.stringify(keyValue);
       } catch (error) {
