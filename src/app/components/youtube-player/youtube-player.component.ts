@@ -137,7 +137,7 @@ export class YoutubePlayerComponent implements OnInit {
         break;
 
       case PlayerState.CUED:
-        event.target.playVideo();
+        // event.target.playVideo();
         break;
 
       default:
