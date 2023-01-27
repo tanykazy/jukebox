@@ -86,8 +86,10 @@ export class AppComponent {
       case PlayerState.ENDED:
         this.playback.isPlaying = false;
         if (this.settings.repeat === Repeat.One) {
+          console.info('Repeat One');
           this.player.seekTo(0, true);
         } else {
+          console.info('Skip');
           this.skipNext(this.settings.repeat === Repeat.On);
         }
         break;
