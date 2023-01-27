@@ -28,6 +28,7 @@ export class AppComponent {
   bufferValue: number = 0;
   value: number = 0;
   maxWidth: number = 400;
+  cutoffTime: number = 0;
 
   constructor(
     private clipboard: Clipboard,
@@ -58,8 +59,10 @@ export class AppComponent {
     this.playback.time = event;
     this.value = event / this.playback.duration * 100;
 
-    if (this.playback.time > 60 * 1) {
-      this.skipNext(this.settings.repeat !== Repeat.Off);
+    if (this.cutoffTime > 0) {
+      if (this.playback.time > this.cutoffTime * 60) {
+        this.skipNext(this.settings.repeat !== Repeat.Off);
+      }
     }
   }
 

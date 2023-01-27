@@ -55,6 +55,10 @@
         </button>
         <mat-slider min="0" max="100" step="1" [value]="settings.volume.value" (input)="onInputSlider($event)">
         </mat-slider>
+        <mat-form-field>
+            <mat-label>Cut-Off Time</mat-label>
+            <input matInput type="number" [(ngModel)]="cutoffTime">
+        </mat-form-field>
     </mat-card-actions>
     <mat-card-footer>
         <mat-progress-bar [mode]="barmode" [value]="value" [bufferValue]="bufferValue"></mat-progress-bar>
