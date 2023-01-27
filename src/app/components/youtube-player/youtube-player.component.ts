@@ -218,10 +218,10 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   /**
-   * clearVideo
+   * nextVideo
    */
-  public clearVideo():void {
-    this.youtube.clearVideo();
+  public nextVideo() {
+    this.youtube.nextVideo();
   }
 
   /**
