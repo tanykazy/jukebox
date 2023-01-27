@@ -208,6 +208,7 @@ export class YoutubePlayerComponent implements OnInit {
    */
   public pauseVideo(): void {
     this.youtube.pauseVideo();
+    console.log(this.youtube.playerVars);
   }
 
   /**
@@ -215,13 +216,6 @@ export class YoutubePlayerComponent implements OnInit {
    */
   public stopVideo(): void {
     this.youtube.stopVideo();
-  }
-
-  /**
-   * nextVideo
-   */
-  public nextVideo() {
-    this.youtube.nextVideo();
   }
 
   /**
