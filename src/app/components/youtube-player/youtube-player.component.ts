@@ -218,6 +218,13 @@ export class YoutubePlayerComponent implements OnInit {
   }
 
   /**
+   * clearVideo
+   */
+  public clearVideo():void {
+    this.youtube.clearVideo();
+  }
+
+  /**
    * seekTo
    */
   public seekTo(seconds: number, allowSeekAhead: boolean): void {
