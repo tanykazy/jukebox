@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, ViewChild, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, ViewChild, EventEmitter, Input, OnDestroy } from '@angular/core';
 
 import { YouTubePlayer } from "@angular/youtube-player";
 
@@ -9,12 +9,8 @@ let apiLoaded = false;
   templateUrl: './youtube-player.component.html',
   styleUrls: ['./youtube-player.component.css']
 })
-export class YoutubePlayerComponent implements OnInit {
+export class YoutubePlayerComponent implements OnInit, OnDestroy {
   @ViewChild(YouTubePlayer) youtube!: YouTubePlayer;
-
-  @Input() videoId: string | undefined;
-  @Input() height: number | undefined;
-  @Input() width: number | undefined;
 
   @Output() changeCurrentTime: EventEmitter<number> = new EventEmitter();
   @Output() changeLoadedFraction: EventEmitter<number> = new EventEmitter();
@@ -22,18 +18,30 @@ export class YoutubePlayerComponent implements OnInit {
   @Output() state: EventEmitter<PlayerState> = new EventEmitter();
 
   @Input()
-  set volume(value: number) {
+  public set videoId(id: string | undefined) {
+    window.clearInterval(this.watchCurrentTimeId);
+    window.clearInterval(this.watchLoadedFractionTimeId);
+    this._videoId = id;
+  }
+  public get videoId(): string | undefined {
+    return this._videoId;
+  }
+  _videoId: string | undefined;
+
+  @Input()
+  public set volume(value: number) {
     if (this.isReady) {
       this.setVolume(value);
     }
     this._volume = value;
   }
-  get volume(): number {
+  public get volume(): number {
     return this._volume;
   }
+  private _volume: number = 0;
 
   @Input()
-  set muted(mute: boolean) {
+  public set muted(mute: boolean) {
     if (this.isReady) {
       if (mute) {
         this.mute();
@@ -43,20 +51,32 @@ export class YoutubePlayerComponent implements OnInit {
     }
     this._muted = mute;
   }
-  get muted(): boolean {
+  public get muted(): boolean {
     return this._muted;
   }
+  private _muted: boolean = false;
+
+  @Input() height: number | undefined;
+  @Input() width: number | undefined;
 
   private watchCurrentTimeId: number | undefined;
   private watchLoadedFractionTimeId: number | undefined;
   private isReady: boolean = false;
-  private _volume: number = 0;
-  private _muted: boolean = false;
 
   startSeconds: number | undefined;
   endSeconds: number | undefined;
   suggestedQuality: "default" | "small" | "medium" | "large" | "hd720" | "hd1080" | "highres" | undefined;
   showBeforeIframeApiLoads: boolean | undefined;
+
+  public get currentTime(): number {
+    const time: number = this.youtube.getCurrentTime();
+    return time;
+  }
+
+  public get loadedFraction(): number {
+    const fraction: number = this.youtube.getVideoLoadedFraction();
+    return fraction;
+  }
 
   constructor() { }
 
@@ -72,6 +92,11 @@ export class YoutubePlayerComponent implements OnInit {
     } else {
       console.debug('API loaded.');
     }
+  }
+
+  ngOnDestroy(): void {
+    window.clearInterval(this.watchCurrentTimeId);
+    window.clearInterval(this.watchLoadedFractionTimeId);
   }
 
   onReady(event: YT.PlayerEvent): void {
@@ -94,46 +119,46 @@ export class YoutubePlayerComponent implements OnInit {
 
       case PlayerState.ENDED:
         window.clearInterval(this.watchCurrentTimeId);
-        console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+        // console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
 
         window.clearInterval(this.watchLoadedFractionTimeId);
-        console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+        // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
         break;
 
       case PlayerState.PLAYING:
         window.clearInterval(this.watchCurrentTimeId);
-        console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+        // console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
 
         this.watchCurrentTimeId = window.setInterval(() => {
           this.watchCurrentTime(event.target);
         }, 100);
-        console.info('Start watching current time. id: %d', this.watchCurrentTimeId);
+        // console.info('Start watching current time. id: %d', this.watchCurrentTimeId);
 
         window.clearInterval(this.watchLoadedFractionTimeId);
-        console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+        // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
 
         this.watchLoadedFractionTimeId = window.setInterval(() => {
           this.watchLoadedFraction(event.target);
         }, 100);
-        console.info('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
+        // console.info('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
         break;
 
       case PlayerState.PAUSED:
         window.clearInterval(this.watchCurrentTimeId);
-        console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+        // console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
 
         window.clearInterval(this.watchLoadedFractionTimeId);
-        console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+        // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
         break;
 
       case PlayerState.BUFFERING:
         window.clearInterval(this.watchLoadedFractionTimeId);
-        console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+        // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
 
         this.watchLoadedFractionTimeId = window.setInterval(() => {
           this.watchLoadedFraction(event.target);
         }, 100);
-        console.info('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
+        // console.info('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
         break;
 
       case PlayerState.CUED:
@@ -157,7 +182,7 @@ export class YoutubePlayerComponent implements OnInit {
     this.changeLoadedFraction.emit(fraction);
     if (fraction === 1) {
       window.clearInterval(this.watchLoadedFractionTimeId);
-      console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+      // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
     }
   }
 
@@ -208,7 +233,6 @@ export class YoutubePlayerComponent implements OnInit {
    */
   public pauseVideo(): void {
     this.youtube.pauseVideo();
-    console.log(this.youtube.playerVars);
   }
 
   /**

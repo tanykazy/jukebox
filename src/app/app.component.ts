@@ -58,12 +58,8 @@ export class AppComponent {
     this.playback.time = event;
     this.value = event / this.playback.duration * 100;
 
-    // console.log(this.playback);
-
     if (this.playback.time > 60 * 1) {
       this.skipNext(this.settings.repeat !== Repeat.Off);
-      // this.player.stopVideo();
-      // this.player.nextVideo();
     }
   }
 
@@ -73,6 +69,7 @@ export class AppComponent {
   }
 
   onReady(event: YoutubePlayerComponent): void {
+    console.info('Player ready.');
     event.playVideo();
   }
 
@@ -110,6 +107,7 @@ export class AppComponent {
 
       case PlayerState.CUED:
         this.barmode = 'buffer';
+        this.player.playVideo();
         break;
 
       default:
