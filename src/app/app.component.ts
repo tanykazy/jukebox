@@ -218,15 +218,6 @@ export class AppComponent {
     }
   }
 
-  @HostListener('document:paste', ['$event'])
-  onPaste(event: ClipboardEvent): void {
-    const clipboardData = event.clipboardData;
-    if (clipboardData) {
-      const paste = clipboardData.getData('text');
-      this.requestBox.addRequest(paste);
-    }
-  }
-
   @HostListener('window:resize', ['$event'])
   onWindowResize(event: UIEvent): void {
     this.resizeGrid({
