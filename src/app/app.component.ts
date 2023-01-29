@@ -2,9 +2,11 @@ import { Component, ViewChild, ViewChildren, HostListener, QueryList } from '@an
 import { MatSliderChange } from "@angular/material/slider";
 import { ProgressBarMode } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogConfig, MatDialogState } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { YoutubePlayerComponent, PlayerState } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent } from "./components/request-box/request-box.component";
+import { RequestDialogComponent, DialogData } from "./components/request-dialog/request-dialog.component";
 import { StorageService, Storage } from './service/storage.service';
 
 @Component({
@@ -29,8 +31,10 @@ export class AppComponent {
   value: number = 0;
   maxWidth: number = 400;
   cutoffTime: number = 0;
+  private dialogState: MatDialogState = MatDialogState.CLOSED;
 
   constructor(
+    public dialog: MatDialog,
     private clipboard: Clipboard,
     private snackBar: MatSnackBar) { }
 
@@ -218,20 +222,50 @@ export class AppComponent {
     }
   }
 
-  // @HostListener('document:paste', ['$event'])
-  // onPaste(event: ClipboardEvent): void {
-  //   const clipboardData = event.clipboardData;
-  //   if (clipboardData) {
-  //     const paste = clipboardData.getData('text');
-  //     this.requestBox.addRequest(paste);
-  //   }
-  // }
+  /**
+   * onClickAddButton
+   */
+  public onClickAddButton(event: UIEvent): void {
+    // console.log(event);
+    this.openDialog();
+  }
+
+  @HostListener('document:paste', ['$event'])
+  onPaste(event: ClipboardEvent): void {
+    if (this.dialogState !== MatDialogState.OPEN) {
+      const clipboardData = event.clipboardData;
+      if (clipboardData) {
+        const paste = clipboardData.getData('text');
+        this.requestBox.addRequest(paste);
+      }
+    }
+  }
 
   @HostListener('window:resize', ['$event'])
   onWindowResize(event: UIEvent): void {
     this.resizeGrid({
       width: window.innerWidth,
       height: window.innerHeight
+    });
+  }
+
+  private openDialog(): void {
+    const data: DialogData = {
+      url: ''
+    };
+    const config: MatDialogConfig = {
+      data: data,
+      minWidth: '90%',
+    };
+    const dialogRef = this.dialog.open(RequestDialogComponent, config);
+    dialogRef.afterOpened().subscribe(() => {
+      console.debug('Request dialog was opened');
+      this.dialogState = MatDialogState.OPEN;
+    });
+    dialogRef.afterClosed().subscribe((result: DialogData) => {
+      console.debug('Request dialog was closed');
+      this.dialogState = MatDialogState.CLOSED;
+      this.requestBox.addRequest(result.url);
     });
   }
 

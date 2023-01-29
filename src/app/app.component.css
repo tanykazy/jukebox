@@ -10,3 +10,9 @@
 .disabled {
   opacity: 0.5;
 }
+
+#add-button {
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+}

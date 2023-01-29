@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Request</h1>
+<mat-dialog-content>
+    <mat-form-field id="request-form">
+        <mat-label>YouTube Video ID</mat-label>
+        <input matInput placeholder="New URL..." [(ngModel)]="data.url">
+    </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-button (click)="onClickCancel($event)">Cancel</button>
+    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>

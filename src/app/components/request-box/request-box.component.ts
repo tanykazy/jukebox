@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input, IterableDiffers, DoCheck, IterableDiffer, HostListener } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Input, IterableDiffers, DoCheck, IterableDiffer } from '@angular/core';
 import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -112,14 +112,5 @@ export class RequestBoxComponent implements OnInit, DoCheck {
 
   public drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.requests, event.previousIndex, event.currentIndex);
-  }
-
-  @HostListener('document:paste', ['$event'])
-  onPaste(event: ClipboardEvent): void {
-    const clipboardData = event.clipboardData;
-    if (clipboardData) {
-      const paste = clipboardData.getData('text');
-      this.addRequest(paste);
-    }
   }
 }
