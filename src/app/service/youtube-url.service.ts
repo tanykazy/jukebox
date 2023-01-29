@@ -31,6 +31,7 @@ export class YoutubeUrlService {
    * getVideoEmbed
    */
   public static getVideoEmbed(url: string) {
+    url = encodeURIComponent(url);
     const result = fetch(`https://www.youtube.com/oembed?url=${url}&format=json`, {
       method: 'GET',
     }).then((response) => {
