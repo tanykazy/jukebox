@@ -55,6 +55,10 @@
         </button>
         <mat-slider min="0" max="100" step="1" [value]="settings.volume.value" (input)="onInputSlider($event)">
         </mat-slider>
+        <mat-form-field>
+            <mat-label>Cut-Off Time</mat-label>
+            <input matInput type="number" [(ngModel)]="cutoffTime">
+        </mat-form-field>
     </mat-card-actions>
     <mat-card-footer>
         <mat-progress-bar [mode]="barmode" [value]="value" [bufferValue]="bufferValue"></mat-progress-bar>
@@ -68,6 +72,7 @@
         <app-youtube-player [videoId]="request" [width]="screenSize.width" [height]="screenSize.height">
         </app-youtube-player>
         <div class="float" id="request">
+            <img [src]="'https://img.youtube.com/vi/' + request + '/default.jpg'">
             <!-- <button mat-fab>
                 <mat-icon>drag_handle</mat-icon>
             </button> -->

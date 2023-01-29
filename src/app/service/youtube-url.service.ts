@@ -10,7 +10,8 @@ export class YoutubeUrlService {
   /**
    * getVideoId
    */
-  static getVideoId(url: string): string | null {
+  public static getVideoId(url: string): string | null {
+    // YoutubeUrlService.getVideoEmbed(url);
     try {
       const addr: URL = new URL(url);
       const hostname: string = addr.hostname;
@@ -24,5 +25,40 @@ export class YoutubeUrlService {
       console.warn(error);
       return null;
     }
+  }
+
+  /**
+   * getVideoEmbed
+   */
+  public static getVideoEmbed(url: string) {
+    const result = fetch(`https://www.youtube.com/oembed?url=${url}&format=json`, {
+      method: 'GET',
+    }).then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.blob();
+    }).then((response) => {
+      console.log(response.text().then(text => {
+        console.log(JSON.parse(text));
+      }));
+    });
+    console.log(result);
+  }
+
+  /**
+   * getVideoThumbnail
+   */
+  public static async getVideoThumbnail(videoid: string) {
+    const res: HTMLImageElement | void = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const img = new Image();
+      img.onload = (event) => resolve(img);
+      img.onerror = (event) => reject(event);
+      img.src = `https://img.youtube.com/vi/${videoid}/default.jpg`;
+    }).catch((e) => {
+      console.log('onload error', e);
+      return;
+    });
+    console.log(res);
   }
 }

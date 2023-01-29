@@ -163,6 +163,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
 
       case PlayerState.CUED:
         // event.target.playVideo();
+        // console.log(event.target.getVideoEmbedCode());
         break;
 
       default:
