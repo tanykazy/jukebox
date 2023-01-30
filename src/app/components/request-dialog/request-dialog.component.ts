@@ -14,6 +14,7 @@ export class RequestDialogComponent {
   ) { }
 
   public onClickCancel(event: UIEvent): void {
+    console.debug('Click cancel button');
     this.dialogRef.close();
   }
 }

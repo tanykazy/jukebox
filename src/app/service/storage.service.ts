@@ -12,7 +12,7 @@ export class StorageService {
 
   constructor() { }
 
-  static getItem(keyName: string): any | null {
+  public static getItem(keyName: string): any | null {
     if (storageAvailable('localStorage')) {
       const value: string | null = window.localStorage.getItem(keyName);
       if (value === null) {
@@ -29,7 +29,7 @@ export class StorageService {
     }
   }
 
-  static setItem(keyName: string, keyValue: any): void {
+  public static setItem(keyName: string, keyValue: any): void {
     if (storageAvailable('localStorage')) {
       let json: string = '';
       try {
