@@ -201,7 +201,7 @@ export class AppComponent {
   }
 
   onClickRepeat(event: UIEvent): void {
-    this.settings.repeat = ((this.settings.repeat + 1) % 3) as Repeat;
+    this.settings.repeat = (this.settings.repeat + 1) % 3;
     this.saveSettings(this.settings);
   }
 
@@ -334,12 +334,18 @@ const Control = {
 } as const;
 export type Control = typeof Control[keyof typeof Control];
 
-const Repeat = {
-  Off: 0,
-  One: 1,
-  On: 2,
-} as const;
-type Repeat = typeof Repeat[keyof typeof Repeat];
+// const Repeat = {
+//   Off: 0,
+//   One: 1,
+//   On: 2,
+// } as const;
+// type Repeat = typeof Repeat[keyof typeof Repeat];
+
+enum Repeat {
+  Off = 0,
+  One = 1,
+  On = 2,
+}
 
 interface Settings {
   volume: Volume;
