@@ -21,7 +21,15 @@ export class AppComponent {
 
   appName = "jukebox";
   requests: Array<string> = new Array();
-  settings: Settings = new Settings();
+  // settings: Settings = new Settings();
+  settings: Settings = {
+    repeat: Repeat.Off,
+    shuffle: false,
+    volume: {
+      value: 50,
+      muted: false
+    }
+  };
   playlist: Array<number> = new Array();
   playback: Playback = new Playback();
   screenSize!: ScreenSize;
@@ -193,7 +201,7 @@ export class AppComponent {
   }
 
   onClickRepeat(event: UIEvent): void {
-    this.settings.repeat = (this.settings.repeat + 1) % 3;
+    this.settings.repeat = ((this.settings.repeat + 1) % 3) as Repeat;
     this.saveSettings(this.settings);
   }
 
@@ -331,21 +339,34 @@ const Repeat = {
   One: 1,
   On: 2,
 } as const;
+type Repeat = typeof Repeat[keyof typeof Repeat];
 
-class Settings {
-  public volume: Volume;
-  public repeat: number = 0;
-  public shuffle: boolean = false;
-
-  constructor() {
-    this.volume = new Volume();
-  }
+interface Settings {
+  volume: Volume;
+  repeat: Repeat;
+  shuffle: boolean;
 }
 
-class Volume {
-  public value: number = 50;
-  public muted: boolean = false;
+// class Settings {
+//   public volume: Volume;
+//   public repeat: number = 0;
+//   // public shuffle: boolean = false;
+//   public shuffle: Shuffle = Shuffle.Off;
+
+//   constructor() {
+//     this.volume = new Volume();
+//   }
+// }
+
+interface Volume {
+  value: number;
+  muted: boolean;
 }
+
+// class Volume {
+//   public value: number = 50;
+//   public muted: boolean = false;
+// }
 
 class Playback {
   videoid: string | undefined;
