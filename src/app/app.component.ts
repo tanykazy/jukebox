@@ -332,7 +332,7 @@ const Repeat = {
   On: 2,
 } as const;
 
-export class Settings {
+class Settings {
   public volume: Volume;
   public repeat: number = 0;
   public shuffle: boolean = false;
