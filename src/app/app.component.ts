@@ -21,7 +21,15 @@ export class AppComponent {
 
   appName = "jukebox";
   requests: Array<string> = new Array();
-  settings: Settings = new Settings();
+  // settings: Settings = new Settings();
+  settings: Settings = {
+    repeat: Repeat.Off,
+    shuffle: false,
+    volume: {
+      value: 50,
+      muted: false
+    }
+  };
   playlist: Array<number> = new Array();
   playback: Playback = new Playback();
   screenSize!: ScreenSize;
@@ -331,26 +339,45 @@ const Control = {
 } as const;
 export type Control = typeof Control[keyof typeof Control];
 
-const Repeat = {
-  Off: 0,
-  One: 1,
-  On: 2,
-} as const;
+// const Repeat = {
+//   Off: 0,
+//   One: 1,
+//   On: 2,
+// } as const;
+// type Repeat = typeof Repeat[keyof typeof Repeat];
 
-export class Settings {
-  public volume: Volume;
-  public repeat: number = 0;
-  public shuffle: boolean = false;
-
-  constructor() {
-    this.volume = new Volume();
-  }
+enum Repeat {
+  Off = 0,
+  One = 1,
+  On = 2,
 }
 
-class Volume {
-  public value: number = 50;
-  public muted: boolean = false;
+interface Settings {
+  volume: Volume;
+  repeat: Repeat;
+  shuffle: boolean;
 }
+
+// class Settings {
+//   public volume: Volume;
+//   public repeat: number = 0;
+//   // public shuffle: boolean = false;
+//   public shuffle: Shuffle = Shuffle.Off;
+
+//   constructor() {
+//     this.volume = new Volume();
+//   }
+// }
+
+interface Volume {
+  value: number;
+  muted: boolean;
+}
+
+// class Volume {
+//   public value: number = 50;
+//   public muted: boolean = false;
+// }
 
 class Playback {
   videoid: string | undefined;
