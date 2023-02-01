@@ -3,7 +3,7 @@ import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from 
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
-import { YoutubeUrlService } from "../../service/youtube-url.service";
+import { YoutubeUrlService, OEmbedResponseTypeVideo } from "../../service/youtube-url.service";
 import { StorageService, Storage } from "../../service/storage.service";
 
 @Component({
@@ -43,6 +43,14 @@ export class RequestBoxComponent implements OnInit, DoCheck {
       }
       this.requestsChange.emit(this.requests);
     }
+    const params = new URLSearchParams(window.location.search);
+    const requests = params.get('requests');
+    if (requests) {
+      requests.split(',').forEach((value) => {
+        const url = YoutubeUrlService.getVideoUrl(value);
+        this.addRequest(url.href);
+      })
+    }
   }
 
   ngDoCheck(): void {
@@ -64,7 +72,17 @@ export class RequestBoxComponent implements OnInit, DoCheck {
           const result = await YoutubeUrlService.getVideoEmbed(value);
           console.warn(result);
 
+          // const div = window.document.createElement('div');
+          // const iframe = window.document.createElement('iframe');
+          // div.appendChild(iframe);
+          // console.log(div);
+          // iframe.outerHTML = result.html;
+          // console.log(div.firstChild);
+          // console.log((div.firstChild as HTMLIFrameElement).src);
+          //<iframe width="200" height="113" src="https://www.youtube.com/embed/ZZ_hity8FUw?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="カネヨリマサル『関係のない人』MV"></iframe>
+
           if (!this.requests.includes(videoid)) {
+            // this.requests.push(videoid);
             this.requests.push(videoid);
             this.requestsChange.emit(this.requests);
           }
@@ -105,6 +123,16 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     moveItemInArray(this.requests, event.previousIndex, event.currentIndex);
   }
 
+  public getTitle(data: string): string {
+    console.log(data);
+    return data;
+  }
+
+  public getAuthor(data: string): string {
+    console.log(data);
+    return data;
+  }
+
   private updateStorage(values: Array<string>): void {
     StorageService.setItem(Storage.Playlist, [...values]);
   }
@@ -124,30 +152,41 @@ export class RequestBoxComponent implements OnInit, DoCheck {
 
   // displayedColumns: string[] = ['name'];
   // dataSource = ELEMENT_DATA;
-  displayedColumns: string[] = [''];
+  public displayedColumns: string[] = ['Title', 'Author'];
+  public __request: Request[] = [];
+
 }
 
-export interface VideoInfo {
+// class Request {
+//   constructor(videoid: string) {
+//     this.videoid = videoid;
+//   }
+
+//   public set videoid(videoid: string) {
+//     this._videoid = videoid;
+//   }
+//   public get videoid(): string {
+//     return this._videoid;
+//   }
+//   private _videoid: string = '';
+
+//   private oEmbed: OEmbedResponseTypeVideo | undefined;
+// }
+
+interface Request extends OEmbedResponseTypeVideo {
   videoid: string;
-  oEmbed: OEmbedResponseTypeVideo;
 }
 
-interface OEmbedResponse {
-  type: '';
-  version: '1.0';
-  title?: string;
-  author_name?: string;
-  author_url?: string;
-  provider_name?: string;
-  provider_url?: string;
-  cache_age?: number;
-  thumbnail_url?: string;
-  thumbnail_width?: number;
-  thumbnail_height?: number;
-}
+class Requests {
+  constructor() { }
 
-interface OEmbedResponseTypeVideo extends OEmbedResponse {
-  html: string;
-  width: number;
-  height: number;
+  private _requests: Request[] = [];
+
+  public addRequest(request: Request): void {
+    this._requests.push(request);
+  }
+
+  public removeRequest(request: Request): void {
+
+  }
 }

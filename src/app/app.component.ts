@@ -21,7 +21,6 @@ export class AppComponent {
 
   appName = "jukebox";
   requests: Array<string> = new Array();
-  // settings: Settings = new Settings();
   settings: Settings = {
     repeat: Repeat.Off,
     shuffle: false,
@@ -52,11 +51,6 @@ export class AppComponent {
       height: window.innerHeight
     };
     this.resizeGrid(this.screenSize);
-    const params = new URLSearchParams(window.location.search);
-    const requests = params.get('requests');
-    if (requests) {
-      this.requests = requests.split(',');
-    }
     const settings: Settings = StorageService.getItem(Storage.Settings);
     if (settings) {
       this.settings = settings;
@@ -339,13 +333,6 @@ const Control = {
 } as const;
 export type Control = typeof Control[keyof typeof Control];
 
-// const Repeat = {
-//   Off: 0,
-//   One: 1,
-//   On: 2,
-// } as const;
-// type Repeat = typeof Repeat[keyof typeof Repeat];
-
 enum Repeat {
   Off = 0,
   One = 1,
@@ -358,26 +345,10 @@ interface Settings {
   shuffle: boolean;
 }
 
-// class Settings {
-//   public volume: Volume;
-//   public repeat: number = 0;
-//   // public shuffle: boolean = false;
-//   public shuffle: Shuffle = Shuffle.Off;
-
-//   constructor() {
-//     this.volume = new Volume();
-//   }
-// }
-
 interface Volume {
   value: number;
   muted: boolean;
 }
-
-// class Volume {
-//   public value: number = 50;
-//   public muted: boolean = false;
-// }
 
 class Playback {
   videoid: string | undefined;
@@ -400,7 +371,6 @@ function shuffle(array: Array<any>): Array<any> {
   while (m) {
     // Pick a remaining element…
     const i = Math.floor(Math.random() * m--);
-
     // And swap it with the current element.
     [array[m], array[i]] = [array[i], array[m]];
   }
