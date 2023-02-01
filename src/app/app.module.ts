@@ -14,6 +14,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatRippleModule } from '@angular/material/core';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from './app.component';
@@ -47,6 +49,8 @@ import { RequestDialogComponent } from './components/request-dialog/request-dial
     MatProgressBarModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatTableModule,
+    MatRippleModule,
     DragDropModule,
   ],
   providers: [],

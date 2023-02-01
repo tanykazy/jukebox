@@ -54,26 +54,16 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     }
   }
 
-  private updateStorage(values: Array<string>): void {
-    StorageService.setItem(Storage.Playlist, [...values]);
-  }
-
-  private getChipByValue(value: string): MatChip | null {
-    let chip: MatChip | null = null;
-    this.chipList.chips.forEach((item: MatChip) => {
-      if (item.value === value) {
-        chip = item;
-      }
-    });
-    return chip;
-  }
-
-  public addRequest(value: string): void {
+  public async addRequest(value: string): Promise<boolean> {
     if (value) {
       const requests = value.split(/\r\n|\r|\n|\s/);
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
+
+          const result = await YoutubeUrlService.getVideoEmbed(value);
+          console.warn(result);
+
           if (!this.requests.includes(videoid)) {
             this.requests.push(videoid);
             this.requestsChange.emit(this.requests);
@@ -82,6 +72,7 @@ export class RequestBoxComponent implements OnInit, DoCheck {
       }
       this.updateStorage(this.requests);
     }
+    return Promise.resolve(true);
   }
 
   public addRequestFromInput(event: MatChipInputEvent): void {
@@ -113,4 +104,50 @@ export class RequestBoxComponent implements OnInit, DoCheck {
   public drop(event: CdkDragDrop<string[]>): void {
     moveItemInArray(this.requests, event.previousIndex, event.currentIndex);
   }
+
+  private updateStorage(values: Array<string>): void {
+    StorageService.setItem(Storage.Playlist, [...values]);
+  }
+
+  private getChipByValue(value: string): MatChip | null {
+    let chip: MatChip | null = null;
+    this.chipList.chips.forEach((item: MatChip) => {
+      if (item.value === value) {
+        chip = item;
+      }
+    });
+    return chip;
+  }
+
+
+
+
+  // displayedColumns: string[] = ['name'];
+  // dataSource = ELEMENT_DATA;
+  displayedColumns: string[] = [''];
+}
+
+export interface VideoInfo {
+  videoid: string;
+  oEmbed: OEmbedResponseTypeVideo;
+}
+
+interface OEmbedResponse {
+  type: '';
+  version: '1.0';
+  title?: string;
+  author_name?: string;
+  author_url?: string;
+  provider_name?: string;
+  provider_url?: string;
+  cache_age?: number;
+  thumbnail_url?: string;
+  thumbnail_width?: number;
+  thumbnail_height?: number;
+}
+
+interface OEmbedResponseTypeVideo extends OEmbedResponse {
+  html: string;
+  width: number;
+  height: number;
 }

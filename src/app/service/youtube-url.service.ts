@@ -11,7 +11,6 @@ export class YoutubeUrlService {
    * getVideoId
    */
   public static getVideoId(url: string): string | null {
-    // YoutubeUrlService.getVideoEmbed(url);
     try {
       const addr: URL = new URL(url);
       const hostname: string = addr.hostname;
@@ -32,19 +31,14 @@ export class YoutubeUrlService {
    */
   public static getVideoEmbed(url: string) {
     url = encodeURIComponent(url);
-    const result = fetch(`https://www.youtube.com/oembed?url=${url}&format=json`, {
+    return fetch(`https://www.youtube.com/oembed?url=${url}&format=json`, {
       method: 'GET',
     }).then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      return response.blob();
-    }).then((response) => {
-      console.log(response.text().then(text => {
-        console.log(JSON.parse(text));
-      }));
-    });
-    console.log(result);
+      return response.json();
+    })
   }
 
   /**

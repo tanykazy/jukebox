@@ -262,15 +262,20 @@ export class AppComponent {
       console.debug('Request dialog was opened');
       this.dialogState = MatDialogState.OPEN;
     });
-    dialogRef.afterClosed().subscribe((result: DialogData) => {
+    dialogRef.afterClosed().subscribe((result: DialogData | undefined) => {
       console.debug('Request dialog was closed');
       this.dialogState = MatDialogState.CLOSED;
-      this.requestBox.addRequest(result.url);
+      if (result) {
+        this.requestBox.addRequest(result.url);
+      }
     });
   }
 
-  private openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action);
+  private openSnackBar(message: string, action: string): void {
+    this.snackBar.open(message, action, {
+      announcementMessage: message,
+      duration: 5000
+    });
   }
 
   private resizeGrid(screenSize: ScreenSize): void {
