@@ -11,12 +11,12 @@ import { StorageService, Storage } from "../../service/storage.service";
   templateUrl: './request-box.component.html',
   styleUrls: ['./request-box.component.css']
 })
-export class RequestBoxComponent implements OnInit, DoCheck {
+export class RequestBoxComponent implements OnInit {
   @ViewChild(MatChipList) chipList!: MatChipList;
 
-  // @Input() requests: Requests = new Requests();
-  @Input() requests: Array<string> = new Array();
-  @Output() requestsChange: EventEmitter<Array<string>> = new EventEmitter();
+  public requests: Requests = new Requests();
+  // @Input() requests: Array<string> = new Array();
+  // @Output() requestsChange: EventEmitter<Array<string>> = new EventEmitter();
 
   @Output() select: EventEmitter<string> = new EventEmitter();
   @Output() deselect: EventEmitter<string> = new EventEmitter();
@@ -28,21 +28,23 @@ export class RequestBoxComponent implements OnInit, DoCheck {
 
   public value: string = '';
 
-  private iterableDiffer: IterableDiffer<string>;
+  public displayedColumns: string[] = ['Title', 'Author'];
 
-  constructor(private iterableDiffers: IterableDiffers) {
-    this.iterableDiffer = this.iterableDiffers.find(this.requests).create();
+  constructor() {
   }
 
   ngOnInit(): void {
     const playlist = StorageService.getItem(Storage.Playlist);
     if (playlist !== null) {
       try {
-        this.requests = Array.from(playlist);
+        playlist.forEach((value: string) => {
+          this.requests.add({
+            videoid: value
+          });
+        })
       } catch (error) {
         this.updateStorage(this.requests);
       }
-      this.requestsChange.emit(this.requests);
     }
     const params = new URLSearchParams(window.location.search);
     const requests = params.get('requests');
@@ -54,24 +56,16 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     }
   }
 
-  ngDoCheck(): void {
-    if (this.iterableDiffer) {
-      const changes = this.iterableDiffer.diff(this.requests);
-      if (changes) {
-        this.updateStorage(this.requests);
-      }
-    }
-  }
-
   public async addRequest(value: string): Promise<boolean> {
     if (value) {
       const requests = value.split(/\r\n|\r|\n|\s/);
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
+          const request: Request = { videoid: videoid };
 
-          const result = await YoutubeUrlService.getVideoEmbed(value);
-          console.warn(result);
+          // const result = await YoutubeUrlService.getVideoEmbed(value);
+          // console.warn(result);
 
           // const div = window.document.createElement('div');
           // const iframe = window.document.createElement('iframe');
@@ -82,10 +76,8 @@ export class RequestBoxComponent implements OnInit, DoCheck {
           // console.log((div.firstChild as HTMLIFrameElement).src);
           //<iframe width="200" height="113" src="https://www.youtube.com/embed/ZZ_hity8FUw?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="カネヨリマサル『関係のない人』MV"></iframe>
 
-          if (!this.requests.includes(videoid)) {
-            // this.requests.push(videoid);
-            this.requests.push(videoid);
-            this.requestsChange.emit(this.requests);
+          if (!this.requests.includes(request)) {
+            this.requests.add(request);
           }
         }
       }
@@ -102,26 +94,31 @@ export class RequestBoxComponent implements OnInit, DoCheck {
   }
 
   public removeRequest(request: string): void {
-    this.requests = this.requests.filter((element) => element !== request);
-    this.requestsChange.emit(this.requests);
+    this.requests.remove({ videoid: request });
     this.updateStorage(this.requests);
   }
 
+  public getIndex(request: string): number {
+    // const index = this.requests.indexOf(request);
+    return 0;
+  }
+
+  public getRequest(index: number): string {
+    // return this.requests[index];
+    return '';
+  }
+
+  public getLength(): number {
+    return this.requests.length;
+  }
+
+  public getAllRequests(): Array<string> {
+    // return this.requests;
+    return [];
+  }
+
   public shuffleRequest(): void {
-    this.requests = shuffle(this.requests);
-  }
-
-  public remove(request: string, chip: MatChip): void {
-    chip.deselect();
-    this.removeRequest(request);
-  }
-
-  public onSelectionChange(event: MatChipSelectionChange): void {
-    if (event.selected) {
-      this.select.emit(event.source.value);
-    } else {
-      this.deselect.emit(event.source.value);
-    }
+    // this.requests = shuffle(this.requests);
   }
 
   public drop(event: CdkDragDrop<string[]>): void {
@@ -138,64 +135,65 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     return data;
   }
 
-  private updateStorage(values: Array<string>): void {
-    StorageService.setItem(Storage.Playlist, [...values]);
+  // private updateStorage(values: Array<string>): void {
+  private updateStorage(requests: Requests): void {
+    StorageService.setItem(Storage.Playlist, requests);
   }
-
-  // displayedColumns: string[] = ['name'];
-  // dataSource = ELEMENT_DATA;
-  public displayedColumns: string[] = ['Title', 'Author'];
-  public __request: Request[] = [];
 }
 
-// class Request {
-//   constructor(videoid: string) {
-//     this.videoid = videoid;
-//   }
-
-//   public set videoid(videoid: string) {
-//     this._videoid = videoid;
-//   }
-//   public get videoid(): string {
-//     return this._videoid;
-//   }
-//   private _videoid: string = '';
-
-//   private oEmbed: OEmbedResponseTypeVideo | undefined;
-// }
-
-export interface Request extends OEmbedResponseTypeVideo {
+export interface Request {
   videoid: string;
 }
 
 export class Requests extends Array<Request> {
+  private index: number;
+
   constructor(...requests: Request[]) {
     super(...requests);
     super.push(...requests || []);
-    // this._requests = requests || [];
+    this.index = 0;
   }
 
-  // private _requests: Request[];
+  public toString(): string {
+    return this.join();
+  }
+
+  public toJSON() {
+    return Array.from(this);
+  }
 
   public add(request: Request): number {
-    // this._requests.push(request);
     return this.push(request);
   }
 
   public remove(request: Request): void {
     // this._requests = this._requests.filter((r: Request) => r !== request);
-     this.filter((r: Request) => r !== request);
+    this.filter((r: Request) => r !== request);
   }
-}
 
-function shuffle(array: Array<any>): Array<any> {
-  let m: number = array.length;
-  // While there remain elements to shuffle…
-  while (m) {
-    // Pick a remaining element…
-    const i: number = Math.floor(Math.random() * m--);
-    // And swap it with the current element.
-    [array[m], array[i]] = [array[i], array[m]];
+  public next(loop: boolean): Request {
+    if (loop && this.index === this.length) {
+      this.index = 0;
+    }
+    return this[this.index++];
   }
-  return array;
+
+  public previous(loop: boolean): Request {
+    if (loop && this.index === 0) {
+      this.index = this.length - 1;
+    }
+    return this[--this.index]
+  }
+
+  public has(): boolean {
+    return this[this.index] !== undefined;
+  }
+
+  public shuffle() {
+    let m: number = this.length;
+    while (m) {
+      const i: number = Math.floor(Math.random() * m--);
+      [this[m], this[i]] = [this[i], this[m]];
+    }
+  }
 }

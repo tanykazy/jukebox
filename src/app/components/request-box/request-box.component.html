@@ -1,14 +1,8 @@
 <mat-form-field class="request-box" appearance="fill">
     <mat-label>YouTube Video ID</mat-label>
-    <mat-chip-list #chipList aria-label="Video requests" selectable cdkDropList cdkDropListOrientation="horizontal"
-        [cdkDropListData]="requests" (cdkDropListDropped)="drop($event)">
-        <mat-chip #chip="matChip" *ngFor="let request of requests" [value]="request" [selectable]="selectable"
-            [removable]="removable" (removed)="remove(request, chip)" (selectionChange)="onSelectionChange($event)"
-            cdkDrag>
-            {{request}}
-            <mat-icon matChipRemove *ngIf="removable">
-                cancel
-            </mat-icon>
+    <mat-chip-list #chipList aria-label="Video requests">
+        <mat-chip #chip="matChip" *ngFor="let request of requests" [value]="request" cdkDrag>
+            {{request.videoid}}
         </mat-chip>
         <input placeholder="New URL..." [(ngModel)]="value" [matChipInputFor]="chipList"
             [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"

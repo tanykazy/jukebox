@@ -20,7 +20,6 @@ export class AppComponent {
   @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
 
   appName = "jukebox";
-  requests: Array<string> = new Array();
   settings: Settings = {
     repeat: Repeat.Off,
     shuffle: false,
@@ -139,47 +138,61 @@ export class AppComponent {
   }
 
   onClickListPlay(event: string): void {
-    const index = this.requests.indexOf(event);
-    if (index !== -1) {
-      this.playback = new Playback();
-      this.playback.videoid = event;
-      this.playback.index = index;
-    }
+    // const index = this.requestBox.getIndex(event);
+    // const index = this.requests.indexOf(event);
+    // if (index !== -1) {
+    //   this.playback = new Playback();
+    //   this.playback.videoid = event;
+    //   this.playback.index = index;
+    // }
   }
 
   onClickListDelete(event: string): void {
     // this.requests = this.requests.filter((request) => request !== event);
-    this.requestBox.removeRequest(event);
+    // this.requestBox.removeRequest(event);
   }
 
   onClickSkipPrevious(event: UIEvent): void {
     // this.controlEvent.emit(Control.SkipPrevious);
-    if (this.requests.length > 0) {
-      let index = this.playback.index - 1;
-      if (index < 0) {
-        index = this.requests.length - 1;
-      }
-      const request = this.requests[index];
-      this.playback = new Playback();
-      this.playback.videoid = request;
-      this.playback.index = index;
-    }
+    // if (this.requestBox.requests.has()) {
+    // let index = this.playback.index - 1;
+    // if (index < 0) {
+    //   index = this.requestBox.getLength() - 1;
+    // }
+    const request = this.requestBox.requests.previous(true);
+    this.playback = new Playback();
+    this.playback.videoid = request.videoid;
+    // this.playback.index = index;
+    // }
   }
 
   onClickPlayPause(event: UIEvent): void {
     // this.controlEvent.emit(Control.Play);
-    if (this.playback.index < 0) {
-      const index = 0;
-      this.playback = new Playback();
-      this.playback.videoid = this.requests[index];
-      this.playback.index = index;
-    } else {
+    if (this.playback) {
       if (this.playback.isPlaying) {
         this.player.pauseVideo();
       } else {
         this.player.playVideo();
       }
+    } else {
+      if (this.requestBox.requests.has()) {
+        const request = this.requestBox.requests.next(false);
+        this.playback = new Playback();
+        this.playback.videoid = request.videoid;
+      }
     }
+    // if (this.playback.index < 0) {
+    //   const index = 0;
+    //   this.playback = new Playback();
+    //   this.playback.videoid = this.requestBox.getRequest(index);
+    //   this.playback.index = index;
+    // } else {
+    //   if (this.playback.isPlaying) {
+    //     this.player.pauseVideo();
+    //   } else {
+    //     this.player.playVideo();
+    //   }
+    // }
   }
 
   onClickSkipNext(event: UIEvent): void {
@@ -191,7 +204,7 @@ export class AppComponent {
     this.settings.shuffle = !this.settings.shuffle;
     if (this.settings.shuffle) {
       // shuffle(this.requests);
-      this.requestBox.shuffleRequest();
+      this.requestBox.requests.shuffle();
     }
     this.saveSettings(this.settings);
   }
@@ -215,8 +228,8 @@ export class AppComponent {
 
   onClickShare(event: UIEvent): void {
     const url = new URL(window.location.href);
-    if (this.requests.length > 0) {
-      url.search = `requests=${this.requests.join(',')}`;
+    if (this.requestBox.requests.length > 0) {
+      url.search = `requests=${this.requestBox.requests}`;
     }
     const result = this.clipboard.copy(url.href);
     if (result) {
@@ -230,7 +243,6 @@ export class AppComponent {
    * onClickAddButton
    */
   public onClickAddButton(event: UIEvent): void {
-    // console.log(event);
     this.openDialog();
   }
 
@@ -299,26 +311,31 @@ export class AppComponent {
   }
 
   private skipNext(loop: boolean): void {
-    if (this.requests.length === 0) {
+    if (this.requestBox.requests.length === 0) {
       return;
     }
-    let index: number;
+    // let index: number;
     // if (this.settings.shuffle) {
     // index = Math.floor(Math.random() * this.requests.length);
     // } else {
-    index = this.playback.index + 1;
-    if (!(index < this.requests.length)) {
-      if (!loop) {
-        return;
-      } else {
-        index = index % this.requests.length;
-      }
-    }
+    // index = this.playback.index + 1;
+    // if (!(index < this.requestBox.requests.length)) {
+    // let request;
+    // if (this.requestBox.requests.has()) {
+    //   if (!loop) {
+    //     return;
+    //   } else {
+    //     // index = index % this.requestBox.requests.length;
+    //     request = this.requestBox.requests.next(loop);
+    //   }
     // }
-    const request = this.requests[index];
-    this.playback = new Playback();
-    this.playback.videoid = request;
-    this.playback.index = index;
+    // }
+    const request = this.requestBox.requests.next(loop);
+    if (request) {
+      this.playback = new Playback();
+      this.playback.videoid = request.videoid;
+    }
+    // this.playback.index = index;
   }
 
   private saveSettings(settings: Settings): void {
