@@ -182,11 +182,11 @@ class Requests {
 
   private _requests: Request[] = [];
 
-  public addRequest(request: Request): void {
+  public add(request: Request): void {
     this._requests.push(request);
   }
 
-  public removeRequest(request: Request): void {
-
+  public remove(request: Request): void {
+    this._requests = this._requests.filter((r: Request) => r !== request);
   }
 }
