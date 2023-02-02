@@ -14,6 +14,7 @@ import { StorageService, Storage } from "../../service/storage.service";
 export class RequestBoxComponent implements OnInit, DoCheck {
   @ViewChild(MatChipList) chipList!: MatChipList;
 
+  // @Input() requests: Requests = new Requests();
   @Input() requests: Array<string> = new Array();
   @Output() requestsChange: EventEmitter<Array<string>> = new EventEmitter();
 
@@ -100,15 +101,19 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     }
   }
 
-  public remove(request: string, chip: MatChip): void {
-    chip.deselect();
+  public removeRequest(request: string): void {
     this.requests = this.requests.filter((element) => element !== request);
     this.requestsChange.emit(this.requests);
     this.updateStorage(this.requests);
   }
 
-  public onChipClick(chip: MatChip): void {
-    // chip.toggleSelected();
+  public shuffleRequest(): void {
+    this.requests = shuffle(this.requests);
+  }
+
+  public remove(request: string, chip: MatChip): void {
+    chip.deselect();
+    this.removeRequest(request);
   }
 
   public onSelectionChange(event: MatChipSelectionChange): void {
@@ -173,20 +178,38 @@ export class RequestBoxComponent implements OnInit, DoCheck {
 //   private oEmbed: OEmbedResponseTypeVideo | undefined;
 // }
 
-interface Request extends OEmbedResponseTypeVideo {
+export interface Request extends OEmbedResponseTypeVideo {
   videoid: string;
 }
 
-class Requests {
-  constructor() { }
+export class Requests extends Array<Request> {
+  constructor(...requests: Request[]) {
+    super(...requests);
+    super.push(...requests || []);
+    // this._requests = requests || [];
+  }
 
-  private _requests: Request[] = [];
+  // private _requests: Request[];
 
-  public add(request: Request): void {
-    this._requests.push(request);
+  public add(request: Request): number {
+    // this._requests.push(request);
+    return this.push(request);
   }
 
   public remove(request: Request): void {
-    this._requests = this._requests.filter((r: Request) => r !== request);
+    // this._requests = this._requests.filter((r: Request) => r !== request);
+     this.filter((r: Request) => r !== request);
   }
+}
+
+function shuffle(array: Array<any>): Array<any> {
+  let m: number = array.length;
+  // While there remain elements to shuffle…
+  while (m) {
+    // Pick a remaining element…
+    const i: number = Math.floor(Math.random() * m--);
+    // And swap it with the current element.
+    [array[m], array[i]] = [array[i], array[m]];
+  }
+  return array;
 }

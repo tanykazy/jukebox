@@ -4,7 +4,7 @@
         [cdkDropListData]="requests" (cdkDropListDropped)="drop($event)">
         <mat-chip #chip="matChip" *ngFor="let request of requests" [value]="request" [selectable]="selectable"
             [removable]="removable" (removed)="remove(request, chip)" (selectionChange)="onSelectionChange($event)"
-            (click)="onChipClick(chip)" cdkDrag>
+            cdkDrag>
             {{request}}
             <mat-icon matChipRemove *ngIf="removable">
                 cancel
@@ -21,15 +21,15 @@
 
 <!-- <mat-table [dataSource]="requests"> -->
 <!-- <table mat-table [dataSource]="requests"> -->
-    <!-- <ng-container matColumnDef="symbol">
+<!-- <ng-container matColumnDef="symbol">
         <mat-header-cell *matHeaderCellDef> Symbol </mat-header-cell>
         <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>
     </ng-container> -->
 
-    <!-- <mat-text-column name="title" headerText="Title" [dataAccessor]="getTitle"></mat-text-column> -->
-    <!-- <mat-text-column name="author" headerText="Author" [dataAccessor]="getAuthor"></mat-text-column> -->
+<!-- <mat-text-column name="title" headerText="Title" [dataAccessor]="getTitle"></mat-text-column> -->
+<!-- <mat-text-column name="author" headerText="Author" [dataAccessor]="getAuthor"></mat-text-column> -->
 
-    <!-- <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row> -->
-    <!-- <mat-row matRipple *matRowDef="let row; columns: displayedColumns;"></mat-row> -->
+<!-- <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row> -->
+<!-- <mat-row matRipple *matRowDef="let row; columns: displayedColumns;"></mat-row> -->
 <!-- </table> -->
 <!-- </mat-table> -->

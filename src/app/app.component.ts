@@ -148,7 +148,8 @@ export class AppComponent {
   }
 
   onClickListDelete(event: string): void {
-    this.requests = this.requests.filter((request) => request !== event);
+    // this.requests = this.requests.filter((request) => request !== event);
+    this.requestBox.removeRequest(event);
   }
 
   onClickSkipPrevious(event: UIEvent): void {
@@ -189,7 +190,8 @@ export class AppComponent {
   onClickShuffle(event: UIEvent): void {
     this.settings.shuffle = !this.settings.shuffle;
     if (this.settings.shuffle) {
-      shuffle(this.requests);
+      // shuffle(this.requests);
+      this.requestBox.shuffleRequest();
     }
     this.saveSettings(this.settings);
   }
@@ -281,8 +283,8 @@ export class AppComponent {
   }
 
   private resizeGrid(screenSize: ScreenSize): void {
-    let cols = Math.floor(screenSize.width / this.maxWidth);
-    let size = this.maxWidth;
+    let cols: number = Math.floor(screenSize.width / this.maxWidth);
+    let size: number = this.maxWidth;
     if (cols > 0) {
       size = Math.floor(screenSize.width / cols);
     } else {
@@ -300,7 +302,7 @@ export class AppComponent {
     if (this.requests.length === 0) {
       return;
     }
-    let index;
+    let index: number;
     // if (this.settings.shuffle) {
     // index = Math.floor(Math.random() * this.requests.length);
     // } else {
@@ -365,14 +367,14 @@ interface ScreenSize {
   height: number;
 }
 
-function shuffle(array: Array<any>): Array<any> {
-  let m = array.length;
-  // While there remain elements to shuffle…
-  while (m) {
-    // Pick a remaining element…
-    const i = Math.floor(Math.random() * m--);
-    // And swap it with the current element.
-    [array[m], array[i]] = [array[i], array[m]];
-  }
-  return array;
-}
+// function shuffle(array: Array<any>): Array<any> {
+//   let m = array.length;
+//   // While there remain elements to shuffle…
+//   while (m) shuffle{
+//     // Pick a remaining element…
+//     const i = Math.floor(Math.random() * m--);
+//     // And swap it with the current element.
+//     [array[m], array[i]] = [array[i], array[m]];
+//   }
+//   return array;
+// }
