@@ -142,24 +142,10 @@ export class RequestBoxComponent implements OnInit, DoCheck {
     StorageService.setItem(Storage.Playlist, [...values]);
   }
 
-  private getChipByValue(value: string): MatChip | null {
-    let chip: MatChip | null = null;
-    this.chipList.chips.forEach((item: MatChip) => {
-      if (item.value === value) {
-        chip = item;
-      }
-    });
-    return chip;
-  }
-
-
-
-
   // displayedColumns: string[] = ['name'];
   // dataSource = ELEMENT_DATA;
   public displayedColumns: string[] = ['Title', 'Author'];
   public __request: Request[] = [];
-
 }
 
 // class Request {
