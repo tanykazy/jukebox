@@ -5,6 +5,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { YoutubeUrlService, OEmbedResponseTypeVideo } from "../../service/youtube-url.service";
 import { StorageService, Storage } from "../../service/storage.service";
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-request-box',
@@ -13,8 +14,10 @@ import { StorageService, Storage } from "../../service/storage.service";
 })
 export class RequestBoxComponent implements OnInit {
   @ViewChild(MatChipList) chipList!: MatChipList;
+  @ViewChild(MatTable) table!: MatTable<Requests>;
 
   public requests: Requests = new Requests();
+  public dataSource: MatTableDataSource<Request> = new MatTableDataSource(this.requests);
   // @Input() requests: Array<string> = new Array();
   // @Output() requestsChange: EventEmitter<Array<string>> = new EventEmitter();
 
@@ -27,8 +30,9 @@ export class RequestBoxComponent implements OnInit {
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
   public value: string = '';
+  public headerText!: string;
 
-  public displayedColumns: string[] = ['Title', 'Author'];
+  public displayedColumns: string[] = ['title', 'author'];
 
   constructor() {
   }
@@ -38,9 +42,7 @@ export class RequestBoxComponent implements OnInit {
     if (playlist !== null) {
       try {
         playlist.forEach((value: string) => {
-          this.requests.add({
-            videoid: value
-          });
+          this.addRequest(value);
         })
       } catch (error) {
         this.updateStorage(this.requests);
@@ -62,22 +64,13 @@ export class RequestBoxComponent implements OnInit {
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
-          const request: Request = { videoid: videoid };
-
-          // const result = await YoutubeUrlService.getVideoEmbed(value);
-          // console.warn(result);
-
-          // const div = window.document.createElement('div');
-          // const iframe = window.document.createElement('iframe');
-          // div.appendChild(iframe);
-          // console.log(div);
-          // iframe.outerHTML = result.html;
-          // console.log(div.firstChild);
-          // console.log((div.firstChild as HTMLIFrameElement).src);
-          //<iframe width="200" height="113" src="https://www.youtube.com/embed/ZZ_hity8FUw?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen title="カネヨリマサル『関係のない人』MV"></iframe>
-
+          const request: Request = {
+            videoid: videoid,
+            oEmbed: await YoutubeUrlService.getVideoEmbed(value)
+          };
           if (!this.requests.includes(request)) {
             this.requests.add(request);
+            this.table.renderRows();
           }
         }
       }
@@ -125,14 +118,20 @@ export class RequestBoxComponent implements OnInit {
     moveItemInArray(this.requests, event.previousIndex, event.currentIndex);
   }
 
-  public getTitle(data: string): string {
-    console.log(data);
-    return data;
+  public getTitle(data: Request, name: string): string {
+    // console.log(data);
+    if (data.oEmbed) {
+      return data.oEmbed.title || '';
+    }
+    return '';
   }
 
-  public getAuthor(data: string): string {
-    console.log(data);
-    return data;
+  public getAuthor(data: Request, name: string): string {
+    // console.log(data);
+    if (data.oEmbed) {
+      return data.oEmbed.author_name || '';
+    }
+    return '';
   }
 
   // private updateStorage(values: Array<string>): void {
@@ -141,8 +140,11 @@ export class RequestBoxComponent implements OnInit {
   }
 }
 
+export type VideoId = string;
+
 export interface Request {
-  videoid: string;
+  videoid: VideoId;
+  oEmbed?: OEmbedResponseTypeVideo;
 }
 
 export class Requests extends Array<Request> {
@@ -168,7 +170,7 @@ export class Requests extends Array<Request> {
 
   public remove(request: Request): void {
     // this._requests = this._requests.filter((r: Request) => r !== request);
-    this.filter((r: Request) => r !== request);
+    this.filter((r: Request) => r.videoid !== request.videoid);
   }
 
   public next(loop: boolean): Request {
