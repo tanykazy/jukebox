@@ -15,12 +15,13 @@ import { StorageService, Storage } from './service/storage.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+  public appName = "jukebox";
+
   @ViewChild(RequestBoxComponent) requestBox!: RequestBoxComponent;
   @ViewChildren(YoutubePlayerComponent) players!: QueryList<YoutubePlayerComponent>;
   @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
 
-  appName = "jukebox";
-  settings: Settings = {
+  public settings: Settings = {
     repeat: Repeat.Off,
     shuffle: false,
     volume: {
@@ -28,15 +29,15 @@ export class AppComponent {
       muted: false
     }
   };
-  playlist: Array<number> = new Array();
-  playback: Playback = new Playback();
-  screenSize!: ScreenSize;
-  cols: number = 1;
-  barmode!: ProgressBarMode;
-  bufferValue: number = 0;
-  value: number = 0;
-  maxWidth: number = 400;
-  cutoffTime: number = 0;
+  // playlist: Array<number> = new Array();
+  public playback: Playback = new Playback('');
+  public screenSize!: ScreenSize;
+  private cols: number = 1;
+  public barmode!: ProgressBarMode;
+  public bufferValue: number = 0;
+  public value: number = 0;
+  private maxWidth: number = 400;
+  public cutoffTime: number = 0;
   private dialogState: MatDialogState = MatDialogState.CLOSED;
 
   constructor(
@@ -94,6 +95,9 @@ export class AppComponent {
           console.info('Repeat One');
           this.player.seekTo(0, true);
         } else {
+          if (this.settings.repeat === Repeat.Off) {
+            this.requestBox.removeRequest(this.playback.videoid);
+          }
           console.info('Skip');
           this.skipNext(this.settings.repeat === Repeat.On);
         }
@@ -160,8 +164,8 @@ export class AppComponent {
     //   index = this.requestBox.getLength() - 1;
     // }
     const request = this.requestBox.requests.previous(true);
-    this.playback = new Playback();
-    this.playback.videoid = request.videoid;
+    this.playback = new Playback(request.videoid);
+    // this.playback.videoid = request.videoid;
     // this.playback.index = index;
     // }
   }
@@ -177,8 +181,8 @@ export class AppComponent {
     } else {
       if (this.requestBox.requests.has()) {
         const request = this.requestBox.requests.next(false);
-        this.playback = new Playback();
-        this.playback.videoid = request.videoid;
+        this.playback = new Playback(request.videoid);
+        // this.playback.videoid = request.videoid;
       }
     }
     // if (this.playback.index < 0) {
@@ -332,8 +336,8 @@ export class AppComponent {
     // }
     const request = this.requestBox.requests.next(loop);
     if (request) {
-      this.playback = new Playback();
-      this.playback.videoid = request.videoid;
+      this.playback = new Playback(request.videoid);
+      // this.playback.videoid = request.videoid;
     }
     // this.playback.index = index;
   }
@@ -370,7 +374,10 @@ interface Volume {
 }
 
 class Playback {
-  videoid: string | undefined;
+  constructor(videoid: string) {
+    this.videoid = videoid;
+  }
+  videoid: string;
   state: PlayerState | undefined;
   time: number = 0;
   duration: number = 0;
