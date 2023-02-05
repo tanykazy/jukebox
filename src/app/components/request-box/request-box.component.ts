@@ -182,7 +182,7 @@ export class Requests extends Array<Request> {
     if (loop && this.index === 0) {
       this.index = this.length - 1;
     }
-    return this[--this.index]
+    return this[--this.index];
   }
 
   public has(): boolean {
