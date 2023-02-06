@@ -15,16 +15,18 @@
 
 <!-- <mat-table id="table" [dataSource]="dataSource"> -->
 <table mat-table id="table" [dataSource]="dataSource">
-    <mat-text-column name="title" [dataAccessor]="getTitle"></mat-text-column>
-    <!-- <ng-container matColumnDef="title">
+    <!-- <mat-text-column name="title" [dataAccessor]="getTitle"></mat-text-column> -->
+    <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef>title</th>
-        <td mat-cell *matCellDef="let request">{{request.oEmbed.title}}</td>
-    </ng-container> -->
-    <mat-text-column name="author" [dataAccessor]="getAuthor"></mat-text-column>
-    <!-- <ng-container matColumnDef="author">
+        <td mat-cell *matCellDef="let request">{{request.oEmbed.title}}
+            <img [src]="request.oEmbed.thumbnail_url">
+        </td>
+    </ng-container>
+    <!-- <mat-text-column name="author" [dataAccessor]="getAuthor"></mat-text-column> -->
+    <ng-container matColumnDef="author">
         <th mat-header-cell *matHeaderCellDef>author</th>
         <td mat-cell *matCellDef="let request">{{request.oEmbed.author_name}}</td>
-    </ng-container> -->
+    </ng-container>
 
     <!-- <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row> -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

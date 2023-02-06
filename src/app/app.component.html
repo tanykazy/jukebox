@@ -65,8 +65,7 @@
     </mat-card-footer>
 </mat-card>
 
-<!-- <app-request-box [(requests)]="requests" (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box> -->
-<app-request-box (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
+<app-request-box [size]="screenSize" (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
 
 <!-- <mat-grid-list [cols]="cols">
     <mat-grid-tile *ngFor="let request of requests">

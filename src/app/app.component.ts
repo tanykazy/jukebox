@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogConfig, MatDialogState } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { YoutubePlayerComponent, PlayerState } from "./components/youtube-player/youtube-player.component";
-import { RequestBoxComponent } from "./components/request-box/request-box.component";
+import { RequestBoxComponent, Size } from "./components/request-box/request-box.component";
 import { RequestDialogComponent, DialogData } from "./components/request-dialog/request-dialog.component";
 import { StorageService, Storage } from './service/storage.service';
 
@@ -31,7 +31,7 @@ export class AppComponent {
   };
   // playlist: Array<number> = new Array();
   public playback: Playback = new Playback('');
-  public screenSize!: ScreenSize;
+  public screenSize!: Size;
   private cols: number = 1;
   public barmode!: ProgressBarMode;
   public bufferValue: number = 0;
@@ -157,17 +157,8 @@ export class AppComponent {
   }
 
   onClickSkipPrevious(event: UIEvent): void {
-    // this.controlEvent.emit(Control.SkipPrevious);
-    // if (this.requestBox.requests.has()) {
-    // let index = this.playback.index - 1;
-    // if (index < 0) {
-    //   index = this.requestBox.getLength() - 1;
-    // }
     const request = this.requestBox.requests.previous(true);
     this.playback = new Playback(request.videoid);
-    // this.playback.videoid = request.videoid;
-    // this.playback.index = index;
-    // }
   }
 
   onClickPlayPause(event: UIEvent): void {
@@ -182,21 +173,8 @@ export class AppComponent {
       if (this.requestBox.requests.has()) {
         const request = this.requestBox.requests.next(false);
         this.playback = new Playback(request.videoid);
-        // this.playback.videoid = request.videoid;
       }
     }
-    // if (this.playback.index < 0) {
-    //   const index = 0;
-    //   this.playback = new Playback();
-    //   this.playback.videoid = this.requestBox.getRequest(index);
-    //   this.playback.index = index;
-    // } else {
-    //   if (this.playback.isPlaying) {
-    //     this.player.pauseVideo();
-    //   } else {
-    //     this.player.playVideo();
-    //   }
-    // }
   }
 
   onClickSkipNext(event: UIEvent): void {
@@ -298,7 +276,7 @@ export class AppComponent {
     });
   }
 
-  private resizeGrid(screenSize: ScreenSize): void {
+  private resizeGrid(screenSize: Size): void {
     let cols: number = Math.floor(screenSize.width / this.maxWidth);
     let size: number = this.maxWidth;
     if (cols > 0) {
@@ -318,22 +296,6 @@ export class AppComponent {
     if (this.requestBox.requests.length === 0) {
       return;
     }
-    // let index: number;
-    // if (this.settings.shuffle) {
-    // index = Math.floor(Math.random() * this.requests.length);
-    // } else {
-    // index = this.playback.index + 1;
-    // if (!(index < this.requestBox.requests.length)) {
-    // let request;
-    // if (this.requestBox.requests.has()) {
-    //   if (!loop) {
-    //     return;
-    //   } else {
-    //     // index = index % this.requestBox.requests.length;
-    //     request = this.requestBox.requests.next(loop);
-    //   }
-    // }
-    // }
     const request = this.requestBox.requests.next(loop);
     if (request) {
       this.playback = new Playback(request.videoid);
@@ -384,11 +346,6 @@ class Playback {
   fraction: number = 0;
   index: number = -1;
   isPlaying: boolean = false;
-}
-
-interface ScreenSize {
-  width: number;
-  height: number;
 }
 
 // function shuffle(array: Array<any>): Array<any> {

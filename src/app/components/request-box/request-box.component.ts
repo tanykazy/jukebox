@@ -1,11 +1,16 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input, IterableDiffers, DoCheck, IterableDiffer } from '@angular/core';
-import { MatChip, MatChipInputEvent, MatChipList, MatChipSelectionChange } from '@angular/material/chips';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
+import { MatChipInputEvent, MatChipList } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { YoutubeUrlService, OEmbedResponseTypeVideo } from "../../service/youtube-url.service";
 import { StorageService, Storage } from "../../service/storage.service";
 import { MatTable, MatTableDataSource } from '@angular/material/table';
+
+export interface Size {
+  width: number;
+  height: number;
+}
 
 @Component({
   selector: 'app-request-box',
@@ -16,10 +21,10 @@ export class RequestBoxComponent implements OnInit {
   @ViewChild(MatChipList) chipList!: MatChipList;
   @ViewChild(MatTable) table!: MatTable<Requests>;
 
+  @Input() size!: Size;
+
   public requests: Requests = new Requests();
   public dataSource: MatTableDataSource<Request> = new MatTableDataSource(this.requests);
-  // @Input() requests: Array<string> = new Array();
-  // @Output() requestsChange: EventEmitter<Array<string>> = new EventEmitter();
 
   @Output() select: EventEmitter<string> = new EventEmitter();
   @Output() deselect: EventEmitter<string> = new EventEmitter();
@@ -64,12 +69,12 @@ export class RequestBoxComponent implements OnInit {
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
-          const request: Request = {
+          const r: Request = {
             videoid: videoid,
-            oEmbed: await YoutubeUrlService.getVideoEmbed(value)
+            oEmbed: await YoutubeUrlService.getVideoEmbed(request)
           };
-          if (!this.requests.includes(request)) {
-            this.requests.add(request);
+          if (!this.requests.exist(r)) {
+            this.requests.add(r);
             this.table.renderRows();
           }
         }
@@ -87,9 +92,6 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public removeRequest(request: string): void {
-    // this.requests = this.requests.filter((r: Request) => r.videoid !== request);
-
-    // this.requests.filter
     this.requests.remove({ videoid: request });
     this.table.renderRows();
     this.updateStorage(this.requests);
@@ -123,7 +125,6 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public getTitle(data: Request, name: string): string {
-    // console.log(data);
     if (data.oEmbed) {
       return data.oEmbed.title || '';
     }
@@ -131,14 +132,12 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public getAuthor(data: Request, name: string): string {
-    // console.log(data);
     if (data.oEmbed) {
       return data.oEmbed.author_name || '';
     }
     return '';
   }
 
-  // private updateStorage(values: Array<string>): void {
   private updateStorage(requests: Requests): void {
     StorageService.setItem(Storage.Playlist, requests);
   }
@@ -173,14 +172,14 @@ export class Requests extends Array<Request> {
   }
 
   public remove(request: Request): void {
-    // this._requests = this._requests.filter((r: Request) => r !== request);
-    // this.filter((r: Request) => r.videoid !== request.videoid);
-    // const i = this.indexOf(request);
-    // console.log(request);
     const i = this.findIndex((r: Request) => r.videoid === request.videoid);
     if (i !== -1) {
       this.splice(i, 1);
     }
+  }
+
+  public exist(request: Request): boolean {
+    return !this.every((r: Request) => r.videoid !== request.videoid);
   }
 
   public next(loop: boolean): Request {
