@@ -1,36 +1,12 @@
-<mat-form-field class="request-box" appearance="fill">
-    <mat-label>YouTube Video ID</mat-label>
-    <mat-chip-list #chipList aria-label="Video requests">
-        <mat-chip #chip="matChip" *ngFor="let request of requests" [value]="request" cdkDrag>
-            {{request.videoid}}
-        </mat-chip>
-        <input placeholder="New URL..." [(ngModel)]="value" [matChipInputFor]="chipList"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-            (matChipInputTokenEnd)="addRequestFromInput($event)">
-        <button mat-button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
-            <mat-icon>close</mat-icon>
-        </button>
-    </mat-chip-list>
-</mat-form-field>
-
-<!-- <mat-table id="table" [dataSource]="dataSource"> -->
-<table mat-table id="table" [dataSource]="dataSource">
-    <!-- <mat-text-column name="title" [dataAccessor]="getTitle"></mat-text-column> -->
-    <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef>title</th>
-        <td mat-cell *matCellDef="let request">{{request.oEmbed.title}}
-            <img [src]="request.oEmbed.thumbnail_url">
-        </td>
-    </ng-container>
-    <!-- <mat-text-column name="author" [dataAccessor]="getAuthor"></mat-text-column> -->
-    <ng-container matColumnDef="author">
-        <th mat-header-cell *matHeaderCellDef>author</th>
-        <td mat-cell *matCellDef="let request">{{request.oEmbed.author_name}}</td>
-    </ng-container>
-
-    <!-- <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row> -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <!-- <mat-row matRipple *matRowDef="let row; columns: displayedColumns;"></mat-row> -->
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
-<!-- </mat-table> -->
+<mat-list role="list">
+    <mat-list-item role="listitem" matRipple *ngFor="let request of requests">
+        <div class="video-list" (click)="onClickRequest(request)">
+            <img matListItemAvatar class="avatar" [src]="request.oEmbed?.thumbnail_url" [alt]="">
+            <span matListItemTitle>{{request.oEmbed?.title}}</span>
+            <span matListItemLine>{{request.oEmbed?.author_name}}</span>
+        </div>
+        <div matListItemMeta class="actions">
+            <button mat-icon-button (click)="onClickDelete(request)"><mat-icon>delete</mat-icon></button>
+        </div>
+    </mat-list-item>
+</mat-list>

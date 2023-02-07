@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogConfig, MatDialogState } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { YoutubePlayerComponent, PlayerState } from "./components/youtube-player/youtube-player.component";
-import { RequestBoxComponent, Size } from "./components/request-box/request-box.component";
+import { RequestBoxComponent, Request, Size } from "./components/request-box/request-box.component";
 import { RequestDialogComponent, DialogData } from "./components/request-dialog/request-dialog.component";
 import { StorageService, Storage } from './service/storage.service';
 
@@ -96,7 +96,7 @@ export class AppComponent {
           this.player.seekTo(0, true);
         } else {
           if (this.settings.repeat === Repeat.Off) {
-            this.requestBox.removeRequest(this.playback.videoid);
+            this.requestBox.removeRequest({ videoid: this.playback.videoid });
           }
           console.info('Skip');
           this.skipNext(this.settings.repeat === Repeat.On);
@@ -124,6 +124,12 @@ export class AppComponent {
 
       default:
         break;
+    }
+  }
+
+  onClickRequest(event: Request): void {
+    if (this.playback.videoid !== event.videoid) {
+      this.playback = new Playback(event.videoid);
     }
   }
 
@@ -211,7 +217,11 @@ export class AppComponent {
   onClickShare(event: UIEvent): void {
     const url = new URL(window.location.href);
     if (this.requestBox.requests.length > 0) {
-      url.search = `requests=${this.requestBox.requests}`;
+      let param = [];
+      while (this.requestBox.requests.has()) {
+        param.push(this.requestBox.requests.next(false).videoid);
+      }
+      url.search = `requests=${param.join(',')}`;
     }
     const result = this.clipboard.copy(url.href);
     if (result) {

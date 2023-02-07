@@ -65,26 +65,8 @@
     </mat-card-footer>
 </mat-card>
 
-<app-request-box [size]="screenSize" (select)="onSelect($event)" (deselect)="onDeselect($event)"></app-request-box>
-
-<!-- <mat-grid-list [cols]="cols">
-    <mat-grid-tile *ngFor="let request of requests">
-        <app-youtube-player [videoId]="request" [width]="screenSize.width" [height]="screenSize.height">
-        </app-youtube-player>
-        <div class="float" id="request">
-            <img [src]="'https://img.youtube.com/vi/' + request + '/default.jpg'">
-            <button mat-fab>
-                <mat-icon>drag_handle</mat-icon>
-            </button>
-            <button mat-fab (click)="onClickListPlay(request)">
-                <mat-icon>play_circle</mat-icon>
-            </button>
-            <button mat-fab (click)="onClickListDelete(request)">
-                <mat-icon>delete</mat-icon>
-            </button>
-        </div>
-    </mat-grid-tile>
-</mat-grid-list> -->
+<app-request-box [size]="screenSize" (clickRequest)="onClickRequest($event)" (select)="onSelect($event)"
+    (deselect)="onDeselect($event)"></app-request-box>
 
 <button mat-fab id="add-button" (click)="onClickAddButton($event)">
     <mat-icon>add</mat-icon>

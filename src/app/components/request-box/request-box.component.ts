@@ -1,11 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, Input } from '@angular/core';
-import { MatChipInputEvent, MatChipList } from '@angular/material/chips';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 import { YoutubeUrlService, OEmbedResponseTypeVideo } from "../../service/youtube-url.service";
 import { StorageService, Storage } from "../../service/storage.service";
-import { MatTable, MatTableDataSource } from '@angular/material/table';
 
 export interface Size {
   width: number;
@@ -18,26 +15,13 @@ export interface Size {
   styleUrls: ['./request-box.component.css']
 })
 export class RequestBoxComponent implements OnInit {
-  @ViewChild(MatChipList) chipList!: MatChipList;
-  @ViewChild(MatTable) table!: MatTable<Requests>;
-
   @Input() size!: Size;
 
-  public requests: Requests = new Requests();
-  public dataSource: MatTableDataSource<Request> = new MatTableDataSource(this.requests);
-
+  @Output() clickRequest: EventEmitter<Request> = new EventEmitter();
   @Output() select: EventEmitter<string> = new EventEmitter();
   @Output() deselect: EventEmitter<string> = new EventEmitter();
 
-  readonly selectable: boolean = true;
-  readonly removable: boolean = true;
-  readonly addOnBlur: boolean = true;
-  readonly separatorKeysCodes = [ENTER, COMMA] as const;
-
-  public value: string = '';
-  public headerText!: string;
-
-  public displayedColumns: string[] = ['title', 'author'];
+  public requests: Requests = new Requests();
 
   constructor() {
   }
@@ -75,7 +59,6 @@ export class RequestBoxComponent implements OnInit {
           };
           if (!this.requests.exist(r)) {
             this.requests.add(r);
-            this.table.renderRows();
           }
         }
       }
@@ -84,16 +67,8 @@ export class RequestBoxComponent implements OnInit {
     return Promise.resolve(true);
   }
 
-  public addRequestFromInput(event: MatChipInputEvent): void {
-    if (event.value) {
-      this.addRequest(event.value);
-      event.chipInput!.clear();
-    }
-  }
-
-  public removeRequest(request: string): void {
-    this.requests.remove({ videoid: request });
-    this.table.renderRows();
+  public removeRequest(request: Request): void {
+    this.requests.remove(request);
     this.updateStorage(this.requests);
   }
 
@@ -118,6 +93,14 @@ export class RequestBoxComponent implements OnInit {
 
   public shuffleRequest(): void {
     // this.requests = shuffle(this.requests);
+  }
+
+  public onClickRequest(event: Request): void {
+    this.clickRequest.emit(event);
+  }
+
+  public onClickDelete(event: Request): void {
+    this.removeRequest(event);
   }
 
   public drop(event: CdkDragDrop<string[]>): void {

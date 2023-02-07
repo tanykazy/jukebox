@@ -1,7 +1,20 @@
-.request-box {
-  width: 100%;
+.video-list {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
 }
 
-#table {
-  width: 100%;
+.avatar {
+  width: 10vmin;
+}
+
+.actions {
+  margin: 0 0 0 auto;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  align-items: center;
 }

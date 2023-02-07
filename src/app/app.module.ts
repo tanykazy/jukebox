@@ -3,19 +3,17 @@ import { FormsModule } from "@angular/forms";
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { YouTubePlayerModule } from '@angular/youtube-player';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatTableModule } from '@angular/material/table';
 import { MatRippleModule } from '@angular/material/core';
+import { MatListModule } from '@angular/material/list';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from './app.component';
@@ -37,20 +35,18 @@ import { RequestDialogComponent } from './components/request-dialog/request-dial
     BrowserModule,
     FormsModule,
     YouTubePlayerModule,
-    MatChipsModule,
     MatIconModule,
     MatInputModule,
     MatToolbarModule,
     BrowserAnimationsModule,
-    MatGridListModule,
     MatButtonModule,
     MatSliderModule,
     MatCardModule,
     MatProgressBarModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatTableModule,
     MatRippleModule,
+    MatListModule,
     DragDropModule,
   ],
   providers: [],
