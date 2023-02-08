@@ -53,12 +53,18 @@ export class RequestBoxComponent implements OnInit {
       for (const request of requests) {
         const videoid = YoutubeUrlService.getVideoId(request);
         if (videoid) {
-          const r: Request = {
-            videoid: videoid,
-            oEmbed: await YoutubeUrlService.getVideoEmbed(request)
-          };
-          if (!this.requests.exist(r)) {
-            this.requests.add(r);
+          try {
+            const r: Request = {
+              videoid: videoid,
+              oEmbed: await YoutubeUrlService.getVideoEmbed(request)
+            };
+            if (!this.requests.exist(r)) {
+              this.requests.add(r);
+            } else {
+              console.info(`Duplicate video id '${videoid}'`);
+            }
+          } catch (error) {
+            console.warn(error);
           }
         }
       }
