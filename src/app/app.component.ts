@@ -67,7 +67,7 @@ export class AppComponent {
 
     if (this.cutoffTime > 0) {
       if (this.playback.time > this.cutoffTime * 60) {
-        this.skipNext(this.settings.repeat !== Repeat.Off);
+        this.skipNext(this.settings.repeat !== Repeat.Off, this.settings.repeat === Repeat.Off);
       }
     }
   }
@@ -95,11 +95,8 @@ export class AppComponent {
           console.info('Repeat One');
           this.player.seekTo(0, true);
         } else {
-          if (this.settings.repeat === Repeat.Off) {
-            this.requestBox.removeRequest({ videoid: this.playback.videoid });
-          }
           console.info('Skip');
-          this.skipNext(this.settings.repeat === Repeat.On);
+          this.skipNext(this.settings.repeat === Repeat.On, this.settings.repeat === Repeat.Off);
         }
         break;
 
@@ -185,7 +182,7 @@ export class AppComponent {
 
   onClickSkipNext(event: UIEvent): void {
     // this.controlEvent.emit(Control.SkipNext);
-    this.skipNext(true);
+    this.skipNext(true, this.settings.repeat === Repeat.Off);
   }
 
   onClickShuffle(event: UIEvent): void {
@@ -302,7 +299,10 @@ export class AppComponent {
     this.cols = cols;
   }
 
-  private skipNext(loop: boolean): void {
+  private skipNext(loop: boolean, remove: boolean): void {
+    if (remove) {
+      this.requestBox.removeRequest({ videoid: this.playback.videoid });
+    }
     if (this.requestBox.requests.length === 0) {
       return;
     }
