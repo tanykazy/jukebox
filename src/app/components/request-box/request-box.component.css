@@ -1,3 +1,7 @@
+.list {
+  width: 100%;
+}
+
 .video-list {
   display: flex;
   justify-content: center;

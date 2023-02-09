@@ -1,5 +1,5 @@
-<mat-list role="list">
-    <mat-list-item role="listitem" matRipple *ngFor="let request of requests">
+<mat-list class="list" role="list">
+    <mat-list-item role="listitem" matRipple *ngFor="let request of requests" lines="3">
         <div class="video-list" (click)="onClickRequest(request)">
             <img matListItemAvatar class="avatar" [src]="request.oEmbed?.thumbnail_url" [alt]="">
             <span matListItemTitle>{{request.oEmbed?.title}}</span>
