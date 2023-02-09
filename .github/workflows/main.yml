@@ -1,61 +1,100 @@
 name: Deploy to github pages
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
-#  pull_request:
-#    branches: [ main ]
+    branches: [main]
+  #  pull_request:
+  #    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
 
-      - name: Setup nodejs
-        uses: actions/setup-node@v2
-#         with:
-#           node-version: '14'
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: current
 
-      - name: Install node packages
+      - name: Install Node packages
         run: npm ci
 
       - name: Build
-        run: npm run ng -- build --prod --base-href=https://${{ github.repository_owner }}.github.io/jukebox/ --output-path=${{ runner.temp }}/${{ github.sha }}
+        run: npm run ng -- build --base-href=https://${{ github.repository_owner }}.github.io/${GITHUB_REPOSITORY#${GITHUB_REPOSITORY_OWNER}/}/ --output-path=${{ runner.temp }}/${{ github.sha }}
 
-      - name: Preprocessing
-        run: |
-          git fetch origin
-          git checkout gh-pages
-          rm -rf ./**
-          mv ${{ runner.temp }}/${{ github.sha }}/** ./
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: "${{ runner.temp }}/${{ github.sha }}"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
 
-      - name: Check changes
-        id: changes
-        run: |
-          git add -N .
-          echo "::set-output name=ischange::$(git diff --name-only | wc -l)"
+  # # This workflow contains a single job called "build"
+  # build:
+  #   # The type of runner that the job will run on
+  #   runs-on: ubuntu-latest
 
-      - name: Push github pages
-        run: |
-          git config user.name "${{ github.actor }}"
-          git add .
-          git commit -m "Deploy to github pages - ${{ github.sha }}"
-          git push origin
-        if: steps.changes.outputs.ischange > 0
+  #   # Steps represent a sequence of tasks that will be executed as part of the job
+  #   steps:
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v2
 
+  #     - name: Setup nodejs
+  #       uses: actions/setup-node@v2
+  #     #         with:
+  #     #           node-version: '14'
 
+  #     - name: Install node packages
+  #       run: npm ci
 
+  #     - name: Build
+  #       run: npm run ng -- build --prod --base-href=https://${{ github.repository_owner }}.github.io/jukebox/ --output-path=${{ runner.temp }}/${{ github.sha }}
 
+  #     - name: Preprocessing
+  #       run: |
+  #         git fetch origin
+  #         git checkout gh-pages
+  #         rm -rf ./**
+  #         mv ${{ runner.temp }}/${{ github.sha }}/** ./
+
+  #     - name: Check changes
+  #       id: changes
+  #       run: |
+  #         git add -N .
+  #         echo "::set-output name=ischange::$(git diff --name-only | wc -l)"
+
+  #     - name: Push github pages
+  #       run: |
+  #         git config user.name "${{ github.actor }}"
+  #         git add .
+  #         git commit -m "Deploy to github pages - ${{ github.sha }}"
+  #         git push origin
+  #       if: steps.changes.outputs.ischange > 0
