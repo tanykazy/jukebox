@@ -371,15 +371,3 @@ class Playback {
   index: number = -1;
   isPlaying: boolean = false;
 }
-
-// function shuffle(array: Array<any>): Array<any> {
-//   let m = array.length;
-//   // While there remain elements to shuffle…
-//   while (m) shuffle{
-//     // Pick a remaining element…
-//     const i = Math.floor(Math.random() * m--);
-//     // And swap it with the current element.
-//     [array[m], array[i]] = [array[i], array[m]];
-//   }
-//   return array;
-// }

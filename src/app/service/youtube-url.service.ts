@@ -51,22 +51,6 @@ export class YoutubeUrlService {
       return response.json();
     })
   }
-
-  /**
-   * getVideoThumbnail
-   */
-  // public static async getVideoThumbnail(videoid: string) {
-  //   const res: HTMLImageElement | void = await new Promise<HTMLImageElement>((resolve, reject) => {
-  //     const img = new Image();
-  //     img.onload = (event) => resolve(img);
-  //     img.onerror = (event) => reject(event);
-  //     img.src = `https://img.youtube.com/vi/${videoid}/default.jpg`;
-  //   }).catch((e) => {
-  //     console.log('onload error', e);
-  //     return;
-  //   });
-  //   console.log(res);
-  // }
 }
 
 export interface OEmbedResponse {

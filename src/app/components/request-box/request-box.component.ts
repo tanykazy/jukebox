@@ -48,31 +48,6 @@ export class RequestBoxComponent implements OnInit {
     }
   }
 
-  // public async addRequest(value: string): Promise<boolean> {
-  //   if (value) {
-  //     const requests = value.split(/\r\n|\r|\n|\s/);
-  //     for (const request of requests) {
-  //       const videoid = YoutubeUrlService.getVideoId(request);
-  //       if (videoid) {
-  //         try {
-  //           const r: Request = {
-  //             videoid: videoid,
-  //             oEmbed: await YoutubeUrlService.getVideoEmbed(request)
-  //           };
-  //           if (!this.requests.exist(r)) {
-  //             this.requests.add(r);
-  //           } else {
-  //             console.info(`Duplicate video id '${videoid}'`);
-  //           }
-  //         } catch (error) {
-  //           console.warn(error);
-  //         }
-  //       }
-  //     }
-  //     this.updateStorage(this.requests);
-  //   }
-  //   return Promise.resolve(true);
-  // }
   public async addRequest(...urls: Array<URL>): Promise<boolean> {
     for (const url of urls) {
       const videoid = YoutubeUrlService.getVideoId(url.href);
