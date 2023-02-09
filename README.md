@@ -1,5 +1,7 @@
 # Jukebox
 
+[![Deploy to github pages](https://github.com/tanykazy/jukebox/actions/workflows/main.yml/badge.svg)](https://github.com/tanykazy/jukebox/actions/workflows/main.yml)
+
 ## Overview
 
 Jukebox is jukebox of [YouTube](https://www.youtube.com/) video.
