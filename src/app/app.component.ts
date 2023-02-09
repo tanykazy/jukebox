@@ -241,7 +241,14 @@ export class AppComponent {
       const clipboardData = event.clipboardData;
       if (clipboardData) {
         const paste = clipboardData.getData('text');
-        this.requestBox.addRequest(paste);
+        const urls = paste.split(/\r\n|\r|\n|\s/);
+        for (const url of urls) {
+          try {
+            this.requestBox.addRequest(new URL(url));
+          } catch (error) {
+            console.warn(error);
+          }
+        }
       }
     }
   }
@@ -271,7 +278,14 @@ export class AppComponent {
       console.debug('Request dialog was closed');
       this.dialogState = MatDialogState.CLOSED;
       if (result) {
-        this.requestBox.addRequest(result.url);
+        const urls = result.url.split(/\r\n|\r|\n|\s/);
+        for (const url of urls) {
+          try {
+            this.requestBox.addRequest(new URL(url));
+          } catch (error) {
+            console.warn(error);
+          }
+        }
       }
     });
   }
