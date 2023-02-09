@@ -128,7 +128,7 @@ export class RequestBoxComponent implements OnInit {
   }
 
   private updateStorage(requests: Requests): void {
-    StorageService.setItem(Storage.Playlist, requests);
+    StorageService.setItem(Storage.Playlist, requests.toIdList());
   }
 }
 
@@ -148,8 +148,12 @@ export class Requests extends Array<Request> {
     this.index = 0;
   }
 
-  public toString(): string {
-    return this.join();
+  public toIdList(): Array<string> {
+    const ids: string[] = [];
+    this.forEach((request: Request) => {
+      ids.push(request.videoid);
+    });
+    return ids;
   }
 
   public toJSON() {
