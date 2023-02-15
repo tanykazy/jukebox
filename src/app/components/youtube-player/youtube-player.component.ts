@@ -1,6 +1,22 @@
 import { Component, OnInit, Output, ViewChild, EventEmitter, Input, OnDestroy } from '@angular/core';
 
-import { YouTubePlayer } from "@angular/youtube-player";
+import { ProgressBarMode } from '@angular/material/progress-bar';
+import { MatSliderChange } from '@angular/material/slider';
+import { YouTubePlayer } from '@angular/youtube-player';
+
+import { StorageService, Storage } from '../../service/storage.service';
+
+// export type PlayerState = YT.PlayerState;
+// export const PlayerState = {
+//   UNSTARTED: -1,
+//   ENDED: 0,
+//   PLAYING: 1,
+//   PAUSED: 2,
+//   BUFFERING: 3,
+//   CUED: 5
+// } as const;
+// export type PlayerState = typeof PlayerState[keyof typeof PlayerState];
+// export type PlayerState = typeof YT.PlayerState[keyof typeof YT.PlayerState];
 
 let apiLoaded = false;
 
@@ -10,12 +26,18 @@ let apiLoaded = false;
   styleUrls: ['./youtube-player.component.css']
 })
 export class YoutubePlayerComponent implements OnInit, OnDestroy {
+  constructor() { }
+
   @ViewChild(YouTubePlayer) youtube!: YouTubePlayer;
 
-  @Output() changeCurrentTime: EventEmitter<number> = new EventEmitter();
-  @Output() changeLoadedFraction: EventEmitter<number> = new EventEmitter();
-  @Output() ready: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
-  @Output() state: EventEmitter<PlayerState> = new EventEmitter();
+  // @Output() changeCurrentTime = new EventEmitter<number>();
+  // @Output() changeLoadedFraction = new EventEmitter<number>();
+  // @Output() ready = new EventEmitter<YoutubePlayerComponent>();
+  // @Output() state = new EventEmitter<YT.PlayerState>();
+  @Output() end = new EventEmitter<void>();
+
+  @Input() height: number | undefined;
+  @Input() width: number | undefined;
 
   @Input()
   public set videoId(id: string | undefined) {
@@ -38,7 +60,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   public get volume(): number {
     return this._volume;
   }
-  private _volume: number = 0;
+  private _volume: number = 50;
 
   @Input()
   public set muted(mute: boolean) {
@@ -55,9 +77,6 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     return this._muted;
   }
   private _muted: boolean = false;
-
-  @Input() height: number | undefined;
-  @Input() width: number | undefined;
 
   private watchCurrentTimeId: number | undefined;
   private watchLoadedFractionTimeId: number | undefined;
@@ -78,17 +97,50 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     return fraction;
   }
 
-  constructor() { }
+  public get playerState(): YT.PlayerState | undefined {
+    if (this.isReady) {
+      const state = this.youtube.getPlayerState();
+      return state;
+    }
+    return;
+  }
+
+  public get isPlaying(): boolean {
+    if (this.playerState !== undefined) {
+      return this.playerState === YT.PlayerState.PLAYING;
+    }
+    return false
+  }
+
+  settings: Settings = {
+    repeat: Repeat.Off,
+    shuffle: false,
+    volume: {
+      value: 50,
+      muted: false
+    }
+  };
+
+  progressbar: ProgressBarSetting = {
+    show: false,
+    mode: 'determinate',
+    bufferValue: NaN,
+    value: NaN
+  };
 
   ngOnInit(): void {
+    const settings: Settings = StorageService.getItem(Storage.Settings);
+    if (settings) {
+      this.settings = settings;
+    }
     if (!apiLoaded) {
       // This code loads the IFrame Player API code asynchronously, according to the instructions at
       // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
       const scriptElement: HTMLScriptElement = document.createElement('script');
       scriptElement.src = 'https://www.youtube.com/iframe_api';
-      console.info('Load API %s', scriptElement.src);
       document.body.appendChild(scriptElement);
       apiLoaded = true;
+      console.info('Load API %s', scriptElement.src);
     } else {
       console.debug('API loaded.');
     }
@@ -102,85 +154,156 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   onReady(event: YT.PlayerEvent): void {
     console.info('Video %s ready.', event.target.getVideoUrl());
     this.isReady = true;
-    this.ready.emit(this);
-    this.setVolume(this._volume);
-    if (this._muted) {
+    // this.ready.emit(this);
+    this.setVolume(this.volume);
+    if (this.muted) {
       this.mute();
     } else {
       this.unMute();
     }
+    event.target.playVideo();
   }
 
   onStateChange(event: YT.OnStateChangeEvent): void {
-    console.info('Player state changed to %d', event.data);
+    console.debug('Player state changed to %d', event.data);
     switch (event.data) {
-      case PlayerState.UNSTARTED:
+      case YT.PlayerState.UNSTARTED:
+        this.progressbar.show = false;
+        this.progressbar.mode = 'indeterminate';
         break;
 
-      case PlayerState.ENDED:
+      case YT.PlayerState.ENDED:
         window.clearInterval(this.watchCurrentTimeId);
-        // console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+        console.debug('Cancel current time watching. id: %d', this.watchCurrentTimeId);
 
         window.clearInterval(this.watchLoadedFractionTimeId);
-        // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+        console.debug('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
         break;
 
-      case PlayerState.PLAYING:
+      case YT.PlayerState.PLAYING:
         window.clearInterval(this.watchCurrentTimeId);
-        // console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+        console.debug('Cancel current time watching. id: %d', this.watchCurrentTimeId);
 
         this.watchCurrentTimeId = window.setInterval(() => {
           this.watchCurrentTime(event.target);
         }, 100);
-        // console.info('Start watching current time. id: %d', this.watchCurrentTimeId);
+        console.debug('Start watching current time. id: %d', this.watchCurrentTimeId);
 
         window.clearInterval(this.watchLoadedFractionTimeId);
-        // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+        console.debug('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
 
         this.watchLoadedFractionTimeId = window.setInterval(() => {
           this.watchLoadedFraction(event.target);
         }, 100);
-        // console.info('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
+        console.debug('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
+        this.progressbar.show = true;
+        this.progressbar.mode = 'buffer';
         break;
 
-      case PlayerState.PAUSED:
+      case YT.PlayerState.PAUSED:
         window.clearInterval(this.watchCurrentTimeId);
-        // console.info('Cancel current time watching. id: %d', this.watchCurrentTimeId);
+        console.debug('Cancel current time watching. id: %d', this.watchCurrentTimeId);
 
         window.clearInterval(this.watchLoadedFractionTimeId);
-        // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+        console.debug('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
         break;
 
-      case PlayerState.BUFFERING:
+      case YT.PlayerState.BUFFERING:
         window.clearInterval(this.watchLoadedFractionTimeId);
-        // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+        console.debug('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
 
         this.watchLoadedFractionTimeId = window.setInterval(() => {
           this.watchLoadedFraction(event.target);
         }, 100);
-        // console.info('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
+        console.debug('Start watching loaded fraction. id: %d', this.watchLoadedFractionTimeId);
+        this.progressbar.show = true;
+        this.progressbar.mode = 'buffer';
         break;
 
-      case PlayerState.CUED:
+      case YT.PlayerState.CUED:
         // event.target.playVideo();
-        // console.log(event.target.getVideoEmbedCode());
+        this.progressbar.show = true;
+        this.progressbar.mode = 'buffer';
         break;
 
       default:
         console.warn('Unknown state %d', event.data);
         break;
     }
-    this.state.emit(event.data);
+    // this.state.emit(event.data);
+  }
+
+  onClickSkipPrevious(event: UIEvent): void {
+    // const request = this.requestBox.requests.previous(true);
+    // this.playback = new Playback(request.videoid);
+  }
+
+  onClickPlayPause(event: UIEvent): void {
+    if (this.isReady) {
+      if (this.youtube.getPlayerState() === YT.PlayerState.PLAYING) {
+        this.pauseVideo();
+      } else {
+        this.playVideo();
+      }
+    }
+  }
+
+  onClickSkipNext(event: UIEvent): void {
+    // this.controlEvent.emit(Control.SkipNext);
+    // this.skipNext(true, this.settings.repeat === Repeat.Off);
+  }
+
+
+  onClickShuffle(event: UIEvent): void {
+    this.settings.shuffle = !this.settings.shuffle;
+    if (this.settings.shuffle) {
+      // shuffle(this.requests);
+      // this.requestBox.requests.shuffle();
+    }
+    StorageService.setItem(Storage.Settings, this.settings);
+  }
+
+  onClickRepeat(event: UIEvent): void {
+    this.settings.repeat = (this.settings.repeat + 1) % 3;
+    StorageService.setItem(Storage.Settings, this.settings);
+  }
+
+  onClickVolume(event: UIEvent): void {
+    this.settings.volume.muted = !this.settings.volume.muted;
+    if (this.settings.volume.muted) {
+      this.mute();
+    } else {
+      this.unMute();
+    }
+    StorageService.setItem(Storage.Settings, this.settings);
+  }
+
+  onDragStart(event: any): void {
+    console.log(event);
+  }
+
+  onDragEnd(event: any): void {
+    console.log(event);
+  }
+
+  onInputSlider(event: MatSliderChange): void {
+    if (event.value !== null) {
+      this.volume = event.value;
+      this.settings.volume.value = event.value;
+      StorageService.setItem(Storage.Settings, this.settings);
+    }
   }
 
   private watchCurrentTime(target: YT.Player): void {
     const time: number = target.getCurrentTime();
-    this.changeCurrentTime.emit(time);
+    this.progressbar.value = time / this.getDuration() * 100;
+    // this.changeCurrentTime.emit(time);
   }
 
   private watchLoadedFraction(target: YT.Player): void {
     const fraction: number = target.getVideoLoadedFraction();
-    this.changeLoadedFraction.emit(fraction);
+    this.progressbar.bufferValue = fraction * 100;
+    // this.changeLoadedFraction.emit(fraction);
     if (fraction === 1) {
       window.clearInterval(this.watchLoadedFractionTimeId);
       // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
@@ -265,12 +388,26 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   }
 }
 
-export const PlayerState = {
-  UNSTARTED: -1,
-  ENDED: 0,
-  PLAYING: 1,
-  PAUSED: 2,
-  BUFFERING: 3,
-  CUED: 5
-} as const;
-export type PlayerState = typeof PlayerState[keyof typeof PlayerState];
+enum Repeat {
+  Off = 0,
+  One = 1,
+  On = 2,
+}
+
+interface Settings {
+  volume: Volume;
+  repeat: Repeat;
+  shuffle: boolean;
+}
+
+interface Volume {
+  value: number;
+  muted: boolean;
+}
+
+interface ProgressBarSetting {
+  show: boolean,
+  mode: ProgressBarMode,
+  bufferValue: number,
+  value: number
+}

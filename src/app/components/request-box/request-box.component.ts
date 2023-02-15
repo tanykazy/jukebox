@@ -17,9 +17,9 @@ export interface Size {
 export class RequestBoxComponent implements OnInit {
   @Input() size!: Size;
 
-  @Output() clickRequest: EventEmitter<Request> = new EventEmitter();
-  @Output() select: EventEmitter<string> = new EventEmitter();
-  @Output() deselect: EventEmitter<string> = new EventEmitter();
+  @Output() clickRequest = new EventEmitter<Request>();
+  @Output() select = new EventEmitter<string>();
+  @Output() deselect = new EventEmitter<string>();
 
   public requests: Requests = new Requests();
 

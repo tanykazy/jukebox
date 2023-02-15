@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -14,6 +15,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRippleModule } from '@angular/material/core';
 import { MatListModule } from '@angular/material/list';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from './app.component';
@@ -34,11 +36,12 @@ import { RequestDialogComponent } from './components/request-dialog/request-dial
   imports: [
     BrowserModule,
     FormsModule,
+    BrowserAnimationsModule,
     YouTubePlayerModule,
     MatIconModule,
     MatInputModule,
     MatToolbarModule,
-    BrowserAnimationsModule,
+    MatSidenavModule,
     MatButtonModule,
     MatSliderModule,
     MatCardModule,
@@ -47,6 +50,7 @@ import { RequestDialogComponent } from './components/request-dialog/request-dial
     MatDialogModule,
     MatRippleModule,
     MatListModule,
+    MatBottomSheetModule,
     DragDropModule,
   ],
   providers: [],
