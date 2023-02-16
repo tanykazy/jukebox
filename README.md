@@ -6,8 +6,6 @@
 
 Jukebox is jukebox of [YouTube](https://www.youtube.com/) video.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.4.
-
 ## Features
 
 Jukebox can be used as a temporary playlist.
