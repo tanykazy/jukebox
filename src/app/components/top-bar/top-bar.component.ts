@@ -8,7 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class TopBarComponent {
   @Input() appName: string | undefined;
 
-  @Output() share: EventEmitter<UIEvent> = new EventEmitter();
+  @Output() share = new EventEmitter<UIEvent>();
 
   constructor() { }
 

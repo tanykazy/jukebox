@@ -2,7 +2,7 @@ import { Component, OnInit, Output, ViewChild, EventEmitter, Input, OnDestroy } 
 
 import { YouTubePlayer } from "@angular/youtube-player";
 
-let apiLoaded = false;
+let apiLoaded: boolean = false;
 
 @Component({
   selector: 'app-youtube-player',
@@ -10,12 +10,14 @@ let apiLoaded = false;
   styleUrls: ['./youtube-player.component.css']
 })
 export class YoutubePlayerComponent implements OnInit, OnDestroy {
+  constructor() { }
+
   @ViewChild(YouTubePlayer) youtube!: YouTubePlayer;
 
-  @Output() changeCurrentTime: EventEmitter<number> = new EventEmitter();
-  @Output() changeLoadedFraction: EventEmitter<number> = new EventEmitter();
-  @Output() ready: EventEmitter<YoutubePlayerComponent> = new EventEmitter();
-  @Output() state: EventEmitter<PlayerState> = new EventEmitter();
+  @Output() changeCurrentTime = new EventEmitter<number>();
+  @Output() changeLoadedFraction = new EventEmitter<number>();
+  @Output() ready = new EventEmitter<YoutubePlayerComponent>();
+  @Output() state = new EventEmitter<PlayerState>();
 
   @Input()
   public set videoId(id: string | undefined) {
@@ -77,8 +79,6 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     const fraction: number = this.youtube.getVideoLoadedFraction();
     return fraction;
   }
-
-  constructor() { }
 
   ngOnInit(): void {
     if (!apiLoaded) {
