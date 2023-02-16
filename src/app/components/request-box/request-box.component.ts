@@ -108,8 +108,10 @@ export class RequestBoxComponent implements OnInit {
     this.removeRequest(event);
   }
 
-  public drop(event: CdkDragDrop<string[]>): void {
+  public drop(event: CdkDragDrop<Request[]>): void {
+    // console.debug(this.requests);
     moveItemInArray(this.requests, event.previousIndex, event.currentIndex);
+    // console.debug(this.requests);
   }
 
   public getTitle(data: Request, name: string): string {

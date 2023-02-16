@@ -1,5 +1,5 @@
-<mat-list role="list">
-    <mat-list-item matRipple role="listitem" *ngFor="let request of requests" (click)="onClickRequest(request)">
+<mat-list cdkDropList role="list" (cdkDropListDropped)="drop($event)">
+    <mat-list-item matRipple cdkDrag role="listitem" *ngFor="let request of requests" (click)="onClickRequest(request)">
         <img matListItemAvatar [src]="request.oEmbed?.thumbnail_url" [alt]="">
         <span matListItemTitle>{{request.oEmbed?.title}}</span>
         <span matListItemLine>{{request.oEmbed?.author_name}}</span>
