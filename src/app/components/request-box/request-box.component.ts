@@ -15,19 +15,18 @@ export interface Size {
   styleUrls: ['./request-box.component.css']
 })
 export class RequestBoxComponent implements OnInit {
+  constructor() { }
+
   @Input() size!: Size;
 
-  @Output() clickRequest: EventEmitter<Request> = new EventEmitter();
-  @Output() select: EventEmitter<string> = new EventEmitter();
-  @Output() deselect: EventEmitter<string> = new EventEmitter();
+  @Output() clickRequest = new EventEmitter<Request>();
+  @Output() select = new EventEmitter<string>();
+  @Output() deselect = new EventEmitter<string>();
 
   public requests: Requests = new Requests();
 
-  constructor() {
-  }
-
   ngOnInit(): void {
-    const playlist = StorageService.getItem(Storage.Playlist);
+    const playlist: Array<string> = StorageService.getItem(Storage.Playlist);
     if (playlist !== null) {
       try {
         playlist.forEach((value: string) => {
@@ -100,10 +99,12 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public onClickRequest(event: Request): void {
+    console.debug('Click list item');
     this.clickRequest.emit(event);
   }
 
   public onClickDelete(event: Request): void {
+    console.debug('Click list item delete');
     this.removeRequest(event);
   }
 
