@@ -53,7 +53,8 @@
                 <mat-icon>volume_up</mat-icon>
             </ng-template>
         </button>
-        <mat-slider min="0" max="100" step="1" [value]="settings.volume.value" (input)="onInputSlider($event)">
+        <mat-slider min="0" max="100" step="1">
+            <input matSliderThumb [value]="settings.volume.value" (valueChange)="onInputSlider($event)">
         </mat-slider>
         <mat-form-field>
             <mat-label>Cut-Off Time</mat-label>

@@ -1,8 +1,8 @@
 import { Component, ViewChild, ViewChildren, HostListener, QueryList } from '@angular/core';
-import { MatLegacySliderChange as MatSliderChange } from "@angular/material/legacy-slider";
+import { MatSliderDragEvent } from '@angular/material/slider';
 import { LegacyProgressBarMode as ProgressBarMode } from '@angular/material/legacy-progress-bar';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig, MatLegacyDialogState as MatDialogState } from '@angular/material/legacy-dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogConfig, MatDialogState } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { YoutubePlayerComponent, PlayerState } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent, Request, Size } from "./components/request-box/request-box.component";
@@ -204,9 +204,9 @@ export class AppComponent {
     this.saveSettings(this.settings);
   }
 
-  onInputSlider(event: MatSliderChange): void {
-    if (event.value !== null) {
-      this.settings.volume.value = event.value;
+  onInputSlider(event: number): void {
+    if (event!== null) {
+      this.settings.volume.value = event;
       this.saveSettings(this.settings);
     }
   }
