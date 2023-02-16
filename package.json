@@ -21,7 +21,6 @@
     "@angular/platform-browser-dynamic": "^13.3.8",
     "@angular/router": "^13.3.8",
     "@angular/youtube-player": "^13.3.7",
-    "npm": "^8.10.0",
     "rxjs": "^7.5.5",
     "tslib": "^2.1.0",
     "zone.js": "~0.11.4"
@@ -38,6 +37,7 @@
     "karma-coverage": "^2.2.0",
     "karma-jasmine": "^5.0.1",
     "karma-jasmine-html-reporter": "^1.7.0",
+    "npm": "^9.5.0",
     "typescript": "^4.6.4"
   }
 }
