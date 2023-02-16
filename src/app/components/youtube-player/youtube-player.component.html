@@ -52,8 +52,7 @@
           <mat-icon>volume_up</mat-icon>
         </ng-template>
       </button>
-      <mat-slider min="0" max="100" step="1" [disabled]="settings.volume.muted" [value]="settings.volume.value"
-        (input)="onInputSlider($event)">
+      <mat-slider min="0" max="100" step="1" [disabled]="settings.volume.muted">
         <input matSliderThumb [value]="settings.volume.value" (dragstart)="onDragStart($event)"
           (dragend)="onDragEnd($event)">
       </mat-slider>

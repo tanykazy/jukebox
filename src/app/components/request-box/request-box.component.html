@@ -1,12 +1,10 @@
-<mat-list class="list" role="list">
-    <mat-list-item role="listitem" matRipple *ngFor="let request of requests" lines="3">
-        <div class="video-list" (click)="onClickRequest(request)">
-            <img matListItemAvatar class="avatar" [src]="request.oEmbed?.thumbnail_url" [alt]="">
-            <span matListItemTitle>{{request.oEmbed?.title}}</span>
-            <span matListItemLine>{{request.oEmbed?.author_name}}</span>
-        </div>
-        <div matListItemMeta class="actions">
-            <button mat-icon-button (click)="onClickDelete(request)"><mat-icon>delete</mat-icon></button>
-        </div>
+<mat-list cdkDropList role="list" (cdkDropListDropped)="drop($event)">
+    <mat-list-item matRipple cdkDrag role="listitem" *ngFor="let request of requests" (click)="onClickRequest(request)">
+        <img matListItemAvatar [src]="request.oEmbed?.thumbnail_url" [alt]="">
+        <span matListItemTitle>{{request.oEmbed?.title}}</span>
+        <span matListItemLine>{{request.oEmbed?.author_name}}</span>
+        <button matListItemMeta mat-icon-button (click)="onClickDelete(request)">
+            <mat-icon>delete</mat-icon>
+        </button>
     </mat-list-item>
 </mat-list>

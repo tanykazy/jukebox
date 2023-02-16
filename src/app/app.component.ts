@@ -1,6 +1,6 @@
 import { Component, ViewChild, ViewChildren, HostListener, QueryList } from '@angular/core';
-import { MatSliderChange } from "@angular/material/slider";
-import { ProgressBarMode } from '@angular/material/progress-bar';
+import { MatSliderDragEvent } from '@angular/material/slider';
+import { LegacyProgressBarMode as ProgressBarMode } from '@angular/material/legacy-progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogConfig, MatDialogState } from '@angular/material/dialog';
 import { Clipboard } from '@angular/cdk/clipboard';

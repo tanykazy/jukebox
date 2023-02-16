@@ -18,7 +18,7 @@ import { StorageService, Storage } from '../../service/storage.service';
 // export type PlayerState = typeof PlayerState[keyof typeof PlayerState];
 // export type PlayerState = typeof YT.PlayerState[keyof typeof YT.PlayerState];
 
-let apiLoaded = false;
+let apiLoaded: boolean = false;
 
 @Component({
   selector: 'app-youtube-player',
@@ -170,6 +170,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
       case YT.PlayerState.UNSTARTED:
         this.progressbar.show = false;
         this.progressbar.mode = 'indeterminate';
+        event.target.playVideo();
         break;
 
       case YT.PlayerState.ENDED:
