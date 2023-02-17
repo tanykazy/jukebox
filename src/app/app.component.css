@@ -7,8 +7,10 @@
   justify-content: center;
 }
 
-.disabled {
-  opacity: 0.5;
+#player{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
 #add-button {

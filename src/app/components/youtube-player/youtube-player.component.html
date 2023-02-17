@@ -1,13 +1,12 @@
-<mat-nav-list>
-  <mat-card>
-    <mat-card-content>
-      <youtube-player [videoId]="_videoId" [height]="height" [width]="width" [startSeconds]="startSeconds"
-        [endSeconds]="endSeconds" [suggestedQuality]="suggestedQuality"
-        [showBeforeIframeApiLoads]="showBeforeIframeApiLoads" (ready)="onReady($event)"
-        (stateChange)="onStateChange($event)">
-      </youtube-player>
-    </mat-card-content>
-    <mat-card-actions>
+<!-- <mat-accordion> -->
+
+  <mat-progress-bar *ngIf="progressbar.show" [mode]="progressbar.mode" [value]="progressbar.value"
+    [bufferValue]="progressbar.bufferValue">
+  </mat-progress-bar>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+
       <button mat-icon-button (click)="onClickSkipPrevious($event)">
         <mat-icon>skip_previous</mat-icon>
       </button>
@@ -22,6 +21,9 @@
       <button mat-icon-button (click)="onClickSkipNext($event)">
         <mat-icon>skip_next</mat-icon>
       </button>
+
+
+
       <button mat-icon-button (click)="onClickShuffle($event)">
         <ng-template [ngIf]="settings.shuffle">
           <mat-icon>shuffle</mat-icon>
@@ -53,13 +55,32 @@
         </ng-template>
       </button>
       <mat-slider min="0" max="100" step="1" [disabled]="settings.volume.muted">
-        <input matSliderThumb [value]="settings.volume.value" (dragstart)="onDragStart($event)"
-          (dragend)="onDragEnd($event)">
+        <input matSliderThumb [value]="settings.volume.value" (dragStart)="onDragStart($event)"
+          (dragEnd)="onDragEnd($event)" (valueChange)="onValueChange($event)" (click)="onClickSlider($event)">
       </mat-slider>
-    </mat-card-actions>
-    <mat-card-footer>
-      <mat-progress-bar *ngIf="progressbar.show" [mode]="progressbar.mode" [value]="progressbar.value"
-        [bufferValue]="progressbar.bufferValue"></mat-progress-bar>
-    </mat-card-footer>
-  </mat-card>
-</mat-nav-list>
+
+      <!-- <mat-panel-title> -->
+      <!-- </mat-panel-title> -->
+      <!-- <mat-panel-description> -->
+      <!-- </mat-panel-description> -->
+    </mat-expansion-panel-header>
+
+    <youtube-player [videoId]="_videoId" [height]="height" [width]="width" [startSeconds]="startSeconds"
+      [endSeconds]="endSeconds" [suggestedQuality]="suggestedQuality"
+      [showBeforeIframeApiLoads]="showBeforeIframeApiLoads" (ready)="onReady($event)"
+      (stateChange)="onStateChange($event)">
+    </youtube-player>
+
+  </mat-expansion-panel>
+<!-- </mat-accordion> -->
+
+<!-- <mat-nav-list> -->
+<!-- <mat-card> -->
+<!-- <mat-card-content> -->
+<!-- </mat-card-content> -->
+<!-- <mat-card-actions> -->
+<!-- </mat-card-actions> -->
+<!-- <mat-card-footer> -->
+<!-- </mat-card-footer> -->
+<!-- </mat-card> -->
+<!-- </mat-nav-list> -->

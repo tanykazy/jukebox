@@ -58,7 +58,7 @@ export class AppComponent {
 
   openBottomSheet(): void {
     this.bottomSheet.open(YoutubePlayerComponent, {
-      ariaLabel: null,
+      ariaModal: true,
       disableClose: true
     });
   }

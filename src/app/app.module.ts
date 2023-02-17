@@ -16,6 +16,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatRippleModule } from '@angular/material/core';
 import { MatListModule } from '@angular/material/list';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
 import { AppComponent } from './app.component';
@@ -51,6 +53,8 @@ import { RequestDialogComponent } from './components/request-dialog/request-dial
     MatRippleModule,
     MatListModule,
     MatBottomSheetModule,
+    MatMenuModule,
+    MatExpansionModule,
     DragDropModule,
   ],
   providers: [],

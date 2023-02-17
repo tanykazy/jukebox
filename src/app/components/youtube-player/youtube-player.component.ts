@@ -1,7 +1,8 @@
 import { Component, OnInit, Output, ViewChild, EventEmitter, Input, OnDestroy } from '@angular/core';
 
+import { MatMenuTrigger } from '@angular/material/menu';
 import { ProgressBarMode } from '@angular/material/progress-bar';
-import { MatSliderChange } from '@angular/material/slider';
+import { MatSliderDragEvent } from '@angular/material/slider';
 import { YouTubePlayer } from '@angular/youtube-player';
 
 import { StorageService, Storage } from '../../service/storage.service';
@@ -29,6 +30,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   constructor() { }
 
   @ViewChild(YouTubePlayer) youtube!: YouTubePlayer;
+  @ViewChild(MatMenuTrigger) volumeMenuTrigger!: MatMenuTrigger;
 
   // @Output() changeCurrentTime = new EventEmitter<number>();
   // @Output() changeLoadedFraction = new EventEmitter<number>();
@@ -237,6 +239,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   onClickSkipPrevious(event: UIEvent): void {
     // const request = this.requestBox.requests.previous(true);
     // this.playback = new Playback(request.videoid);
+    event.stopPropagation();
   }
 
   onClickPlayPause(event: UIEvent): void {
@@ -247,11 +250,13 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
         this.playVideo();
       }
     }
+    event.stopPropagation();
   }
 
   onClickSkipNext(event: UIEvent): void {
     // this.controlEvent.emit(Control.SkipNext);
     // this.skipNext(true, this.settings.repeat === Repeat.Off);
+    event.stopPropagation();
   }
 
 
@@ -262,11 +267,13 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
       // this.requestBox.requests.shuffle();
     }
     StorageService.setItem(Storage.Settings, this.settings);
+    event.stopPropagation();
   }
 
   onClickRepeat(event: UIEvent): void {
     this.settings.repeat = (this.settings.repeat + 1) % 3;
     StorageService.setItem(Storage.Settings, this.settings);
+    event.stopPropagation();
   }
 
   onClickVolume(event: UIEvent): void {
@@ -277,22 +284,36 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
       this.unMute();
     }
     StorageService.setItem(Storage.Settings, this.settings);
+    event.stopPropagation();
   }
 
-  onDragStart(event: any): void {
+  onHoverVolume(event: any) {
+    console.log(event);
+    this.volumeMenuTrigger.openMenu();
+  }
+
+  onBlurVolume(event: any) {
     console.log(event);
   }
 
-  onDragEnd(event: any): void {
+  onDragStart(event: MatSliderDragEvent): void {
     console.log(event);
   }
 
-  onInputSlider(event: MatSliderChange): void {
-    if (event.value !== null) {
-      this.volume = event.value;
-      this.settings.volume.value = event.value;
-      StorageService.setItem(Storage.Settings, this.settings);
-    }
+  onDragEnd(event: MatSliderDragEvent): void {
+    console.log(event);
+  }
+
+  onValueChange(event: number): void {
+    console.log(event);
+    this.volume = event;
+    this.settings.volume.value = event;
+    StorageService.setItem(Storage.Settings, this.settings);
+  }
+
+  onClickSlider(event: UIEvent): void {
+    console.log(event);
+    event.stopPropagation();
   }
 
   private watchCurrentTime(target: YT.Player): void {
