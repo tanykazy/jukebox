@@ -62,12 +62,12 @@
         </button>
 
         <mat-slider min="0" max="100" step="1" [disabled]="settings.volume.muted">
-          <input matSliderThumb [value]="settings.volume.value" (dragStart)="onDragStart($event)"
-            (dragEnd)="onDragEnd($event)" (valueChange)="onValueChange($event)" (click)="onClickSlider($event)">
+          <input matSliderThumb [value]="settings.volume.value" (valueChange)="onValueChange($event)"
+            (click)="onClickSlider($event)">
         </mat-slider>
       </mat-expansion-panel-header>
 
-      <youtube-player [videoId]="_videoId" [height]="height" [width]="width" [startSeconds]="startSeconds"
+      <youtube-player [videoId]="_video?.videoid" [height]="height" [width]="width" [startSeconds]="startSeconds"
         [endSeconds]="endSeconds" [suggestedQuality]="suggestedQuality"
         [showBeforeIframeApiLoads]="showBeforeIframeApiLoads" (ready)="onReady($event)"
         (stateChange)="onStateChange($event)">

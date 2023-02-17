@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, HostListener } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
 
 import { MatDialog, MatDialogConfig, MatDialogState } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -6,6 +6,14 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { RequestDialogComponent, DialogData } from "../request-dialog/request-dialog.component";
 import { YoutubeUrlService, OEmbedResponseTypeVideo } from "../../service/youtube-url.service";
 import { StorageService, Storage } from "../../service/storage.service";
+
+
+type VideoId = string;
+
+export interface Video {
+  videoid: VideoId;
+  oEmbed?: OEmbedResponseTypeVideo;
+}
 
 @Component({
   selector: 'app-request-box',
@@ -17,13 +25,18 @@ export class RequestBoxComponent implements OnInit {
     public dialog: MatDialog,
   ) { }
 
+  private index: number = 0;
   private dialogState: MatDialogState = MatDialogState.CLOSED;
 
-  @Output() clickRequest = new EventEmitter<Request>();
+  @Output() clickVideo = new EventEmitter<Video>();
   @Output() select = new EventEmitter<string>();
   @Output() deselect = new EventEmitter<string>();
 
-  public requests: Requests = new Requests();
+  public videos = new Array<Video>();
+
+  public get length(): number {
+    return this.videos.length;
+  }
 
   ngOnInit(): void {
     const playlist: Array<string> = StorageService.getItem(Storage.Playlist);
@@ -34,7 +47,7 @@ export class RequestBoxComponent implements OnInit {
           this.addRequest(url);
         })
       } catch (error) {
-        StorageService.setItem(Storage.Playlist, this.requests.toIdList());
+        StorageService.setItem(Storage.Playlist, this.toIdList());
       }
     }
     const params = new URLSearchParams(window.location.search);
@@ -52,12 +65,12 @@ export class RequestBoxComponent implements OnInit {
       const videoid = YoutubeUrlService.getVideoId(url.href);
       if (videoid) {
         try {
-          const r: Request = {
+          const v: Video = {
             videoid: videoid,
             oEmbed: await YoutubeUrlService.getVideoEmbed(url.href)
           };
-          if (!this.requests.exist(r)) {
-            this.requests.add(r);
+          if (!this.exist(v)) {
+            this.add(v);
           } else {
             console.info(`Duplicate video id '${videoid}'`);
           }
@@ -65,14 +78,14 @@ export class RequestBoxComponent implements OnInit {
           console.warn(error);
         }
       }
-      StorageService.setItem(Storage.Playlist, this.requests.toIdList());
+      StorageService.setItem(Storage.Playlist, this.toIdList());
     }
     return Promise.resolve(true);
   }
 
-  public removeRequest(request: Request): void {
-    this.requests.remove(request);
-    StorageService.setItem(Storage.Playlist, this.requests.toIdList());
+  public removeRequest(video: Video): void {
+    this.remove(video);
+    StorageService.setItem(Storage.Playlist, this.toIdList());
   }
 
   public getIndex(request: string): number {
@@ -86,7 +99,7 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public getLength(): number {
-    return this.requests.length;
+    return this.videos.length;
   }
 
   public getAllRequests(): Array<string> {
@@ -98,43 +111,76 @@ export class RequestBoxComponent implements OnInit {
     // this.requests = shuffle(this.requests);
   }
 
-  public onClickRequest(event: Request): void {
+  public onClickRequest(event: Video): void {
     console.debug('Click list item');
-    this.clickRequest.emit(event);
+    this.clickVideo.emit(event);
   }
 
-  public onClickDelete(event: Request): void {
+  public onClickDelete(event: Video): void {
     console.debug('Click list item delete');
     this.removeRequest(event);
   }
 
-  /**
-   * onClickAddButton
-   */
   public onClickAddButton(event: UIEvent): void {
     this.openDialog();
   }
 
-  public drop(event: CdkDragDrop<Request[]>): void {
-    // console.debug(this.requests);
-    moveItemInArray(this.requests, event.previousIndex, event.currentIndex);
-    // console.debug(this.requests);
+  public drop(event: CdkDragDrop<Video[]>): void {
+    moveItemInArray(this.videos, event.previousIndex, event.currentIndex);
   }
 
-  public getTitle(data: Request, name: string): string {
-    if (data.oEmbed) {
-      return data.oEmbed.title || '';
+  public toIdList(): Array<string> {
+    const ids: string[] = [];
+    this.videos.forEach((request: Video) => {
+      ids.push(request.videoid);
+    });
+    return ids;
+  }
+
+  public toJSON() {
+    return Array.from(this.videos);
+  }
+
+  public add(video: Video): number {
+    return this.videos.push(video);
+  }
+
+  public remove(video: Video): void {
+    const i = this.videos.findIndex((r: Video) => r.videoid === video.videoid);
+    if (i !== -1) {
+      this.videos.splice(i, 1);
     }
-    return '';
   }
 
-  public getAuthor(data: Request, name: string): string {
-    if (data.oEmbed) {
-      return data.oEmbed.author_name || '';
+  public exist(video: Video): boolean {
+    return !this.videos.every((r: Video) => r.videoid !== video.videoid);
+  }
+
+  public next(loop: boolean): Video {
+    if (loop && this.index === this.videos.length) {
+      this.index = 0;
     }
-    return '';
+    return this.videos[this.index++];
   }
 
+  public previous(loop: boolean): Video {
+    if (loop && this.index === 0) {
+      this.index = this.videos.length - 1;
+    }
+    return this.videos[--this.index];
+  }
+
+  public has(): boolean {
+    return this.videos[this.index] !== undefined;
+  }
+
+  public shuffle() {
+    let m: number = this.videos.length;
+    while (m) {
+      const i: number = Math.floor(Math.random() * m--);
+      [this.videos[m], this.videos[i]] = [this.videos[i], this.videos[m]];
+    }
+  }
   private openDialog(): void {
     const data: DialogData = {
       url: ''
@@ -179,76 +225,6 @@ export class RequestBoxComponent implements OnInit {
           }
         }
       }
-    }
-  }
-}
-
-export type VideoId = string;
-
-export interface Request {
-  videoid: VideoId;
-  oEmbed?: OEmbedResponseTypeVideo;
-}
-
-export class Requests extends Array<Request> {
-  private index: number;
-
-  constructor(...requests: Request[]) {
-    super(...requests);
-    super.push(...requests || []);
-    this.index = 0;
-  }
-
-  public toIdList(): Array<string> {
-    const ids: string[] = [];
-    this.forEach((request: Request) => {
-      ids.push(request.videoid);
-    });
-    return ids;
-  }
-
-  public toJSON() {
-    return Array.from(this);
-  }
-
-  public add(request: Request): number {
-    return this.push(request);
-  }
-
-  public remove(request: Request): void {
-    const i = this.findIndex((r: Request) => r.videoid === request.videoid);
-    if (i !== -1) {
-      this.splice(i, 1);
-    }
-  }
-
-  public exist(request: Request): boolean {
-    return !this.every((r: Request) => r.videoid !== request.videoid);
-  }
-
-  public next(loop: boolean): Request {
-    if (loop && this.index === this.length) {
-      this.index = 0;
-    }
-    return this[this.index++];
-  }
-
-  public previous(loop: boolean): Request {
-    if (loop && this.index === 0) {
-      this.index = this.length - 1;
-    }
-    return this[--this.index];
-  }
-
-  public has(): boolean {
-    return this[this.index] !== undefined;
-  }
-
-  public shuffle() {
-    let m: number = this.length;
-    while (m) {
-      const i: number = Math.floor(Math.random() * m--);
-      [this[m], this[i]] = [this[i], this[m]];
     }
   }
 }
