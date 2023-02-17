@@ -1,0 +1,9 @@
+#request-list {
+    width: fit-content(100%);
+}
+
+#add-button {
+    position: fixed;
+    bottom: 4.5em;
+    right: 1em;
+}

@@ -1,20 +1,13 @@
-.float {
-  display: flex;
-  position: absolute;
+#top-bar {
   width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
 }
 
-#player{
-  position: absolute;
+#request {
+  width: 100%;
+}
+
+#player {
+  position: fixed;
   bottom: 0;
   width: 100%;
-}
-
-#add-button {
-  position: fixed;
-  bottom: 1em;
-  right: 1em;
 }

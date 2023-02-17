@@ -1,86 +1,78 @@
-<!-- <mat-accordion> -->
+<mat-accordion>
+  <div>
+    <mat-progress-bar id="duration-bar" *ngIf="progressbar.show" [mode]="progressbar.mode" [value]="progressbar.value"
+      [bufferValue]="progressbar.bufferValue"></mat-progress-bar>
 
-  <mat-progress-bar *ngIf="progressbar.show" [mode]="progressbar.mode" [value]="progressbar.value"
-    [bufferValue]="progressbar.bufferValue">
-  </mat-progress-bar>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
 
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
+        <button mat-icon-button (click)="onClickSkipPrevious($event)">
+          <mat-icon>skip_previous</mat-icon>
+        </button>
 
-      <button mat-icon-button (click)="onClickSkipPrevious($event)">
-        <mat-icon>skip_previous</mat-icon>
-      </button>
-      <button mat-icon-button (click)="onClickPlayPause($event)">
-        <ng-template [ngIf]="isPlaying">
-          <mat-icon>pause</mat-icon>
-        </ng-template>
-        <ng-template [ngIf]="!isPlaying">
-          <mat-icon>play_arrow</mat-icon>
-        </ng-template>
-      </button>
-      <button mat-icon-button (click)="onClickSkipNext($event)">
-        <mat-icon>skip_next</mat-icon>
-      </button>
+        <button mat-icon-button (click)="onClickPlayPause($event)">
+          <ng-template [ngIf]="isPlaying">
+            <mat-icon>pause</mat-icon>
+          </ng-template>
+          <ng-template [ngIf]="!isPlaying">
+            <mat-icon>play_arrow</mat-icon>
+          </ng-template>
+        </button>
 
+        <button mat-icon-button (click)="onClickSkipNext($event)">
+          <mat-icon>skip_next</mat-icon>
+        </button>
 
+        <!-- <mat-panel-title> -->
+        <!-- </mat-panel-title> -->
+        <!-- <mat-panel-description> -->
+        <!-- </mat-panel-description> -->
 
-      <button mat-icon-button (click)="onClickShuffle($event)">
-        <ng-template [ngIf]="settings.shuffle">
-          <mat-icon>shuffle</mat-icon>
-        </ng-template>
-        <ng-template [ngIf]="!settings.shuffle">
-          <mat-icon class="disabled">shuffle</mat-icon>
-        </ng-template>
-      </button>
-      <button mat-icon-button (click)="onClickRepeat($event)">
-        <ng-template [ngIf]="settings.repeat === 0">
-          <mat-icon class="disabled">repeat</mat-icon>
-        </ng-template>
-        <ng-template [ngIf]="settings.repeat === 1">
-          <mat-icon>repeat_one</mat-icon>
-        </ng-template>
-        <ng-template [ngIf]="settings.repeat === 2">
-          <mat-icon>repeat</mat-icon>
-        </ng-template>
-      </button>
-      <button mat-icon-button (click)="onClickVolume($event)">
-        <ng-template [ngIf]="settings.volume.muted || settings.volume.value === 0">
-          <mat-icon>volume_off</mat-icon>
-        </ng-template>
-        <ng-template [ngIf]="!settings.volume.muted && 0 < settings.volume.value && settings.volume.value <= 50">
-          <mat-icon>volume_down</mat-icon>
-        </ng-template>
-        <ng-template [ngIf]="!settings.volume.muted && 50 < settings.volume.value && settings.volume.value <= 100">
-          <mat-icon>volume_up</mat-icon>
-        </ng-template>
-      </button>
-      <mat-slider min="0" max="100" step="1" [disabled]="settings.volume.muted">
-        <input matSliderThumb [value]="settings.volume.value" (dragStart)="onDragStart($event)"
-          (dragEnd)="onDragEnd($event)" (valueChange)="onValueChange($event)" (click)="onClickSlider($event)">
-      </mat-slider>
+        <button mat-icon-button (click)="onClickShuffle($event)">
+          <ng-template [ngIf]="settings.shuffle">
+            <mat-icon>shuffle</mat-icon>
+          </ng-template>
+          <ng-template [ngIf]="!settings.shuffle">
+            <mat-icon class="disabled">shuffle</mat-icon>
+          </ng-template>
+        </button>
 
-      <!-- <mat-panel-title> -->
-      <!-- </mat-panel-title> -->
-      <!-- <mat-panel-description> -->
-      <!-- </mat-panel-description> -->
-    </mat-expansion-panel-header>
+        <button mat-icon-button (click)="onClickRepeat($event)">
+          <ng-template [ngIf]="settings.repeat === 0">
+            <mat-icon class="disabled">repeat</mat-icon>
+          </ng-template>
+          <ng-template [ngIf]="settings.repeat === 1">
+            <mat-icon>repeat_one</mat-icon>
+          </ng-template>
+          <ng-template [ngIf]="settings.repeat === 2">
+            <mat-icon>repeat</mat-icon>
+          </ng-template>
+        </button>
 
-    <youtube-player [videoId]="_videoId" [height]="height" [width]="width" [startSeconds]="startSeconds"
-      [endSeconds]="endSeconds" [suggestedQuality]="suggestedQuality"
-      [showBeforeIframeApiLoads]="showBeforeIframeApiLoads" (ready)="onReady($event)"
-      (stateChange)="onStateChange($event)">
-    </youtube-player>
+        <button mat-icon-button (click)="onClickVolume($event)">
+          <ng-template [ngIf]="settings.volume.muted || settings.volume.value === 0">
+            <mat-icon>volume_off</mat-icon>
+          </ng-template>
+          <ng-template [ngIf]="!settings.volume.muted && 0 < settings.volume.value && settings.volume.value <= 50">
+            <mat-icon>volume_down</mat-icon>
+          </ng-template>
+          <ng-template [ngIf]="!settings.volume.muted && 50 < settings.volume.value && settings.volume.value <= 100">
+            <mat-icon>volume_up</mat-icon>
+          </ng-template>
+        </button>
 
-  </mat-expansion-panel>
-<!-- </mat-accordion> -->
+        <mat-slider min="0" max="100" step="1" [disabled]="settings.volume.muted">
+          <input matSliderThumb [value]="settings.volume.value" (dragStart)="onDragStart($event)"
+            (dragEnd)="onDragEnd($event)" (valueChange)="onValueChange($event)" (click)="onClickSlider($event)">
+        </mat-slider>
+      </mat-expansion-panel-header>
 
-<!-- <mat-nav-list> -->
-<!-- <mat-card> -->
-<!-- <mat-card-content> -->
-<!-- </mat-card-content> -->
-<!-- <mat-card-actions> -->
-<!-- </mat-card-actions> -->
-<!-- <mat-card-footer> -->
-<!-- </mat-card-footer> -->
-<!-- </mat-card> -->
-<!-- </mat-nav-list> -->
+      <youtube-player [videoId]="_videoId" [height]="height" [width]="width" [startSeconds]="startSeconds"
+        [endSeconds]="endSeconds" [suggestedQuality]="suggestedQuality"
+        [showBeforeIframeApiLoads]="showBeforeIframeApiLoads" (ready)="onReady($event)"
+        (stateChange)="onStateChange($event)">
+      </youtube-player>
+
+    </mat-expansion-panel>
+  </div>
+</mat-accordion>

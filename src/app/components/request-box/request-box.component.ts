@@ -1,13 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, HostListener } from '@angular/core';
+
+import { MatDialog, MatDialogConfig, MatDialogState } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
+import { RequestDialogComponent, DialogData } from "../request-dialog/request-dialog.component";
 import { YoutubeUrlService, OEmbedResponseTypeVideo } from "../../service/youtube-url.service";
 import { StorageService, Storage } from "../../service/storage.service";
-
-export interface Size {
-  width: number;
-  height: number;
-}
 
 @Component({
   selector: 'app-request-box',
@@ -15,9 +13,11 @@ export interface Size {
   styleUrls: ['./request-box.component.css']
 })
 export class RequestBoxComponent implements OnInit {
-  constructor() { }
+  constructor(
+    public dialog: MatDialog,
+  ) { }
 
-  @Input() size!: Size;
+  private dialogState: MatDialogState = MatDialogState.CLOSED;
 
   @Output() clickRequest = new EventEmitter<Request>();
   @Output() select = new EventEmitter<string>();
@@ -34,7 +34,7 @@ export class RequestBoxComponent implements OnInit {
           this.addRequest(url);
         })
       } catch (error) {
-        this.updateStorage(this.requests);
+        StorageService.setItem(Storage.Playlist, this.requests.toIdList());
       }
     }
     const params = new URLSearchParams(window.location.search);
@@ -65,14 +65,14 @@ export class RequestBoxComponent implements OnInit {
           console.warn(error);
         }
       }
-      this.updateStorage(this.requests);
+      StorageService.setItem(Storage.Playlist, this.requests.toIdList());
     }
     return Promise.resolve(true);
   }
 
   public removeRequest(request: Request): void {
     this.requests.remove(request);
-    this.updateStorage(this.requests);
+    StorageService.setItem(Storage.Playlist, this.requests.toIdList());
   }
 
   public getIndex(request: string): number {
@@ -108,6 +108,13 @@ export class RequestBoxComponent implements OnInit {
     this.removeRequest(event);
   }
 
+  /**
+   * onClickAddButton
+   */
+  public onClickAddButton(event: UIEvent): void {
+    this.openDialog();
+  }
+
   public drop(event: CdkDragDrop<Request[]>): void {
     // console.debug(this.requests);
     moveItemInArray(this.requests, event.previousIndex, event.currentIndex);
@@ -128,8 +135,51 @@ export class RequestBoxComponent implements OnInit {
     return '';
   }
 
-  private updateStorage(requests: Requests): void {
-    StorageService.setItem(Storage.Playlist, requests.toIdList());
+  private openDialog(): void {
+    const data: DialogData = {
+      url: ''
+    };
+    const config: MatDialogConfig = {
+      data: data,
+      minWidth: '90%',
+    };
+    const dialogRef = this.dialog.open(RequestDialogComponent, config);
+    dialogRef.afterOpened().subscribe(() => {
+      console.debug('Request dialog was opened');
+      this.dialogState = MatDialogState.OPEN;
+    });
+    dialogRef.afterClosed().subscribe((result: DialogData | undefined) => {
+      console.debug('Request dialog was closed');
+      this.dialogState = MatDialogState.CLOSED;
+      if (result) {
+        const urls = result.url.split(/\r\n|\r|\n|\s/);
+        for (const url of urls) {
+          try {
+            this.addRequest(new URL(url));
+          } catch (error) {
+            console.warn(error);
+          }
+        }
+      }
+    });
+  }
+
+  @HostListener('document:paste', ['$event'])
+  onPaste(event: ClipboardEvent): void {
+    if (this.dialogState !== MatDialogState.OPEN) {
+      const clipboardData = event.clipboardData;
+      if (clipboardData) {
+        const paste = clipboardData.getData('text');
+        const urls = paste.split(/\r\n|\r|\n|\s/);
+        for (const url of urls) {
+          try {
+            this.addRequest(new URL(url));
+          } catch (error) {
+            console.warn(error);
+          }
+        }
+      }
+    }
   }
 }
 

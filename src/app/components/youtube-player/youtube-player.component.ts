@@ -1,6 +1,5 @@
-import { Component, OnInit, Output, ViewChild, EventEmitter, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Output, ViewChild, EventEmitter, Input, OnDestroy, HostListener } from '@angular/core';
 
-import { MatMenuTrigger } from '@angular/material/menu';
 import { ProgressBarMode } from '@angular/material/progress-bar';
 import { MatSliderDragEvent } from '@angular/material/slider';
 import { YouTubePlayer } from '@angular/youtube-player';
@@ -29,17 +28,12 @@ let apiLoaded: boolean = false;
 export class YoutubePlayerComponent implements OnInit, OnDestroy {
   constructor() { }
 
+  private readonly maxSize: number = 400;
+
   @ViewChild(YouTubePlayer) youtube!: YouTubePlayer;
-  @ViewChild(MatMenuTrigger) volumeMenuTrigger!: MatMenuTrigger;
 
-  // @Output() changeCurrentTime = new EventEmitter<number>();
-  // @Output() changeLoadedFraction = new EventEmitter<number>();
-  // @Output() ready = new EventEmitter<YoutubePlayerComponent>();
-  // @Output() state = new EventEmitter<YT.PlayerState>();
-  @Output() end = new EventEmitter<void>();
-
-  @Input() height: number | undefined;
-  @Input() width: number | undefined;
+  @Output() next = new EventEmitter<void>();
+  @Output() previous = new EventEmitter<void>();
 
   @Input()
   public set videoId(id: string | undefined) {
@@ -55,7 +49,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   @Input()
   public set volume(value: number) {
     if (this.isReady) {
-      this.setVolume(value);
+      this.youtube.setVolume(value);
     }
     this._volume = value;
   }
@@ -68,9 +62,9 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   public set muted(mute: boolean) {
     if (this.isReady) {
       if (mute) {
-        this.mute();
+        this.youtube.mute();
       } else {
-        this.unMute();
+        this.youtube.unMute();
       }
     }
     this._muted = mute;
@@ -84,6 +78,8 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   private watchLoadedFractionTimeId: number | undefined;
   private isReady: boolean = false;
 
+  width: number | undefined;
+  height: number | undefined;
   startSeconds: number | undefined;
   endSeconds: number | undefined;
   suggestedQuality: "default" | "small" | "medium" | "large" | "hd720" | "hd1080" | "highres" | undefined;
@@ -146,6 +142,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     } else {
       console.debug('API loaded.');
     }
+    this.resize(window.innerWidth, window.innerHeight);
   }
 
   ngOnDestroy(): void {
@@ -156,12 +153,11 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   onReady(event: YT.PlayerEvent): void {
     console.info('Video %s ready.', event.target.getVideoUrl());
     this.isReady = true;
-    // this.ready.emit(this);
-    this.setVolume(this.volume);
+    this.youtube.setVolume(this.volume);
     if (this.muted) {
-      this.mute();
+      this.youtube.mute();
     } else {
-      this.unMute();
+      this.youtube.unMute();
     }
     event.target.playVideo();
   }
@@ -224,7 +220,6 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
         break;
 
       case YT.PlayerState.CUED:
-        // event.target.playVideo();
         this.progressbar.show = true;
         this.progressbar.mode = 'buffer';
         break;
@@ -233,7 +228,6 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
         console.warn('Unknown state %d', event.data);
         break;
     }
-    // this.state.emit(event.data);
   }
 
   onClickSkipPrevious(event: UIEvent): void {
@@ -245,9 +239,9 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   onClickPlayPause(event: UIEvent): void {
     if (this.isReady) {
       if (this.youtube.getPlayerState() === YT.PlayerState.PLAYING) {
-        this.pauseVideo();
+        this.youtube.pauseVideo();
       } else {
-        this.playVideo();
+        this.youtube.playVideo();
       }
     }
     event.stopPropagation();
@@ -279,21 +273,12 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   onClickVolume(event: UIEvent): void {
     this.settings.volume.muted = !this.settings.volume.muted;
     if (this.settings.volume.muted) {
-      this.mute();
+      this.youtube.mute();
     } else {
-      this.unMute();
+      this.youtube.unMute();
     }
     StorageService.setItem(Storage.Settings, this.settings);
     event.stopPropagation();
-  }
-
-  onHoverVolume(event: any) {
-    console.log(event);
-    this.volumeMenuTrigger.openMenu();
-  }
-
-  onBlurVolume(event: any) {
-    console.log(event);
   }
 
   onDragStart(event: MatSliderDragEvent): void {
@@ -318,95 +303,27 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
 
   private watchCurrentTime(target: YT.Player): void {
     const time: number = target.getCurrentTime();
-    this.progressbar.value = time / this.getDuration() * 100;
-    // this.changeCurrentTime.emit(time);
+    this.progressbar.value = time / this.youtube.getDuration() * 100;
   }
 
   private watchLoadedFraction(target: YT.Player): void {
     const fraction: number = target.getVideoLoadedFraction();
     this.progressbar.bufferValue = fraction * 100;
-    // this.changeLoadedFraction.emit(fraction);
     if (fraction === 1) {
       window.clearInterval(this.watchLoadedFractionTimeId);
-      // console.info('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
+      console.debug('Cancel loaded fraction watching. id: %d', this.watchLoadedFractionTimeId);
     }
   }
 
-  /**
-   * setVolume
-   */
-  public setVolume(volume: number): void {
-    this.youtube.setVolume(volume);
+  @HostListener('window:resize', ['$event'])
+  private onWindowResize(event: UIEvent): void {
+    this.resize(window.innerWidth, window.innerHeight);
   }
 
-  /**
-   * getVolume
-   */
-  public getVolume(): number {
-    return this.youtube.getVolume();
-  }
-
-  /**
-   * mute
-   */
-  public mute(): void {
-    this.youtube.mute();
-  }
-
-  /**
-   * unMute
-   */
-  public unMute() {
-    this.youtube.unMute();
-  }
-
-  /**
-   * isMuted
-   */
-  public isMuted(): boolean {
-    return this.youtube.isMuted();
-  }
-
-  /**
-   * playVideo
-   */
-  public playVideo(): void {
-    this.youtube.playVideo();
-  }
-
-  /**
-   * pauseVideo
-   */
-  public pauseVideo(): void {
-    this.youtube.pauseVideo();
-  }
-
-  /**
-   * stopVideo
-   */
-  public stopVideo(): void {
-    this.youtube.stopVideo();
-  }
-
-  /**
-   * seekTo
-   */
-  public seekTo(seconds: number, allowSeekAhead: boolean): void {
-    this.youtube.seekTo(seconds, allowSeekAhead);
-  }
-
-  /**
-   * getDuration
-   */
-  public getDuration(): number {
-    return this.youtube.getDuration();
-  }
-
-  /**
-   * getVideoUrl
-   */
-  public getVideoUrl(): string {
-    return this.youtube.getVideoUrl();
+  private resize(width: number, height: number): void {
+    const size = Math.min(width, height, this.maxSize) * 0.9;
+    this.width = size;
+    this.height = size;
   }
 }
 
