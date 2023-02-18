@@ -19,11 +19,4 @@ export class TopBarComponent {
     console.debug('Click share button');
     this.share.emit(event);
   }
-
-  /**
-   * onBackdropClick
-   */
-  public onBackdropClick(event:any) {
-    console.log(event);
-  }
 }

@@ -168,7 +168,6 @@ export class RequestBoxComponent implements OnInit {
         this.index = this.videos.length - 1;
       }
     }
-    console.log(this.index);
     return this.videos[this.index++];
   }
 

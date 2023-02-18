@@ -234,14 +234,12 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   }
 
   onValueChange(event: number): void {
-    console.log(event);
     this.youtube.setVolume(event);
     this.settings.volume.value = event;
     StorageService.setItem(Storage.Settings, this.settings);
   }
 
   onClickSlider(event: UIEvent): void {
-    console.log(event);
     event.stopPropagation();
   }
 

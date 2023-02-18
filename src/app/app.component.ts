@@ -10,17 +10,15 @@ import { RequestBoxComponent, Video } from "./components/request-box/request-box
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  public appName = "jukebox";
-
-  @ViewChild(RequestBoxComponent) requestBox!: RequestBoxComponent;
-  @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
-
-  // playlist: Array<number> = new Array();
-  public video!: Video;
-
   constructor(
     private clipboard: Clipboard,
     private snackBar: MatSnackBar) { }
+
+  public appName = "jukebox";
+  public video!: Video;
+
+  @ViewChild(RequestBoxComponent) requestBox!: RequestBoxComponent;
+  @ViewChild(YoutubePlayerComponent) player!: YoutubePlayerComponent;
 
   onClickVideo(event: Video): void {
     this.video = event;
