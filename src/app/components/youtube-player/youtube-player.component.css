@@ -1,7 +1,46 @@
+#player {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+#player-container {
+  width: 100%;
+}
+
+#player-panel {
+  width: 100%;
+}
+
+#player-header {
+  width: 100%;
+}
+
+#thumbnail-container,
+#thumbnail {
+  width: 3em;
+  height: 3em;
+}
+
 #duration-bar {
   width: 100%;
 }
 
+#video-text-container {
+  width: 100%;
+}
+
+.video-text {
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .disabled {
   opacity: 0.5;
+}
+
+.spacer {
+  flex: 1 1 auto;
 }

@@ -9,14 +9,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
-import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatRippleModule } from '@angular/material/core';
 import { MatListModule } from '@angular/material/list';
-import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -46,14 +43,11 @@ import { RequestDialogComponent } from './components/request-dialog/request-dial
     MatSidenavModule,
     MatButtonModule,
     MatSliderModule,
-    MatCardModule,
     MatProgressBarModule,
     MatSnackBarModule,
     MatDialogModule,
     MatRippleModule,
     MatListModule,
-    MatBottomSheetModule,
-    MatMenuModule,
     MatExpansionModule,
     DragDropModule,
   ],
