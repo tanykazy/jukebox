@@ -1,70 +1,82 @@
-<mat-accordion>
-  <div>
+<mat-accordion id="player">
+  <div id="player-container">
     <mat-progress-bar id="duration-bar" *ngIf="progressbar.show" [mode]="progressbar.mode" [value]="progressbar.value"
       [bufferValue]="progressbar.bufferValue"></mat-progress-bar>
 
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
+    <mat-expansion-panel id="player-panel">
+      <mat-expansion-panel-header id="player-header">
 
-        <button mat-icon-button (click)="onClickSkipPrevious($event)">
-          <mat-icon>skip_previous</mat-icon>
-        </button>
+        <mat-panel-title>
+          <div id="thumbnail-container">
+            <img id="thumbnail" *ngIf="_video?.oEmbed?.thumbnail_url" [src]="_video?.oEmbed?.thumbnail_url">
+          </div>
 
-        <button mat-icon-button (click)="onClickPlayPause($event)">
-          <ng-template [ngIf]="isPlaying">
-            <mat-icon>pause</mat-icon>
-          </ng-template>
-          <ng-template [ngIf]="!isPlaying">
-            <mat-icon>play_arrow</mat-icon>
-          </ng-template>
-        </button>
+          <button mat-icon-button (click)="onClickSkipPrevious($event)">
+            <mat-icon>skip_previous</mat-icon>
+          </button>
 
-        <button mat-icon-button (click)="onClickSkipNext($event)">
-          <mat-icon>skip_next</mat-icon>
-        </button>
+          <button mat-icon-button (click)="onClickPlayPause($event)">
+            <ng-template [ngIf]="isPlaying">
+              <mat-icon>pause</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!isPlaying">
+              <mat-icon>play_arrow</mat-icon>
+            </ng-template>
+          </button>
 
-        <!-- <mat-panel-title> -->
-        <!-- </mat-panel-title> -->
-        <!-- <mat-panel-description> -->
-        <!-- </mat-panel-description> -->
+          <button mat-icon-button (click)="onClickSkipNext($event)">
+            <mat-icon>skip_next</mat-icon>
+          </button>
 
-        <button mat-icon-button (click)="onClickShuffle($event)">
-          <ng-template [ngIf]="settings.shuffle">
-            <mat-icon>shuffle</mat-icon>
-          </ng-template>
-          <ng-template [ngIf]="!settings.shuffle">
-            <mat-icon class="disabled">shuffle</mat-icon>
-          </ng-template>
-        </button>
+          <button mat-icon-button (click)="onClickShuffle($event)">
+            <ng-template [ngIf]="settings.shuffle">
+              <mat-icon>shuffle</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!settings.shuffle">
+              <mat-icon class="disabled">shuffle</mat-icon>
+            </ng-template>
+          </button>
 
-        <button mat-icon-button (click)="onClickRepeat($event)">
-          <ng-template [ngIf]="settings.repeat === 0">
-            <mat-icon class="disabled">repeat</mat-icon>
-          </ng-template>
-          <ng-template [ngIf]="settings.repeat === 1">
-            <mat-icon>repeat_one</mat-icon>
-          </ng-template>
-          <ng-template [ngIf]="settings.repeat === 2">
-            <mat-icon>repeat</mat-icon>
-          </ng-template>
-        </button>
+          <button mat-icon-button (click)="onClickRepeat($event)">
+            <ng-template [ngIf]="settings.repeat === 0">
+              <mat-icon class="disabled">repeat</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="settings.repeat === 1">
+              <mat-icon>repeat_one</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="settings.repeat === 2">
+              <mat-icon>repeat</mat-icon>
+            </ng-template>
+          </button>
 
-        <button mat-icon-button (click)="onClickVolume($event)">
-          <ng-template [ngIf]="settings.volume.muted || settings.volume.value === 0">
-            <mat-icon>volume_off</mat-icon>
-          </ng-template>
-          <ng-template [ngIf]="!settings.volume.muted && 0 < settings.volume.value && settings.volume.value <= 50">
-            <mat-icon>volume_down</mat-icon>
-          </ng-template>
-          <ng-template [ngIf]="!settings.volume.muted && 50 < settings.volume.value && settings.volume.value <= 100">
-            <mat-icon>volume_up</mat-icon>
-          </ng-template>
-        </button>
+          <button mat-icon-button (click)="onClickVolume($event)">
+            <ng-template [ngIf]="settings.volume.muted || settings.volume.value === 0">
+              <mat-icon>volume_off</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!settings.volume.muted && 0 < settings.volume.value && settings.volume.value <= 50">
+              <mat-icon>volume_down</mat-icon>
+            </ng-template>
+            <ng-template [ngIf]="!settings.volume.muted && 50 < settings.volume.value && settings.volume.value <= 100">
+              <mat-icon>volume_up</mat-icon>
+            </ng-template>
+          </button>
 
-        <mat-slider min="0" max="100" step="1" [disabled]="settings.volume.muted">
-          <input matSliderThumb [value]="settings.volume.value" (valueChange)="onValueChange($event)"
-            (click)="onClickSlider($event)">
-        </mat-slider>
+          <mat-slider min="0" max="100" step="1" [disabled]="settings.volume.muted">
+            <input matSliderThumb [value]="settings.volume.value" (valueChange)="onValueChange($event)"
+              (click)="onClickSlider($event)">
+          </mat-slider>
+        </mat-panel-title>
+
+        <span class="spacer"></span>
+
+        <mat-panel-description>
+
+          <div id="video-text-container">
+            <div class="video-text">{{_video?.oEmbed?.title}}</div>
+            <div class="video-text">{{_video?.oEmbed?.author_name}}</div>
+          </div>
+        </mat-panel-description>
+
       </mat-expansion-panel-header>
 
       <youtube-player [videoId]="_video?.videoid" [height]="height" [width]="width" [startSeconds]="startSeconds"
