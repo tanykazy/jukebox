@@ -113,6 +113,10 @@ export class RequestBoxComponent implements OnInit {
 
   public onClickRequest(event: Video): void {
     console.debug('Click list item');
+    const i = this.videos.findIndex((r: Video) => r.videoid === event.videoid);
+    if (i !== -1) {
+      this.index = i + 1;
+    }
     this.clickVideo.emit(event);
   }
 
@@ -131,8 +135,8 @@ export class RequestBoxComponent implements OnInit {
 
   public toIdList(): Array<string> {
     const ids: string[] = [];
-    this.videos.forEach((request: Video) => {
-      ids.push(request.videoid);
+    this.videos.forEach((v: Video) => {
+      ids.push(v.videoid);
     });
     return ids;
   }
@@ -146,28 +150,39 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public remove(video: Video): void {
-    const i = this.videos.findIndex((r: Video) => r.videoid === video.videoid);
+    const i = this.videos.findIndex((v: Video) => v.videoid === video.videoid);
     if (i !== -1) {
       this.videos.splice(i, 1);
     }
   }
 
   public exist(video: Video): boolean {
-    return !this.videos.every((r: Video) => r.videoid !== video.videoid);
+    return !this.videos.every((v: Video) => v.videoid !== video.videoid);
   }
 
   public next(loop: boolean): Video {
-    if (loop && this.index === this.videos.length) {
-      this.index = 0;
+    if (!(this.index < this.videos.length)) {
+      if (loop) {
+        this.index = 0;
+      } else {
+        this.index = this.videos.length - 1;
+      }
     }
+    console.log(this.index);
     return this.videos[this.index++];
   }
 
   public previous(loop: boolean): Video {
-    if (loop && this.index === 0) {
-      this.index = this.videos.length - 1;
+    if (this.index - 2 < 0) {
+      if (loop) {
+        this.index = this.videos.length + this.index - 2;
+      } else {
+        this.index = 0;
+      }
+    } else {
+      this.index = this.index - 2;
     }
-    return this.videos[--this.index];
+    return this.videos[this.index++];
   }
 
   public has(): boolean {
@@ -181,6 +196,7 @@ export class RequestBoxComponent implements OnInit {
       [this.videos[m], this.videos[i]] = [this.videos[i], this.videos[m]];
     }
   }
+
   private openDialog(): void {
     const data: DialogData = {
       url: ''

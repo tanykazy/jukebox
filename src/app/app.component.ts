@@ -38,11 +38,8 @@ export class AppComponent {
   }
 
   onNext(loop: boolean): void {
-    console.log(loop);
-    if (this.requestBox.has()) {
-      const video = this.requestBox.next(loop);
-      this.video = video;
-    }
+    const video = this.requestBox.next(loop);
+    this.video = video;
   }
 
   onShuffle(): void {
