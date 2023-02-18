@@ -180,7 +180,11 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   }
 
   onClickSkipPrevious(event: UIEvent): void {
-    this.previous.emit(this.settings.repeat === Repeat.On);
+    if (this.youtube.getCurrentTime() < 1) {
+      this.previous.emit(this.settings.repeat === Repeat.On);
+    } else {
+      this.youtube.seekTo(0, true);
+    }
     event.stopPropagation();
   }
 
