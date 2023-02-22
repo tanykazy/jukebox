@@ -1,5 +1,24 @@
 #request-list {
-    width: fit-content(100%);
+    width: 100%;
+}
+
+.request-list-item {
+    align-items: center;
+    justify-content: center;
+}
+
+#delete-button-container {
+    /* height: 100%; */
+    /* min-height: fit-content(100%); */
+    /* max-height: fit-content(100%); */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+}
+
+.delete-button {
+    /* margin-top: auto; */
+    /* margin-bottom: auto; */
 }
 
 #add-button {

@@ -120,9 +120,10 @@ export class RequestBoxComponent implements OnInit {
     this.clickVideo.emit(event);
   }
 
-  public onClickDelete(event: Video): void {
+  public onClickDelete(video: Video, event: UIEvent): void {
     console.debug('Click list item delete');
-    this.removeRequest(event);
+    this.removeRequest(video);
+    event.stopPropagation();
   }
 
   public onClickAddButton(event: UIEvent): void {

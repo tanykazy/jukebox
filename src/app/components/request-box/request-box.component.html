@@ -1,17 +1,24 @@
-<mat-list cdkDropList id="request-list" role="list" (cdkDropListDropped)="drop($event)">
-    <mat-list-item matRipple cdkDrag role="listitem" *ngFor="let video of videos" (click)="onClickRequest(video)">
-        <img matListItemAvatar [src]="video.oEmbed?.thumbnail_url" [alt]="">
-        <span matListItemTitle>{{video.oEmbed?.title}}</span>
-        <span matListItemLine>{{video.oEmbed?.author_name}}</span>
-        <button matListItemMeta mat-icon-button (click)="onClickDelete(video)">
-            <mat-icon>delete</mat-icon>
-        </button>
-    </mat-list-item>
+<div>
+    <mat-list cdkDropList id="request-list" role="list" (cdkDropListDropped)="drop($event)">
+        <mat-list-item matRipple cdkDrag class="request-list-item" role="listitem" *ngFor="let video of videos"
+            (click)="onClickRequest(video)">
+            <img matListItemAvatar [src]="video.oEmbed?.thumbnail_url" [alt]="">
+            <span matListItemTitle>{{video.oEmbed?.title}}</span>
+            <span matListItemLine>{{video.oEmbed?.author_name}}</span>
+            <span matListItemMeta class="delete-button-container">
+                <button mat-icon-button class="delete-button" (click)="onClickDelete(video, $event)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </span>
+        </mat-list-item>
 
-    <mat-list-item>
-    </mat-list-item>
-</mat-list>
+        <mat-list-item disabled>
+        </mat-list-item>
+    </mat-list>
+</div>
 
-<button mat-fab id="add-button" (click)="onClickAddButton($event)">
-    <mat-icon>add</mat-icon>
-</button>
+<div>
+    <button mat-fab id="add-button" (click)="onClickAddButton($event)">
+        <mat-icon>add</mat-icon>
+    </button>
+</div>
