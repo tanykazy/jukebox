@@ -5,11 +5,11 @@
             <img matListItemAvatar [src]="video.oEmbed?.thumbnail_url" [alt]="">
             <span matListItemTitle>{{video.oEmbed?.title}}</span>
             <span matListItemLine>{{video.oEmbed?.author_name}}</span>
-            <span matListItemMeta class="delete-button-container">
+            <div matListItemMeta class="delete-button-container">
                 <button mat-icon-button class="delete-button" (click)="onClickDelete(video, $event)">
                     <mat-icon>delete</mat-icon>
                 </button>
-            </span>
+            </div>
         </mat-list-item>
 
         <mat-list-item disabled>
