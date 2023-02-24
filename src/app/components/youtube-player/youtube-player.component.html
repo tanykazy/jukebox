@@ -3,7 +3,7 @@
     <mat-progress-bar id="duration-bar" *ngIf="progressbar.show" [mode]="progressbar.mode" [value]="progressbar.value"
       [bufferValue]="progressbar.bufferValue"></mat-progress-bar>
 
-    <mat-expansion-panel id="player-panel">
+    <mat-expansion-panel id="player-panel" [disabled]="!_video">
       <mat-expansion-panel-header id="player-header">
 
         <mat-panel-title>
