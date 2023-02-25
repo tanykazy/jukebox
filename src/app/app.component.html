@@ -1,19 +1,24 @@
-<mat-drawer-container id="container">
+<mat-sidenav-container id="container">
+    <mat-sidenav>
+    </mat-sidenav>
 
-    <div>
-        <div>
-            <app-top-bar id="top-bar" [appName]="appName" (share)="onClickShare($event)"></app-top-bar>
-
-        </div>
-        <div>
-            <app-request-box id="request" (clickVideo)="onClickVideo($event)" (select)="onSelect($event)"
-                (deselect)="onDeselect($event)"></app-request-box>
-        </div>
+    <mat-sidenav-content>
 
         <div>
-            <app-youtube-player id="player" #player [video]="video" (next)="onNext($event)"
-                (previous)="onPrevious($event)" (shuffle)="onShuffle()"></app-youtube-player>
-        </div>
-    </div>
+            <div>
+                <app-top-bar id="top-bar" [appName]="appName" (share)="onClickShare($event)"></app-top-bar>
 
-</mat-drawer-container>
+            </div>
+            <div>
+                <app-request-box id="request" (clickVideo)="onClickVideo($event)" (select)="onSelect($event)"
+                    (deselect)="onDeselect($event)"></app-request-box>
+            </div>
+
+            <div>
+                <app-youtube-player id="player" #player [video]="video" (next)="onNext($event)"
+                    (previous)="onPrevious($event)" (shuffle)="onShuffle()"></app-youtube-player>
+            </div>
+        </div>
+
+    </mat-sidenav-content>
+</mat-sidenav-container>
