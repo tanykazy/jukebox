@@ -9,12 +9,37 @@ import { Video } from '../request-box/request-box.component';
 
 let apiLoaded: boolean = false;
 
+enum Repeat {
+  Off = 0,
+  One = 1,
+  On = 2,
+}
+
+interface Settings {
+  volume: Volume;
+  repeat: Repeat;
+  shuffle: boolean;
+}
+
+interface Volume {
+  value: number;
+  muted: boolean;
+}
+
+interface ProgressBarSetting {
+  show: boolean,
+  mode: ProgressBarMode,
+  bufferValue: number,
+  value: number
+}
+
 @Component({
   selector: 'app-youtube-player',
   templateUrl: './youtube-player.component.html',
   styleUrls: ['./youtube-player.component.css']
 })
 export class YoutubePlayerComponent implements OnInit, OnDestroy {
+
   constructor() { }
 
   @ViewChild(YouTubePlayer) youtube!: YouTubePlayer;
@@ -267,28 +292,4 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     this.width = size;
     this.height = size;
   }
-}
-
-enum Repeat {
-  Off = 0,
-  One = 1,
-  On = 2,
-}
-
-interface Settings {
-  volume: Volume;
-  repeat: Repeat;
-  shuffle: boolean;
-}
-
-interface Volume {
-  value: number;
-  muted: boolean;
-}
-
-interface ProgressBarSetting {
-  show: boolean,
-  mode: ProgressBarMode,
-  bufferValue: number,
-  value: number
 }

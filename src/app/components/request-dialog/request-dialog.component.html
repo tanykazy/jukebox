@@ -2,10 +2,20 @@
 <mat-dialog-content>
     <mat-form-field id="request-form">
         <mat-label>YouTube Video URL</mat-label>
-        <input matInput placeholder="New URL..." [(ngModel)]="data.url">
+        <input matInput placeholder="New URL..." cdkFocusInitial [formControl]="formControl">
+        <mat-error *ngIf="formControl.hasError('pattern')">
+            <span>Not a YouTube URL.</span>
+        </mat-error>
+        <mat-error *ngIf="formControl.hasError('videoid') && !formControl.hasError('pattern')">
+            <span>Video ID not found.</span>
+        </mat-error>
     </mat-form-field>
+
+    <ng-template [ngIf]="!formControl.errors">
+        <youtube-player [width]="200" [height]="200" [videoId]="videoid" (error)="onError($event)"></youtube-player>
+    </ng-template>
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-button (click)="onClickCancel($event)">Cancel</button>
-    <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
+    <button mat-button [mat-dialog-close]="data" [disabled]="formControl.errors" (click)="onClickOk($event)">Ok</button>
 </mat-dialog-actions>

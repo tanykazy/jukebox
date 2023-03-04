@@ -1,5 +1,28 @@
 import { Injectable } from '@angular/core';
 
+
+export const reYoutubeUrl: RegExp = /^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+$/;
+
+export interface OEmbedResponse {
+  type: 'photo' | 'video' | 'link' | 'rich';
+  version: '1.0';
+  title?: string;
+  author_name?: string;
+  author_url?: string;
+  provider_name?: string;
+  provider_url?: string;
+  cache_age?: number;
+  thumbnail_url?: string;
+  thumbnail_width?: number;
+  thumbnail_height?: number;
+}
+
+export interface OEmbedResponseTypeVideo extends OEmbedResponse {
+  html: string;
+  width: number;
+  height: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -14,14 +37,15 @@ export class YoutubeUrlService {
     try {
       const addr: URL = new URL(url);
       const hostname: string = addr.hostname;
-      if (hostname === 'youtu.be') {
-        return addr.pathname.replace('/', '');
-      } else {
+      if (hostname.match(/^youtu\.be$/)) {
+        return addr.pathname.slice(1);
+      } if (hostname.match(/^((w){3}.)?youtube\.com$/)) {
         const searchParams: URLSearchParams = addr.searchParams;
         return searchParams.get('v');
+      } else {
+        return null;
       }
     } catch (error) {
-      console.warn(error);
       return null;
     }
   }
@@ -51,24 +75,4 @@ export class YoutubeUrlService {
       return response.json();
     })
   }
-}
-
-export interface OEmbedResponse {
-  type: 'photo' | 'video' | 'link' | 'rich';
-  version: '1.0';
-  title?: string;
-  author_name?: string;
-  author_url?: string;
-  provider_name?: string;
-  provider_url?: string;
-  cache_age?: number;
-  thumbnail_url?: string;
-  thumbnail_width?: number;
-  thumbnail_height?: number;
-}
-
-export interface OEmbedResponseTypeVideo extends OEmbedResponse {
-  html: string;
-  width: number;
-  height: number;
 }

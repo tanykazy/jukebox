@@ -112,7 +112,6 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public onClickRequest(event: Video): void {
-    console.debug('Click list item');
     const i = this.videos.findIndex((r: Video) => r.videoid === event.videoid);
     if (i !== -1) {
       this.index = i + 1;
@@ -121,7 +120,6 @@ export class RequestBoxComponent implements OnInit {
   }
 
   public onClickDelete(video: Video, event: UIEvent): void {
-    console.debug('Click list item delete');
     this.removeRequest(video);
     event.stopPropagation();
   }
@@ -207,11 +205,9 @@ export class RequestBoxComponent implements OnInit {
     };
     const dialogRef = this.dialog.open(RequestDialogComponent, config);
     dialogRef.afterOpened().subscribe(() => {
-      console.debug('Request dialog was opened');
       this.dialogState = MatDialogState.OPEN;
     });
     dialogRef.afterClosed().subscribe((result: DialogData | undefined) => {
-      console.debug('Request dialog was closed');
       this.dialogState = MatDialogState.CLOSED;
       if (result) {
         const urls = result.url.split(/\r\n|\r|\n|\s/);

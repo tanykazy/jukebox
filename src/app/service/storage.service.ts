@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 
+
 export const Storage = {
   Settings: 'SETTINGS',
   Playlist: 'PLAYLIST',
