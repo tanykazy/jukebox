@@ -201,7 +201,6 @@ export class RequestBoxComponent implements OnInit {
     };
     const config: MatDialogConfig = {
       data: data,
-      minWidth: '90%',
     };
     const dialogRef = this.dialog.open(RequestDialogComponent, config);
     dialogRef.afterOpened().subscribe(() => {

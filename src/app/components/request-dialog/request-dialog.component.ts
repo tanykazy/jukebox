@@ -41,6 +41,8 @@ export class RequestDialogComponent {
   }
 
   videoid: string | undefined;
+  width: number = NaN;
+  height: number = NaN;
   formControl = new FormControl(this.data.url, [
     Validators.pattern(reYoutubeUrl),
     YoutubeValidator.hasVideoid
@@ -54,6 +56,15 @@ export class RequestDialogComponent {
 
   public onClickCancel(event: UIEvent): void {
     this.dialogRef.close();
+  }
+
+  public onReady(event: YT.PlayerEvent): void {
+    const form = window.document.getElementById('request-form');
+    if (form) {
+      const size = form.clientWidth;
+      this.width = size;
+      this.height = size;
+    }
   }
 
   public onError(event: YT.OnErrorEvent): void {
