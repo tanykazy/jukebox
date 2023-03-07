@@ -47,10 +47,7 @@ export class AppComponent {
   onClickShare(event: UIEvent): void {
     const url = new URL(window.location.href);
     if (this.requestBox.length > 0) {
-      let param = [];
-      while (this.requestBox.has()) {
-        param.push(this.requestBox.next(false).videoid);
-      }
+      const param = this.requestBox.toList();
       url.search = `requests=${param.join(',')}`;
     }
     const result = this.clipboard.copy(url.href);

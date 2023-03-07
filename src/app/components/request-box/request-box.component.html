@@ -1,5 +1,5 @@
 <div>
-    <mat-list cdkDropList id="request-list" role="list" (cdkDropListDropped)="drop($event)">
+    <mat-list cdkDropList id="request-list" role="list" (cdkDropListDropped)="onDrop($event)">
         <mat-list-item matRipple cdkDrag class="request-list-item" role="listitem" *ngFor="let video of videos"
             (click)="onClickRequest(video)">
             <img matListItemAvatar [src]="video.oEmbed?.thumbnail_url" [alt]="">

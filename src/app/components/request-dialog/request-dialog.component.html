@@ -12,10 +12,8 @@
             </mat-error>
         </mat-form-field>
 
-        <ng-template [ngIf]="!formControl.errors">
-            <youtube-player [width]="width" [height]="height" [videoId]="videoid" (ready)="onReady($event)"
-                (error)="onError($event)"></youtube-player>
-        </ng-template>
+        <youtube-player [width]="width" [height]="height" [videoId]="videoid" (ready)="onReady($event)"
+            (error)="onError($event)"></youtube-player>
     </mat-dialog-content>
     <mat-dialog-actions>
         <button mat-button (click)="onClickCancel($event)">Cancel</button>

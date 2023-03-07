@@ -53,6 +53,7 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     window.clearInterval(this.watchCurrentTimeId);
     window.clearInterval(this.watchLoadedFractionTimeId);
     this.youtube?.stopVideo();
+    console.debug('Set video %o', video);
     this._video = video;
   }
   public _video: Video | undefined;
@@ -98,9 +99,14 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
       // https://developers.google.com/youtube/iframe_api_reference#Getting_Started
       const scriptElement: HTMLScriptElement = document.createElement('script');
       scriptElement.src = 'https://www.youtube.com/iframe_api';
+      scriptElement.onload = (event: Event) => {
+        apiLoaded = true;
+        console.info('Load API %s', scriptElement.src);
+      };
+      scriptElement.onerror = (event: string | Event) => {
+        console.error('Fail to load API %s', scriptElement);
+      };
       document.body.appendChild(scriptElement);
-      apiLoaded = true;
-      console.info('Load API %s', scriptElement.src);
     } else {
       console.debug('API loaded.');
     }
@@ -113,8 +119,8 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
   }
 
   onReady(event: YT.PlayerEvent): void {
-    console.info('Video %s ready.', event.target.getVideoUrl());
     this.isReady = true;
+    console.info('Player finished loading and is ready to begin receiving API calls.');
     this.youtube.setVolume(this.settings.volume.value);
     if (this.settings.volume.muted) {
       this.youtube.mute();
@@ -230,7 +236,6 @@ export class YoutubePlayerComponent implements OnInit, OnDestroy {
     this.next.emit(this.settings.repeat === Repeat.On);
     event.stopPropagation();
   }
-
 
   onClickShuffle(event: UIEvent): void {
     this.settings.shuffle = !this.settings.shuffle;

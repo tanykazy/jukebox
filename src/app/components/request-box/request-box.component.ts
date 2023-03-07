@@ -38,28 +38,6 @@ export class RequestBoxComponent implements OnInit {
     return this.videos.length;
   }
 
-  ngOnInit(): void {
-    const playlist: Array<string> = StorageService.getItem(Storage.Playlist);
-    if (playlist !== null) {
-      try {
-        playlist.forEach((value: string) => {
-          const url = YoutubeUrlService.getVideoUrl(value);
-          this.addRequest(url);
-        })
-      } catch (error) {
-        StorageService.setItem(Storage.Playlist, this.toIdList());
-      }
-    }
-    const params = new URLSearchParams(window.location.search);
-    const requests = params.get('requests');
-    if (requests) {
-      requests.split(',').forEach((value) => {
-        const url = YoutubeUrlService.getVideoUrl(value);
-        this.addRequest(url);
-      })
-    }
-  }
-
   public async addRequest(...urls: Array<URL>): Promise<boolean> {
     for (const url of urls) {
       const videoid = YoutubeUrlService.getVideoId(url.href);
@@ -78,70 +56,13 @@ export class RequestBoxComponent implements OnInit {
           console.warn(error);
         }
       }
-      StorageService.setItem(Storage.Playlist, this.toIdList());
+      StorageService.setItem(Storage.Playlist, this.toList());
     }
     return Promise.resolve(true);
   }
 
-  public removeRequest(video: Video): void {
-    this.remove(video);
-    StorageService.setItem(Storage.Playlist, this.toIdList());
-  }
-
-  public getIndex(request: string): number {
-    // const index = this.requests.indexOf(request);
-    return 0;
-  }
-
-  public getRequest(index: number): string {
-    // return this.requests[index];
-    return '';
-  }
-
-  public getLength(): number {
-    return this.videos.length;
-  }
-
-  public getAllRequests(): Array<string> {
-    // return this.requests;
-    return [];
-  }
-
-  public shuffleRequest(): void {
-    // this.requests = shuffle(this.requests);
-  }
-
-  public onClickRequest(event: Video): void {
-    const i = this.videos.findIndex((r: Video) => r.videoid === event.videoid);
-    if (i !== -1) {
-      this.index = i + 1;
-    }
-    this.clickVideo.emit(event);
-  }
-
-  public onClickDelete(video: Video, event: UIEvent): void {
-    this.removeRequest(video);
-    event.stopPropagation();
-  }
-
-  public onClickAddButton(event: UIEvent): void {
-    this.openDialog();
-  }
-
-  public drop(event: CdkDragDrop<Video[]>): void {
-    moveItemInArray(this.videos, event.previousIndex, event.currentIndex);
-  }
-
-  public toIdList(): Array<string> {
-    const ids: string[] = [];
-    this.videos.forEach((v: Video) => {
-      ids.push(v.videoid);
-    });
-    return ids;
-  }
-
-  public toJSON() {
-    return Array.from(this.videos);
+  public toList(): Array<string> {
+    return this.videos.reduce((previous: string[], current: Video) => [...previous, current.videoid], []);
   }
 
   public add(video: Video): number {
@@ -152,11 +73,16 @@ export class RequestBoxComponent implements OnInit {
     const i = this.videos.findIndex((v: Video) => v.videoid === video.videoid);
     if (i !== -1) {
       this.videos.splice(i, 1);
+      StorageService.setItem(Storage.Playlist, this.toList());
     }
   }
 
   public exist(video: Video): boolean {
     return !this.videos.every((v: Video) => v.videoid !== video.videoid);
+  }
+
+  public has(): boolean {
+    return this.videos[this.index] !== undefined;
   }
 
   public next(loop: boolean): Video {
@@ -183,15 +109,54 @@ export class RequestBoxComponent implements OnInit {
     return this.videos[this.index++];
   }
 
-  public has(): boolean {
-    return this.videos[this.index] !== undefined;
+  public shuffle() {
+    let i: number = this.videos.length;
+    while (i) {
+      const r: number = Math.floor(Math.random() * i--);
+      [this.videos[i], this.videos[r]] = [this.videos[r], this.videos[i]];
+    }
   }
 
-  public shuffle() {
-    let m: number = this.videos.length;
-    while (m) {
-      const i: number = Math.floor(Math.random() * m--);
-      [this.videos[m], this.videos[i]] = [this.videos[i], this.videos[m]];
+  public onClickRequest(event: Video): void {
+    const i = this.videos.findIndex((r: Video) => r.videoid === event.videoid);
+    if (i !== -1) {
+      this.index = i + 1;
+    }
+    this.clickVideo.emit(event);
+  }
+
+  public onClickDelete(video: Video, event: UIEvent): void {
+    this.remove(video);
+    event.stopPropagation();
+  }
+
+  public onClickAddButton(event: UIEvent): void {
+    this.openDialog();
+  }
+
+  public onDrop(event: CdkDragDrop<Video[]>): void {
+    moveItemInArray(this.videos, event.previousIndex, event.currentIndex);
+  }
+
+  ngOnInit(): void {
+    const playlist: Array<string> = StorageService.getItem(Storage.Playlist);
+    if (playlist !== null) {
+      try {
+        playlist.forEach((value: string) => {
+          const url = YoutubeUrlService.getVideoUrl(value);
+          this.addRequest(url);
+        })
+      } catch (error) {
+        StorageService.setItem(Storage.Playlist, this.toList());
+      }
+    }
+    const params = new URLSearchParams(window.location.search);
+    const requests = params.get('requests');
+    if (requests) {
+      requests.split(',').forEach((value) => {
+        const url = YoutubeUrlService.getVideoUrl(value);
+        this.addRequest(url);
+      })
     }
   }
 
@@ -201,28 +166,26 @@ export class RequestBoxComponent implements OnInit {
     };
     const config: MatDialogConfig = {
       data: data,
+      maxWidth: 390
     };
     const dialogRef = this.dialog.open(RequestDialogComponent, config);
     dialogRef.afterOpened().subscribe(() => {
       this.dialogState = MatDialogState.OPEN;
     });
-    dialogRef.afterClosed().subscribe((result: DialogData | undefined) => {
+    dialogRef.afterClosed().subscribe((result: DialogData) => {
       this.dialogState = MatDialogState.CLOSED;
       if (result) {
-        const urls = result.url.split(/\r\n|\r|\n|\s/);
-        for (const url of urls) {
-          try {
-            this.addRequest(new URL(url));
-          } catch (error) {
-            console.warn(error);
-          }
+        try {
+          this.addRequest(new URL(result.url));
+        } catch (error) {
+          console.warn(error);
         }
       }
     });
   }
 
   @HostListener('document:paste', ['$event'])
-  onPaste(event: ClipboardEvent): void {
+  private onPaste(event: ClipboardEvent): void {
     if (this.dialogState !== MatDialogState.OPEN) {
       const clipboardData = event.clipboardData;
       if (clipboardData) {
