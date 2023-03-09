@@ -1,8 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Clipboard } from '@angular/cdk/clipboard';
+
 import { YoutubePlayerComponent } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent, Video } from "./components/request-box/request-box.component";
+import { YoutubeUrlService } from './service/youtube-url.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +16,6 @@ export class AppComponent {
     private clipboard: Clipboard,
     private snackBar: MatSnackBar) { }
 
-  public appName = "jukebox";
   public video!: Video;
 
   @ViewChild(RequestBoxComponent) requestBox!: RequestBoxComponent;
@@ -44,7 +45,12 @@ export class AppComponent {
     this.requestBox.shuffle();
   }
 
-  onClickShare(event: UIEvent): void {
+  public onClickShareButton(event: UIEvent): void {
+    console.debug('Click share button');
+    this.copyPlaylist();
+  }
+
+  private copyPlaylist(): void {
     const url = new URL(window.location.href);
     if (this.requestBox.length > 0) {
       const param = this.requestBox.toList();
