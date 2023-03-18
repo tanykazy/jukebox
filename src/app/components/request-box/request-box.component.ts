@@ -1,5 +1,6 @@
-import { Component, OnInit, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, HostListener, ViewChildren, QueryList } from '@angular/core';
 
+import { MatListItem } from '@angular/material/list';
 import { MatDialog, MatDialogConfig, MatDialogState } from '@angular/material/dialog';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -27,6 +28,8 @@ export class RequestBoxComponent implements OnInit {
 
   private index: number = 0;
   private dialogState: MatDialogState = MatDialogState.CLOSED;
+
+  @ViewChildren(MatListItem) matListItems!: QueryList<MatListItem>;
 
   @Output() clickVideo = new EventEmitter<Video>();
   @Output() select = new EventEmitter<string>();
@@ -93,6 +96,7 @@ export class RequestBoxComponent implements OnInit {
         this.index = this.videos.length - 1;
       }
     }
+    this.scrollItemIntoView(this.videos[this.index]);
     return this.videos[this.index++];
   }
 
@@ -106,6 +110,7 @@ export class RequestBoxComponent implements OnInit {
     } else {
       this.index = this.index - 2;
     }
+    this.scrollItemIntoView(this.videos[this.index]);
     return this.videos[this.index++];
   }
 
@@ -158,6 +163,15 @@ export class RequestBoxComponent implements OnInit {
         this.addRequest(url);
       })
     }
+  }
+
+  private scrollItemIntoView(video: Video): void {
+    const matListItem = this.matListItems.find((item) => item._elementRef.nativeElement.id === video.videoid);
+    matListItem?._elementRef.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+      inline: 'nearest'
+    });
   }
 
   private openDialog(): void {
