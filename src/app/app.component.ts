@@ -4,7 +4,6 @@ import { Clipboard } from '@angular/cdk/clipboard';
 
 import { YoutubePlayerComponent } from "./components/youtube-player/youtube-player.component";
 import { RequestBoxComponent, Video } from "./components/request-box/request-box.component";
-import { YoutubeUrlService } from './service/youtube-url.service';
 
 @Component({
   selector: 'app-root',
