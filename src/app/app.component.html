@@ -1,4 +1,4 @@
-<div class="container">
+<div class="wrapper">
     <mat-toolbar class="toolbar">
         <button mat-icon-button (click)="sidenav.toggle()">
             <mat-icon>menu</mat-icon>
@@ -10,16 +10,18 @@
         </button>
     </mat-toolbar>
 
-    <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav-container class="container-wrapper">
         <mat-sidenav #sidenav mode="over">
             <!-- Sidenav content -->
         </mat-sidenav>
 
         <mat-sidenav-content>
-            <app-request-box id="request" (clickVideo)="onClickVideo($event)" (select)="onSelect($event)"
-                (deselect)="onDeselect($event)"></app-request-box>
-            <app-youtube-player id="player" #player [video]="video" (next)="onNext($event)"
-                (previous)="onPrevious($event)" (shuffle)="onShuffle()"></app-youtube-player>
+            <div class="content-wrapper">
+                <app-request-box id="request" (clickVideo)="onClickVideo($event)" (select)="onSelect($event)"
+                    (deselect)="onDeselect($event)"></app-request-box>
+                <app-youtube-player id="player" #player [video]="video" (next)="onNext($event)"
+                    (previous)="onPrevious($event)" (shuffle)="onShuffle()"></app-youtube-player>
+            </div>
         </mat-sidenav-content>
     </mat-sidenav-container>
 </div>
