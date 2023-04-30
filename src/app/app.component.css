@@ -7,16 +7,8 @@
   width: 100%;
 }
 
-.container-wrapper {
-  height: 100%;
-}
-
-.content-wrapper {
-  height: 100%;
-}
-
 #request {
-  overflow-y: scroll;
+  width: 100%;
 }
 
 #player {
